@@ -2,9 +2,8 @@
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { ArrowUpRight, Check, GitBranch, Inbox, MessageCircle, Send, ShieldCheck, Trash2, UserRound } from "lucide-react";
+import type { Message, Status } from "@/lib/message-types";
 
-type Status = "pending" | "accepted" | "trash";
-type Message = { id: string; text: string; originalText: string | null; status: Status; createdAt: number };
 const labels: Record<Status, string> = { pending: "На проверке", accepted: "Принято", trash: "Корзина" };
 
 async function api<T = Message[]>(method = "GET", body?: object): Promise<T> {
@@ -83,6 +82,7 @@ export default function Home() {
         {receipt && <div className="receipt" role="status">
           <div className={`notice ${receipt.status === "trash" ? "neutral" : ""}`}><Check size={18} />{receipt.status === "pending" ? "Отправлено админу на проверку" : receipt.status === "accepted" ? "Сообщение принято" : "Сообщение отправлено в корзину"}</div>
           {receipt.originalText && receipt.originalText.trim() !== receipt.text && <div className="correction"><span className="correction-label">Исправлено</span><p>{receipt.text}</p><details><summary>Исходный текст</summary><p>{receipt.originalText}</p></details></div>}
+          {receipt.processing && <a className="processing-link" href={`/logic?message=${receipt.id}`}><GitBranch size={16} />Этапы обработки</a>}
         </div>}
       </> : <>
         <nav className="filters" aria-label="Статус сообщений">{(["pending", "accepted", "trash"] as Status[]).map(status => <button key={status} aria-pressed={filter === status} onClick={() => setFilter(status)}>{labels[status]}<span>{rows.filter(row => row.status === status).length}</span></button>)}</nav>
@@ -91,6 +91,7 @@ export default function Home() {
             <div className="message-meta"><span><UserRound size={14} />Пользователь</span><time dateTime={new Date(row.createdAt).toISOString()}>{new Date(row.createdAt).toLocaleString("ru-RU", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}</time></div>
             <p>{row.text}</p>
             {row.originalText && row.originalText.trim() !== row.text && <details className="message-original"><summary>Исходный текст</summary><p>{row.originalText}</p></details>}
+            {row.processing && <a className="processing-link" href={`/logic?message=${row.id}`}><GitBranch size={16} />Этапы обработки</a>}
             {row.status === "pending" && <div className="actions"><button className="primary" disabled={!!busy} onClick={() => review(row.id, "accepted")}><Check size={16} />Принять</button><button className="secondary" disabled={!!busy} onClick={() => review(row.id, "trash")}><Trash2 size={15} />В корзину</button></div>}
           </article>)}
         </section>

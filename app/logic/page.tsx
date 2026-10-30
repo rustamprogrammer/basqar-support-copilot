@@ -1,23 +1,35 @@
-import { ArrowLeft, ArrowRight, GitBranch, MessageCircle, ShieldCheck, Trash2 } from "lucide-react";
+"use client";
 
-const steps = [
-  { title: "Пользователь пишет сообщение", text: "Вводит текст и нажимает «Отправить». Запрос поступает на сервер, работающий на ноутбуке.", example: "памагите не магу зайти в акаунт" },
-  { title: "Система проверяет заполнение", text: "Пустые сообщения и текст длиннее 2000 символов не принимаются. Исходный текст сохраняется отдельно от исправленного." },
-  { title: "Исправляет частые опечатки", text: "Словарь заменяет знакомые ошибки: «памагите» → «помогите», «акаунт» → «аккаунт». Неизвестные слова остаются как есть. Числа, ссылки, код и текст в кавычках не меняются.", example: "Помогите не могу зайти в аккаунт" },
-  { title: "Проверяет исправленный текст по правилам", text: "Ищет «помощь», «помогите», «помоги», «помочь» или известную проблему, например «не могу войти», «не работает». Регистр не важен. Фраза «помощь больше не нужна» сама по себе не считается просьбой." },
-  { title: "Выбирает очередь и сохраняет", text: "Оригинал, исправленный текст и статус записываются в базу на ноутбуке. «123» остаётся без изменений и попадает в корзину.", branches: true },
-  { title: "Показывает результат пользователю", text: "Пользователь видит статус отправки. Если текст изменился, появляется блок «Исправлено» с возможностью раскрыть исходное сообщение." },
-  { title: "Администратор принимает решение", text: "В очереди «На проверке» администратор читает исправленный текст и при необходимости раскрывает оригинал. Нажимает «Принять» или «В корзину». Сообщения и решения остаются после обновления страницы." },
-];
-const examples = [
-  ["памагите", "Помогите", "Админу"],
-  ["неработает кнопка", "Не работает кнопка", "Админу"],
-  ["Не могу войти", "Без изменений", "Админу"],
-  ["123", "Без изменений", "В корзину"],
-  ["Помощь больше не нужна", "Без изменений", "В корзину"],
-];
+import { useEffect, useState } from "react";
+import { ArrowLeft, GitBranch, MessageCircle } from "lucide-react";
+import { ProcessingTimeline } from "@/components/processing-timeline";
+import type { Message } from "@/lib/message-types";
 
 export default function LogicPage() {
+  const [rows, setRows] = useState<Message[]>([]);
+  const [selectedId, setSelectedId] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    setSelectedId(new URLSearchParams(window.location.search).get("message") || "");
+    let active = true;
+    let timer: ReturnType<typeof setTimeout>;
+    const controller = new AbortController();
+    const refresh = async () => {
+      try {
+        const response = await fetch("/api/messages", { cache: "no-store", signal: controller.signal });
+        if (!response.ok) throw new Error("Не удалось загрузить этапы обработки.");
+        const messages = await response.json() as Message[];
+        if (active) { setRows(messages.filter(message => message.processing)); setError(""); }
+      } catch (e) { if (active) setError(e instanceof Error ? e.message : "Ошибка соединения."); }
+      finally { if (active) { setLoading(false); timer = setTimeout(refresh, 2000); } }
+    };
+    void refresh();
+    return () => { active = false; clearTimeout(timer); controller.abort(); };
+  }, []);
+
+  const selected = selectedId ? rows.find(message => message.id === selectedId) : rows[0];
   return <div className="shell">
     <header className="header">
       <a className="brand" href="/" aria-label="На связи — главная"><span className="brand-icon"><MessageCircle size={21} /></span>На связи<span className="brand-dot">.</span></a>
@@ -25,26 +37,14 @@ export default function LogicPage() {
     </header>
     <main className="logic-main">
       <div className="heading"><span className="section-icon"><GitBranch size={25} /></span><h1>Логика</h1></div>
-      <p className="logic-note">Исправление работает по словарю и правилам. ИИ и свободный анализ смысла пока не подключены.</p>
-      <ol className="logic-steps" role="list">
-        {steps.map((step, index) => <li key={step.title}>
-          <span className="step-number" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
-          <div className="step-content"><h2>{step.title}</h2><p>{step.text}</p>
-            {step.example && <blockquote>{step.example}</blockquote>}
-            {step.branches && <div className="logic-branches">
-              <div><ShieldCheck size={18} /><span>Есть подходящее правило<strong>На проверку админу</strong></span></div>
-              <div><Trash2 size={18} /><span>Нет подходящего правила<strong>В корзину</strong></span></div>
-            </div>}
-          </div>
-        </li>)}
-      </ol>
-      <section className="logic-examples" aria-labelledby="examples-heading">
-        <h2 id="examples-heading">Примеры</h2>
-        <table><thead><tr><th scope="col">Сообщение</th><th scope="col">После исправления</th><th scope="col">Результат</th></tr></thead>
-          <tbody>{examples.map(([text, corrected, result]) => <tr key={text}><td>«{text}»</td><td>{corrected}</td><td>{result}</td></tr>)}</tbody>
-        </table>
+      {error && <div className="notice error" role="alert">{error}</div>}
+      {rows.length > 1 && <div className="logic-selector"><label htmlFor="logic-message">Обращение</label><select id="logic-message" value={selectedId} onChange={e => setSelectedId(e.target.value)}>
+        <option value="">Последнее обращение</option>
+        {rows.map(message => <option key={message.id} value={message.id}>{new Date(message.createdAt).toLocaleString("ru-RU")} — {(message.originalText || message.text).replace(/\s+/g, " ").slice(0, 72)}</option>)}
+      </select></div>}
+      <section aria-label="Обработка обращения" aria-busy={loading} aria-live="polite">
+        {loading ? <div className="empty">Загрузка…</div> : selected ? <ProcessingTimeline message={selected} /> : !error && <div className="empty">{selectedId ? "Обращение не найдено" : "Пока нет обращений"}</div>}
       </section>
-      <a className="logic-back" href="/">К сообщениям<ArrowRight size={17} /></a>
     </main>
   </div>;
 }

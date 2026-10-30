@@ -1,7 +1,7 @@
 import { desc, eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import { messages } from "@/db/schema";
-import { processMessage } from "@/lib/message-processing";
+import { processMessageWithTrace } from "@/lib/message-processing";
 
 export const dynamic = "force-dynamic";
 const fail = (error: string, status = 400) => Response.json({ error }, { status });
@@ -21,8 +21,8 @@ export async function POST(request: Request) {
   if (originalText.length > 2000) return fail("Максимум 2000 символов.");
   if (typeof body?.id !== "string" || !/^[0-9a-f-]{36}$/i.test(body.id)) return fail("Некорректное сообщение.");
   try {
-    const processed = processMessage(text);
-    const message = { id: body.id, text: processed.text, originalText, status: processed.status, createdAt: Date.now() };
+    const processed = processMessageWithTrace(originalText);
+    const message = { id: body.id, text: processed.text, originalText, processing: processed.processing, status: processed.status, createdAt: Date.now() };
     await getDb().insert(messages).values(message).onConflictDoNothing();
     const [saved] = await getDb().select().from(messages).where(eq(messages.id, message.id));
     return Response.json(saved, { status: 201 });
