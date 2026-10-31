@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { Download, Play, RotateCcw, Square, ChevronDown, FlaskConical, BarChart3 } from 'lucide-react';
 import Link from '@/components/site-link';
 import data from '@/lib/assistance-quality-summary.json';
 import type { ProcessingTrace } from '@/lib/message-types';
@@ -119,21 +120,26 @@ function LiveQuality() {
       results: rows.map(row => ({ ...row, expectedRoute: expected[row.index] || null, matchesExpected: expected[row.index] ? expected[row.index] === routeName(row) : null })) };
     saveDownload(JSON.stringify(output, null, 2), `quality-live-${new Date().toISOString().slice(0, 10)}.json`);
   }
+  const canResume = resumable && (status === 'failed' || status === 'stopped') && rows.length < snapshot.length;
 
   return <section aria-labelledby="live-quality-heading" className={styles.live}>
-    <h2 id="live-quality-heading">Проверить текущий алгоритм</h2>
-    <p>Без сохранения обращений и без ИИ. По одной строке на сообщение, до 1000 сообщений и 2000 символов в каждом.</p>
-    <p>Начальная база ответов; изменения карточек проверяйте отправкой <Link href="/">на главной</Link>.</p>
-    <label className={styles.inputLabel} htmlFor="quality-input">Тексты для проверки</label>
+    <div className={styles.sectionHeading}><h2 id="live-quality-heading">Проверить тексты</h2><span className={styles.badge}>Текущий алгоритм</span></div>
+    <div className={styles.composer}>
+    <div className={styles.inputHeading}><label className={styles.inputLabel} htmlFor="quality-input">Сообщения</label><button type="button" className={styles.textButton} disabled={running} onClick={() => edit(liveExamples.join('\n'))}>Вставить примеры</button></div>
     <textarea id="quality-input" className={styles.textarea} value={input} onChange={event => edit(event.target.value)} disabled={running} rows={7} placeholder="Что такое ДМ?&#10;Меня сейчас бьют у банка, помогите" />
-    <div className={styles.toolbar}>
-      <button type="button" className="primary" disabled={running || !input.trim()} onClick={() => void run()}>{running ? 'Проверяется…' : rows.length ? 'Проверить заново' : 'Запустить проверку'}</button>
-      <button type="button" className="secondary" disabled={running} onClick={() => edit(liveExamples.join('\n'))}>Подставить 6 примеров</button>
-      {running && <button type="button" className="secondary" onClick={() => { stopped.current = true; controller.current?.abort(); }}>Остановить</button>}
-      {resumable && (status === 'failed' || status === 'stopped') && rows.length < snapshot.length && <button type="button" className="secondary" onClick={() => void run(true)}>Продолжить с сообщения {rows.length + 1}</button>}
-      {!!rows.length && <button type="button" className="secondary" disabled={running} onClick={exportResults}>Скачать результат JSON</button>}
-      <button type="button" className="secondary" disabled={running || !input} onClick={() => edit('')}>Очистить проверку</button>
+    <p className={styles.inputHint}>Одно сообщение на строку · до 1000 строк · до 2000 символов в сообщении</p>
+    <div className={styles.runToolbar}>
+      <span className={styles.lineCount}>{inputLines.length ? `Сообщений: ${inputLines.length}` : 'Введите текст или вставьте примеры'}</span>
+      <div className={styles.runActions}>
+      {(!!input || !!rows.length) && <details className={styles.tools}><summary>Действия <ChevronDown size={15} aria-hidden="true" /></summary><div>
+        {canResume && <button type="button" className={styles.textButton} disabled={running} onClick={() => void run()}><RotateCcw size={16} aria-hidden="true" />Начать заново</button>}
+        <button type="button" className={styles.textButton} disabled={running || !input} onClick={() => edit('')}>Очистить проверку</button>
+      </div></details>}
+      {running ? <button type="button" className="secondary" onClick={() => { stopped.current = true; controller.current?.abort(); }}><Square size={16} aria-hidden="true" />Остановить</button> : <button type="button" className="primary" disabled={!input.trim()} onClick={() => void run(canResume)}><Play size={16} aria-hidden="true" />{canResume ? `Продолжить с № ${rows.length + 1}` : rows.length ? 'Проверить заново' : 'Запустить проверку'}</button>}
+      </div>
     </div>
+    </div>
+    <details className={styles.methodNote}><summary>Как работает проверка</summary><p>Сообщения не сохраняются в обращениях. Проверяется алгоритм без ИИ и начальная база ответов. Изменённые карточки базы проверяйте отправкой <Link href="/">на главной</Link>.</p></details>
     {!!snapshot.length && <div className={styles.progress} role="status" aria-live="polite">
       <span>{status === 'done' ? 'Проверка завершена' : status === 'stopped' ? 'Проверка остановлена' : status === 'failed' ? 'Проверка прервана' : 'Проверка'}: {rows.length} / {snapshot.length}</span>
       <progress value={rows.length} max={snapshot.length} aria-label="Проверено сообщений" />
@@ -141,26 +147,27 @@ function LiveQuality() {
     </div>}
     {error && <p className={styles.error} role="alert">{error}</p>}
     {!!rows.length && <>
+      <div className={styles.sectionHeading}><h2>Результаты проверки</h2><button type="button" className="secondary" disabled={running} onClick={exportResults}><Download size={16} aria-hidden="true" />Скачать JSON</button></div>
       <div className={styles.metrics}>
         <div><span>Проверено</span><strong>{rows.length}</strong></div>
         <div><span>Не определено</span><strong>{rows.filter(row => !row.processing.route).length}</strong></div>
         <div><span>Срочно сейчас</span><strong>{rows.filter(row => row.processing.urgency?.level === 'now').length}</strong></div>
         <div><span>Готовых ответов</span><strong>{rows.filter(row => row.processing.knowledge?.status === 'answered').length}</strong></div>
       </div>
-      <p>{labelled.length ? `Ручная сверка: совпало ${matches} из ${labelled.length} указанных вами категорий.` : 'Точность не рассчитана: выберите ожидаемую категорию у результатов, которые хотите проверить.'} Оценки сохраняются только в скачанном файле.</p>
-      <div className={styles.toolbar}>
+      <p className={styles.note}>{labelled.length ? `Ручная сверка: совпало ${matches} из ${labelled.length} указанных вами категорий.` : 'Для расчёта точности укажите ожидаемые категории ниже.'} Оценки сохраняются в скачанном файле.</p>
+      <div className={styles.filterBar}>
         <label>Категория<select value={category} onChange={event => { setCategory(event.target.value); setPage(1); }}><option value="all">Все категории</option>{['question', 'help', 'violation', 'trash', 'undetermined'].map(key => <option key={key} value={key}>{names[key]}</option>)}</select></label>
-        <label className={styles.checkbox}><input type="checkbox" checked={onlyErrors} onChange={event => { setOnlyErrors(event.target.checked); setPage(1); }} />Только несовпадения с моей оценкой</label>
+        <label className={styles.checkbox}><input type="checkbox" checked={onlyErrors} onChange={event => { setOnlyErrors(event.target.checked); setPage(1); }} />Только ошибки по моей оценке</label>
         <span>Показано: {filtered.length} из {rows.length}</span>
       </div>
       {filtered.length === 0 && <p>Нет результатов для выбранного фильтра.</p>}
       {filtered.slice((currentPage - 1) * 20, currentPage * 20).map(row => <article key={row.index} className={styles.result}>
-        <div className={styles.resultHeader}><strong>№ {row.index + 1} · {names[routeName(row)]}</strong><span>{row.processing.urgency ? { now: 'Сейчас', high: 'Высокий', normal: 'Обычный' }[row.processing.urgency.level] : ''}</span></div>
+        <div className={styles.resultHeader}><strong><span className={styles.resultNumber}>№ {row.index + 1}</span>{names[routeName(row)]}</strong>{row.processing.urgency && <span className={row.processing.urgency.level === 'now' ? styles.urgent : styles.badge}>{ { now: 'Срочно сейчас', high: 'Высокий приоритет', normal: 'Обычный приоритет' }[row.processing.urgency.level]}</span>}</div>
         <p className={styles.original}>{row.original}</p>
         {row.text !== row.original && <p><strong>После исправления:</strong> {row.text}</p>}
         {row.processing.knowledge?.status === 'answered' && <p className={styles.answer}><strong>Готовый ответ:</strong> {row.processing.knowledge.answer}</p>}
         {row.processing.followUp && <p><strong>Уточнение:</strong> {row.processing.followUp}</p>}
-        <div className={styles.toolbar}>
+        <div className={styles.scoring}>
           <label>Ожидаемая категория<select aria-label={`Ожидаемая категория сообщения ${row.index + 1}`} value={expected[row.index] || ''} onChange={event => setExpected(current => ({ ...current, [row.index]: event.target.value }))}><option value="">Не оценено</option>{['question', 'help', 'violation', 'trash', 'undetermined'].map(key => <option key={key} value={key}>{names[key]}</option>)}</select></label>
           {expected[row.index] && <strong className={expected[row.index] === routeName(row) ? styles.match : styles.mismatch}>{expected[row.index] === routeName(row) ? 'Совпало' : 'Не совпало'}</strong>}
         </div>
@@ -173,7 +180,7 @@ function LiveQuality() {
 
 export default function AssistanceQuality() {
   const { assistance, benchmark } = report;
-  const [view, setView] = useState<'saved' | 'live'>('saved');
+  const [view, setView] = useState<'saved' | 'live'>('live');
   const [breakdown, setBreakdown] = useState<'language' | 'category'>('language');
   const [sort, setSort] = useState('errors');
   useEffect(() => {
@@ -203,13 +210,13 @@ export default function AssistanceQuality() {
   ];
   return <section aria-label="Текущие проверки алгоритмов" className={styles.dashboard}>
     <div className={styles.modeButtons} role="group" aria-label="Режим проверки">
-      <button type="button" aria-pressed={view === 'saved'} onClick={() => changeView('saved')}>Сохранённые проверки</button>
-      <button type="button" aria-pressed={view === 'live'} onClick={() => changeView('live')}>Проверить сейчас</button>
+      <button type="button" aria-pressed={view === 'live'} onClick={() => changeView('live')}><FlaskConical size={18} aria-hidden="true" />Проверить тексты</button>
+      <button type="button" aria-pressed={view === 'saved'} onClick={() => changeView('saved')}><BarChart3 size={18} aria-hidden="true" />Результаты прогонов</button>
     </div>
     <div id="live-check" hidden={view !== 'live'}><LiveQuality /></div>
-    <div id="saved-check" hidden={view !== 'saved'}>
-    <div className={styles.toolbar}><p className={styles.savedLabel}>Сохранённый прогон · {benchmark ? new Date(benchmark.createdAt).toLocaleString('ru-RU', { timeZone: 'Asia/Qyzylorda' }) : 'Не опубликован'}</p><button type="button" className="secondary" onClick={() => saveDownload(JSON.stringify(report, null, 2), 'quality-saved-summary.json')}>Скачать сводку JSON</button></div>
-    <p className="quality-note">Это сохранённые результаты, а не новый запуск. Алгоритмы проверялись без ИИ; разметка ассистентская, не подтверждена человеком.</p>
+    <div id="saved-check" className={styles.saved} hidden={view !== 'saved'}>
+    <div className={styles.savedHeading}><div><span className={styles.badge}>Сохранённый прогон</span><p className={styles.savedLabel}>{benchmark ? new Date(benchmark.createdAt).toLocaleString('ru-RU', { timeZone: 'Asia/Qyzylorda' }) : 'Не опубликован'}</p></div><button type="button" className="secondary" onClick={() => saveDownload(JSON.stringify(report, null, 2), 'quality-saved-summary.json')}><Download size={16} aria-hidden="true" />Скачать сводку</button></div>
+    <p className={styles.note}>Сохранённые результаты без ИИ. Разметка подготовлена ассистентами и не подтверждена человеком; показатели не пересчитываются при новых сообщениях.</p>
     <h2>Категории на {benchmark ? count(benchmark.total) : '10 000'} сообщениях</h2>
     {benchmark ? <>
       <div className={styles.metrics}>
@@ -218,12 +225,12 @@ export default function AssistanceQuality() {
         <div><span>Несовпадений</span><strong>{count(benchmark.wrong)}</strong></div>
         <div><span>Не определено, всего</span><strong>{count(benchmark.diagnostics.undetermined)}</strong></div>
       </div>
-      <div className="quality-table-wrap"><table className="quality-table">
+      <details className={styles.diagnostic}><summary>Ошибочные назначения категорий</summary><div className="quality-table-wrap"><table className="quality-table">
         <caption>Неопределённые решения могут входить в число ошибок; эти показатели не складываются.</caption>
         <thead><tr><th scope="col">Несовпадений категорий</th><th scope="col">Не определено, всего</th><th scope="col">Ложных нарушений</th><th scope="col">Ложная корзина</th></tr></thead>
         <tbody><tr><td>{count(benchmark.wrong)}</td><td>{count(benchmark.diagnostics.undetermined)}</td><td>{count(benchmark.diagnostics.falseViolation)}</td><td>{count(benchmark.diagnostics.falseTrash)}</td></tr></tbody>
-      </table></div>
-      <div className={styles.toolbar}>
+      </table></div></details>
+      <div className={styles.filterBar}>
         <div className={styles.segmented} role="group" aria-label="Разрез статистики"><button type="button" aria-pressed={breakdown === 'language'} onClick={() => setBreakdown('language')}>По языкам</button><button type="button" aria-pressed={breakdown === 'category'} onClick={() => setBreakdown('category')}>По категориям</button></div>
         <label>Порядок<select value={sort} onChange={event => setSort(event.target.value)}><option value="errors">Сначала больше ошибок</option><option value="accuracy">Сначала выше совпадение</option><option value="name">По названию</option></select></label>
       </div>
@@ -248,6 +255,7 @@ export default function AssistanceQuality() {
       </details>
     </> : <p>Новый прогон на 10 000 сообщениях ещё не опубликован.</p>}
 
+    <section className={styles.assistanceSection}>
     <h2>Срочность и готовые ответы</h2>
     <p>{count(assistance.overall.total)} проверенных примеров в {count(assistance.overall.families)} группах. Варианты одной группы связаны между собой. Отложенные группы не использовались для настройки.</p>
     <div className="quality-table-wrap"><table className="quality-table">
@@ -256,18 +264,19 @@ export default function AssistanceQuality() {
       <tbody>{splits.map(({ title, value }) => <tr key={title}><th scope="row">{title}</th><td>{count(value.total)}</td><td>{count(value.correct)}</td><td>{count(value.errors)}</td><td>{percent(value.accuracyPercent)}</td></tr>)}</tbody>
     </table></div>
     {!assistance.holdout && <p>Отложенная проверка ещё не опубликована.</p>}
-    <h3>Срочные ситуации</h3>
+    <details className={styles.diagnostic}><summary>Срочные ситуации</summary>
     <div className="quality-table-wrap"><table className="quality-table">
       <thead><tr><th scope="col">Выборка</th><th scope="col">Нужно вмешаться сейчас</th><th scope="col">Найдено</th><th scope="col">Пропущено</th><th scope="col">Ложная срочность</th></tr></thead>
       <tbody>{splits.map(({ title, value }) => <tr key={title}><th scope="row">{title}</th><td>{count(value.urgency.expectedNow)}</td><td>{count(value.urgency.correctNow)} ({percent(value.urgency.nowRecallPercent)})</td><td>{count(value.urgency.missedNow)}</td><td>{count(value.urgency.falseNow)}</td></tr>)}</tbody>
-    </table></div>
-    <h3>Готовые ответы</h3>
+    </table></div></details>
+    <details className={styles.diagnostic}><summary>Готовые ответы</summary>
     <div className="quality-table-wrap"><table className="quality-table">
       <thead><tr><th scope="col">Выборка</th><th scope="col">Выдано ответов</th><th scope="col">Верных по разметке</th><th scope="col">Ошибочных ответов</th><th scope="col">Охват ответимых вопросов</th></tr></thead>
       <tbody>{splits.map(({ title, value }) => <tr key={title}><th scope="row">{title}</th><td>{count(value.faq.answered)}</td><td>{count(value.faq.correctAnswers)}</td><td>{count(value.faq.unsafeAnswers)}</td><td>{count(value.faq.correctAnswers)} / {count(value.faq.answerable)} ({percent(value.faq.answerRecallPercent)})</td></tr>)}</tbody>
-    </table></div>
+    </table></div></details>
     <p>Это синтетическая проверка, а не гарантия качества в реальном потоке. Естественность переводов отдельно не подтверждена носителями языков.</p>
     <p>Дата проверки: {new Date(assistance.createdAt).toLocaleString('ru-RU', { timeZone: 'Asia/Qyzylorda' })}.</p>
+    </section>
     </div>
   </section>;
 }

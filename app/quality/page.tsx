@@ -1,5 +1,4 @@
-import { ArrowLeft, MessageCircle } from "lucide-react";
-import Link from "@/components/site-link";
+import { SiteNav } from '@/components/site-nav';
 import data from "@/lib/routing-quality-summary.json";
 import { routeLabels } from "@/lib/message-routes";
 import BenchmarkSection from "./benchmark-section";
@@ -71,11 +70,11 @@ function Matrix({ report }: { report: Report }) {
 export default function QualityPage() {
   const latest = quality.stages.at(-1)?.report;
   return <div className="shell">
-    <header className="header"><Link className="brand" href="/"><span className="brand-icon"><MessageCircle size={21} /></span>На связи<span className="brand-dot">.</span></Link><Link className="nav-link" href="/"><ArrowLeft size={16} />К сообщениям</Link></header>
-    <main className="logic-main">
-      <h1>Проверка алгоритмов</h1>
+    <SiteNav active="quality" />
+    <main id="main-content" className="logic-main">
+      <h1>Тесты и статистика</h1>
       <AssistanceQuality />
-      <details className="quality-note"><summary>Предыдущие проверки</summary>
+      <details className="quality-note quality-archive"><summary>Архив проверок и разметка</summary>
       <p>Архив результатов прежних версий алгоритма. Эти показатели не оценивают текущую проверку срочности и базу готовых ответов.</p>
       <BenchmarkSection />
       {latest && <>

@@ -6,5 +6,7 @@ declare namespace Cloudflare {
     SUPPORT_ADMIN_PASSWORD?: string;
     SUPPORT_DEMO_MODE?: string;
     AI_REVIEW_ENABLED?: string;
+    SUPPORT_SETTINGS_SECRET?: string;
+    SUPPORT_LOCAL_PORT?: string;
   }
 }

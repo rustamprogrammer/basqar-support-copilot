@@ -17,6 +17,17 @@ export const knowledgeEntries = sqliteTable('knowledge_entries', {
   id: text('id').primaryKey(), entry: text('entry', { mode: 'json' }).$type<KnowledgeEntry>().notNull(), updatedAt: integer('updated_at').notNull(),
 });
 
+// Credentials are encrypted with the checkout-local settings secret. The lifetime
+// request counter and reservation ledger are intentionally independent of re-keying.
+export const aiSettings = sqliteTable('ai_settings', {
+  id: integer('id').primaryKey(), encryptedKey: text('encrypted_key'), keySuffix: text('key_suffix'),
+  enabled: integer('enabled').notNull().default(0), mode: text('mode').notNull().default('uncertain'), model: text('model').notNull().default('gpt-6-luna'),
+  used: integer('used').notNull().default(0), updatedAt: integer('updated_at').notNull().default(0),
+});
+export const aiRequests = sqliteTable('ai_requests', {
+  id: text('id').primaryKey(), token: text('token').notNull(), inputHash: text('input_hash').notNull(), createdAt: integer('created_at').notNull(), resultJson: text('result_json'),
+});
+
 // Public feedback remains a proposal until a separate review of the rules.
 export const messageFeedback = sqliteTable("message_feedback", {
   messageId: text("message_id").primaryKey().references(() => messages.id),

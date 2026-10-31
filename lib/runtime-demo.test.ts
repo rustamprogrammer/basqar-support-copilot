@@ -3,7 +3,7 @@ import test from 'node:test';
 import { mkdtempSync, readFileSync, existsSync, writeFileSync, mkdirSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { loadRuntimeConfiguration, runtimeDemoMode, runtimeEnvironment, redactOutput } from '../scripts/start-local.mjs';
+import { loadRuntimeConfiguration, loadSettingsSecret, runtimeDemoMode, runtimeEnvironment, redactOutput } from '../scripts/start-local.mjs';
 
 function fixture() {
   const prefix = path.resolve(tmpdir(), 'basqar-demo-test-');
@@ -54,4 +54,18 @@ test('An explicit secure mode reuses a generated password and passes it only at 
 test('Output without a demo password passes through and secure-mode redaction still handles split chunks', () => {
   let demo = ''; const plain = redactOutput(undefined, (chunk: string) => { demo += chunk; }); plain.chunk('ready'); plain.end(); assert.equal(demo, 'ready');
   let secure = ''; const redacted = redactOutput('synthetic-secret', (chunk: string) => { secure += chunk; }); redacted.chunk('before synthetic-'); redacted.chunk('secret after'); redacted.end(); assert.equal(secure, 'before [hidden] after');
+});
+
+test('Settings encryption secret is stable across restarts and never inherited from an unrelated process', () => {
+  const f = fixture();
+  try {
+    const first = loadSettingsSecret(f.root), second = loadSettingsSecret(f.root);
+    assert.match(first, /^[A-Za-z0-9_-]{43}$/u); assert.equal(first, second);
+    const inherited = { SUPPORT_SETTINGS_SECRET: 'untrusted-inherited-value', OPENAI_API_KEY: 'unrelated-api-key' };
+    assert.equal(Object.hasOwn(runtimeEnvironment(inherited), 'SUPPORT_SETTINGS_SECRET'), false);
+    const env = runtimeEnvironment(inherited, undefined, true, first);
+    assert.equal(env.SUPPORT_SETTINGS_SECRET, first); assert.equal(Object.hasOwn(env, 'OPENAI_API_KEY'), false);
+    writeFileSync(path.join(f.root, '.sites-runtime', 'settings-secret'), 'broken');
+    assert.throws(() => loadSettingsSecret(f.root), /повреждён/u);
+  } finally { f.cleanup(); }
 });

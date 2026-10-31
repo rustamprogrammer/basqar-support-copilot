@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import Link from "@/components/site-link";
-import { ArrowUpRight, Check, GitBranch, Inbox, MessageCircle, Send, ShieldAlert, ShieldCheck, Trash2, Undo2, UserRound } from "lucide-react";
+import { ArrowRight, Check, GitBranch, Inbox, ScanText, ShieldAlert, Trash2, Undo2, UserRound } from "lucide-react";
+import { SiteNav } from '@/components/site-nav';
 import type { Message, MessageRoute, Status } from "@/lib/message-types";
 import { messageRoute, routeLabels } from "@/lib/message-routes";
 import { FeedbackForm } from "@/components/feedback-form";
@@ -39,6 +39,7 @@ export default function Home() {
   const [workflow, setWorkflow] = useState('all');
   const [urgencyFilter, setUrgencyFilter] = useState('all');
   const [loginOpen, setLoginOpen] = useState(false);
+  const [publicDemo, setPublicDemo] = useState(false);
   const [password, setPassword] = useState('');
   const [query, setQuery] = useState('');
   const [search, setSearch] = useState('');
@@ -68,6 +69,7 @@ export default function Home() {
   const refreshing = role === 'admin' && settledLoadKey !== loadKey;
   const receiptId = receipt?.id;
 
+  useEffect(() => { if (new URLSearchParams(window.location.search).get('view') === 'inbox') void enterAdmin(); }, []);
   useEffect(() => { const timer = setTimeout(() => setSearch(query.trim()), 300); return () => clearTimeout(timer); }, [query]);
   useEffect(() => {
     const id = localStorage.getItem('basqar-last-message');
@@ -86,8 +88,9 @@ export default function Home() {
     actionLock.current = true;
     setError('');
     try {
-      const result = await fetch('/api/admin', { cache: 'no-store' }).then(r => r.json()) as { authenticated?: boolean };
-      if (result.authenticated) { setRole('admin'); setLoading(true); setLoginOpen(false); }
+      const result = await fetch('/api/admin', { cache: 'no-store' }).then(r => r.json()) as { authenticated?: boolean; publicDemo?: boolean };
+      setPublicDemo(result.publicDemo === true);
+      if (result.authenticated) { setRole('admin'); setLoading(true); setLoginOpen(false); window.history.replaceState(null, '', '/?view=inbox'); }
       else setLoginOpen(true);
     } catch { setError('Не удалось проверить вход.'); }
     finally { actionLock.current = false; }
@@ -98,7 +101,7 @@ export default function Home() {
       const response = await fetch('/api/admin', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password }) });
       const result = await response.json() as { error?: string };
       if (!response.ok) throw new Error(result.error);
-      setPassword(''); setLoginOpen(false); setRole('admin'); setLoading(true);
+      setPassword(''); setLoginOpen(false); setRole('admin'); setLoading(true); window.history.replaceState(null, '', '/?view=inbox');
     } catch (reason) { setError(reason instanceof Error ? reason.message : 'Не удалось войти.'); }
     finally { actionLock.current = false; setBusy(null); }
   }
@@ -108,7 +111,7 @@ export default function Home() {
     try {
       const result = await fetch('/api/admin', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: '{}' });
       if (!result.ok) throw new Error('Не удалось выйти. Повторите попытку.');
-      setRows([]); setRole('user'); setLoginOpen(false);
+      setRows([]); setRole('user'); setLoginOpen(false); window.history.replaceState(null, '', '/');
     } catch (reason) { setError(reason instanceof Error ? reason.message : 'Нет связи с сервером.'); }
     finally { actionLock.current = false; setBusy(null); }
   }
@@ -206,49 +209,42 @@ export default function Home() {
   function resetFilters() { setFilter('all'); setWorkflow('all'); setUrgencyFilter('all'); setQuery(''); setSearch(''); setPage(1); }
 
   return <div className="shell">
-    <header className="header">
-      <Link className="brand" href="/" aria-label="На связи — главная"><span className="brand-icon"><MessageCircle size={21} /></span>На связи<span className="brand-dot">.</span></Link>
-      <div className="header-actions">
-      <a className="nav-link" href="/logic"><GitBranch size={16} />Логика</a>
-      <a className="nav-link" href="/quality">Статистика и тесты</a>
-      {role === 'admin' && <a className="nav-link" href="/knowledge">База ответов</a>}
-      <nav className="roles" aria-label="Роль">
-        <button disabled={!!busy} aria-pressed={role === "user"} onClick={() => { setRole("user"); setLoginOpen(false); setError(""); }}><UserRound size={16} />Проверить</button>
-        <button disabled={!!busy} aria-pressed={role === "admin"} onClick={enterAdmin}><ShieldCheck size={17} />Админ</button>
-        {role === 'admin' && <button disabled={!!busy} onClick={logout}>{busy === 'logout' ? 'Выход…' : 'Выйти'}</button>}
-      </nav>
-      </div>
-    </header>
-    <main className={`workbench-main ${role === 'admin' ? 'workbench-admin' : ''}`}>
+    <SiteNav active={role === 'admin' ? 'inbox' : 'test'} busy={!!busy} onSectionChange={view => { if (view === 'inbox') void enterAdmin(); else { setRole('user'); setLoginOpen(false); setError(''); window.history.replaceState(null, '', '/'); } }} />
+    <main id="main-content" className={`workbench-main ${role === 'admin' ? 'workbench-admin' : ''}`}>
       {loginOpen && <form className="admin-login feedback-form" onSubmit={login}><label htmlFor="admin-password">Пароль администратора<input id="admin-password" type="password" autoComplete="current-password" value={password} onChange={event => setPassword(event.target.value)} required /></label><div className="actions"><button className="primary" disabled={!!busy}>Войти</button><button type="button" className="secondary" onClick={() => { setLoginOpen(false); setPassword(''); }}>Отмена</button></div><p>Пароль находится на ноутбуке в файле .sites-runtime/admin-password.txt.</p></form>}
-      <div className="workbench-mode"><span>Стенд проверки</span><span>Алгоритмы · ИИ выключен</span></div>
-      <div className="heading"><span className="section-icon">{role === "user" ? <Send size={24} /> : <ShieldCheck size={26} />}</span><h1>{role === "user" ? "Проверить сообщение" : "Разбор обращений"}</h1></div>
+      <div className="heading page-heading"><div><h1>{role === "user" ? "Проверка сообщения" : "Обращения"}</h1><p>{role === 'user' ? 'Проверьте, как система поймёт текст игрока.' : 'Разбирайте запросы, отвечайте игрокам и уточняйте разметку.'}</p></div>{role === 'user' && <a className="secondary" href="/quality#live-check">Проверить список<ArrowRight size={16} /></a>}</div>
       {error && <div className="notice error" role="alert">{error}</div>}
-      {role === "user" ? <>
-        <div className="workbench-examples" aria-label="Примеры сообщений">{examples.map(example => <button className="secondary" key={example.label} disabled={!!busy} onClick={() => { setText(example.text); setReceipt(null); setError(''); draftId.current = null; document.getElementById('message')?.focus(); }}>{example.label}</button>)}</div>
-        <form className="composer" onSubmit={send}>
-          <label className="sr-only" htmlFor="message">Ваше сообщение</label>
-          <textarea id="message" placeholder="Напишите сообщение…" value={text} maxLength={2000} disabled={busy === "send"} onChange={e => { setText(e.target.value); setReceipt(null); draftId.current = null; }} required />
-          <div className="composer-footer"><span className="counter">{text.length} / 2000</span><div className="actions"><button type="button" className="secondary" disabled={!!busy || (!text && !receipt)} onClick={() => { setText(''); setReceipt(null); setError(''); draftId.current = null; localStorage.removeItem('basqar-last-message'); document.getElementById('message')?.focus(); }}>Сбросить пример</button><button className="primary" disabled={!text.trim() || !!busy}>{busy === "send" ? "Обработка…" : "Отправить"}<ArrowUpRight size={19} /></button></div></div>
-        </form>
-        {!receipt && <p className="workbench-next"><a href="/quality#live-check">Проверить несколько сообщений</a><span>Результаты отправки сохраняются в обращениях.</span></p>}
-        {receipt && <div className="receipt">
-          <div className="workbench-verdict"><strong>{messageRoute(receipt) ? routeLabels[messageRoute(receipt)!] : 'Не определено'}</strong><span>Результат алгоритмов</span></div>
-          <div role="status" className={`notice ${receipt.status === "violation" ? "violation-notice" : receipt.status === "trash" ? "neutral" : ""}`}>{receipt.status === "violation" ? <ShieldAlert size={18} /> : <Check size={18} />}{receipt.status === "violation" ? "Сообщение отправлено в раздел «Нарушение»" : effectiveState(receipt) === 'answered' ? 'Получен ответ' : effectiveState(receipt) === 'resolved' ? 'Обращение решено' : receipt.status === "pending" ? receipt.processing?.needsClarification || receipt.processing?.followUp ? "Передано админу; нужно уточнение" : "Отправлено админу на проверку" : "Сообщение отправлено в корзину"}</div>
+      {role === "user" ? <div className="test-workspace">
+        <section className="test-input-panel" aria-labelledby="input-heading">
+          <div className="panel-heading"><h2 id="input-heading">Текст игрока</h2><label className="example-picker"><span className="sr-only">Пример сообщения</span><select value="" disabled={!!busy} onChange={event => { const example = examples.find(item => item.label === event.target.value); if (!example) return; setText(example.text); setReceipt(null); setError(''); draftId.current = null; document.getElementById('message')?.focus(); }}><option value="" disabled>Выбрать пример</option>{examples.map(example => <option key={example.label} value={example.label}>{example.label}</option>)}</select></label></div>
+          <form className="composer" onSubmit={send}>
+            <label className="sr-only" htmlFor="message">Ваше сообщение</label>
+            <textarea id="message" placeholder="Например: што такое дмить?" value={text} maxLength={2000} disabled={busy === "send"} onChange={e => { setText(e.target.value); setReceipt(null); draftId.current = null; }} required />
+            <div className="composer-footer"><span className="counter">{text.length} / 2000</span><div className="actions">{(text || receipt) && <button type="button" className="text-button" disabled={!!busy} onClick={() => { setText(''); setReceipt(null); setError(''); draftId.current = null; localStorage.removeItem('basqar-last-message'); document.getElementById('message')?.focus(); }}>Очистить</button>}<button className="primary" disabled={!text.trim() || !!busy}>{busy === "send" ? "Обработка…" : "Проверить"}<ArrowRight size={17} /></button></div></div>
+          </form>
+          <p className="input-note">Сообщение сохранится в обращениях.</p>
+        </section>
+        <section className={`result-panel ${receipt ? 'has-result' : ''}`} aria-label="Результат проверки">
+          <div className="panel-heading"><h2>Результат</h2>{receipt && <span className="result-ready"><Check size={14} />Готово</span>}</div>
+          {!receipt && <div className="result-placeholder"><ScanText size={32} strokeWidth={1.5} /><strong>{busy === 'send' ? 'Проверяем сообщение…' : 'Здесь появится результат'}</strong><p>Категория, исправленный текст и ответ системы.</p></div>}
+          {receipt && <div className="receipt">
+          <div className="workbench-verdict" data-route={messageRoute(receipt) ?? 'undetermined'}><span>Категория</span><strong>{messageRoute(receipt) ? routeLabels[messageRoute(receipt)!] : 'Не определено'}</strong></div>
+          <p role="status" className="result-status">{receipt.status === "violation" ? "Отправлено в нарушения" : effectiveState(receipt) === 'answered' ? 'Готовый ответ отправлен игроку' : effectiveState(receipt) === 'resolved' ? 'Обращение решено' : receipt.status === "pending" ? receipt.processing?.needsClarification || receipt.processing?.followUp ? "Передано админу · нужно уточнение" : "Передано администратору" : "Отправлено в корзину"}</p>
           <SupportCard message={receipt} onSave={(saved, notice) => { setReceipt(saved); setError(notice ?? ''); }} />
           {receipt.originalText && receipt.originalText.trim() !== receipt.text && <div className="correction"><span className="correction-label">Исправлено</span><p>{receipt.text}</p><details><summary>Исходный текст</summary><p>{receipt.originalText}</p></details></div>}
           {receipt.processing && <a className="processing-link" href={`/logic?message=${receipt.id}`}><GitBranch size={16} />Этапы обработки</a>}
           {receipt.processing?.context && <a className="processing-link" href={`/logic?message=${encodeURIComponent(receipt.processing.context.parentId)}`}>Исходное обращение</a>}
           <ClarificationForm key={receipt.id} message={receipt} onSave={(saved, notice) => { setReceipt(saved); setError(notice ?? ''); }} />
         </div>}
-      </> : <>
+        </section>
+      </div> : <>
         <nav className="filters" aria-label="Категория сообщений">{(["all", "question", "help", "undetermined", "violation", "trash"] as const).map(route => <button key={route} className={route === "violation" ? "violation-filter" : undefined} aria-pressed={filter === route} onClick={() => { setFilter(route); setPage(1); if (route === "violation" || route === "trash") setWorkflow("all"); }}>{filterLabels[route]}<span>{hasFreshList ? inbox.counts[route] : '—'}</span></button>)}</nav>
         <div className="admin-toolbar">
           <label className="workflow-filter workbench-search">Поиск<input value={query} maxLength={200} placeholder="Текст обращения…" onChange={event => { setQuery(event.target.value); setPage(1); }} /></label>
           <label className="workflow-filter">Статус<select value={workflow} onChange={event => { setWorkflow(event.target.value); setPage(1); }}><option value="all">Любой</option><option value="pending">Ожидают помощи</option><option value="answered">Отвечено</option><option value="accepted">Решено</option></select></label>
           {filter === 'help' && <label className="workflow-filter">Срочность<select value={urgencyFilter} onChange={event => { setUrgencyFilter(event.target.value); setPage(1); }}><option value="all">Любая</option><option value="now">Сейчас</option><option value="high">Высокий</option><option value="normal">Обычный</option></select></label>}
         </div>
-        <div className="workbench-list-tools"><span role="status">Найдено: {hasFreshList ? inbox.total.toLocaleString('ru-RU') : '—'}{hasFreshList && updatedAt ? ` · обновлено ${new Date(updatedAt).toLocaleTimeString('ru-RU')}` : ''}</span><div className="actions"><button className="secondary" disabled={loading || refreshing || !!busy} onClick={() => setRefreshKey(value => value + 1)}>{loading || refreshing ? 'Загрузка…' : 'Обновить'}</button><button className="secondary" disabled={!!busy} onClick={resetFilters}>Сбросить фильтры</button></div></div>
+        <div className="workbench-list-tools"><span role="status">Найдено: {hasFreshList ? inbox.total.toLocaleString('ru-RU') : '—'}{hasFreshList && updatedAt ? ` · обновлено ${new Date(updatedAt).toLocaleTimeString('ru-RU')}` : ''}</span><div className="actions"><button className="secondary" disabled={loading || refreshing || !!busy} onClick={() => setRefreshKey(value => value + 1)}>{loading || refreshing ? 'Загрузка…' : 'Обновить'}</button>{(filter !== 'all' || workflow !== 'all' || urgencyFilter !== 'all' || query) && <button className="text-button" disabled={!!busy} onClick={resetFilters}>Сбросить фильтры</button>}</div></div>
         {deletedCount !== null && <div className="notice clear-result" role="status">Удалено сообщений: {deletedCount}.</div>}
         {!loading && paginated.pageCount > 1 && <nav className="message-pagination" aria-label="Страницы сообщений">
           <button className="secondary" disabled={paginated.page === 1} onClick={() => setPage(paginated.page - 1)}>Назад</button>
@@ -263,20 +259,25 @@ export default function Home() {
             <SupportCard message={row} admin onSave={(saved, notice) => { setRows(current => current.map(item => item.id === row.id ? saved : item)); setRefreshKey(value => value + 1); if (notice) setError(notice); else if (saved.id !== row.id) setError('Появилось уточнение. Данные обновлены; повторите действие.'); }} />
             {(row.status === "pending" || row.status === "violation") && row.processing?.needsClarification && row.processing.followUp && <p className="quality-note">Уточнить: {row.processing.followUp}</p>}
             {row.status === "violation" && <p className="violation-reason">{row.processing?.classification === "violation" ? row.processing.steps.find(step => step.id === "classified")?.detail : "Отмечено администратором."}</p>}
+            <details className="message-analysis"><summary>Анализ и разметка</summary>
             {row.originalText && row.originalText.trim() !== row.text && <details className="message-original"><summary>Исходный текст</summary><p>{row.originalText}</p></details>}
             {row.processing && <a className="processing-link" href={`/logic?message=${row.id}`}><GitBranch size={16} />Этапы обработки</a>}
             {row.processing?.context && <a className="processing-link" href={`/logic?message=${encodeURIComponent(row.processing.context.parentId)}`}>Исходное обращение</a>}
             <FeedbackForm message={row} onSave={feedback => setRows(current => current.map(item => item.id === row.id ? { ...item, feedback } : item))} />
-            <div className="actions">
-              {row.status === "pending" && <button className="primary" disabled={!!busy} onClick={() => review(row.id, "accepted")}><Check size={16} />Отметить решённым</button>}
+            </details>
+            <div className="message-footer">
+              {row.status === "pending" && <button className="secondary" disabled={!!busy} onClick={() => review(row.id, "accepted")}><Check size={16} />Завершить обращение</button>}
+              <details className="message-menu"><summary>Изменить категорию</summary><div className="actions">
               {row.status !== "trash" && <button className="secondary" disabled={!!busy} onClick={() => review(row.id, "trash")}><Trash2 size={15} />В корзину</button>}
               {row.status !== "violation" && <button className="secondary violation-action" disabled={!!busy} onClick={() => review(row.id, "violation")}><ShieldAlert size={15} />В нарушения</button>}
               {row.status !== "pending" && <button className="secondary" disabled={!!busy} onClick={() => review(row.id, "pending")}><Undo2 size={15} />Вернуть на проверку</button>}
+              </div></details>
             </div>
           </article>)}
         </section>
         {paginated.pageCount > 1 && <nav className="message-pagination" aria-label="Перелистывание сообщений"><button className="secondary" disabled={loading || paginated.page <= 1} onClick={() => setPage(paginated.page - 1)}>Назад</button><span>{paginated.page} / {paginated.pageCount}</span><button className="secondary" disabled={loading || paginated.page >= paginated.pageCount} onClick={() => setPage(paginated.page + 1)}>Вперёд</button></nav>}
         <details className="workbench-data-tools"><summary>Управление тестовыми данными</summary><button className="secondary violation-action" disabled={loading || !!busy || inbox.allCount === 0} onClick={prepareClear}><Trash2 size={15} />{busy === "clear-prepare" ? "Загрузка…" : `Очистить все сообщения (${inbox.allCount})`}</button></details>
+        {!publicDemo && <button className="text-button" disabled={!!busy} onClick={logout}>{busy === 'logout' ? 'Выход…' : 'Выйти из админ-панели'}</button>}
       </>}
       <dialog ref={clearDialog} className="clear-dialog" aria-labelledby="clear-title" aria-describedby="clear-description" onCancel={event => { event.preventDefault(); cancelClear(); }}>
         <h2 id="clear-title">Очистить сообщения</h2>

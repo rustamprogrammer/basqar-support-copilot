@@ -1,8 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
-import Link from "@/components/site-link";
-import { ArrowLeft, BookOpen } from "lucide-react";
+import { Plus, RefreshCw, Search } from "lucide-react";
+import { SiteNav } from "@/components/site-nav";
 import type { KnowledgeEntry } from "@/lib/knowledge-base";
 import type { Message } from "@/lib/message-types";
 
@@ -111,33 +111,39 @@ export default function KnowledgePage() {
   const visible = entries.filter(entry => `${entry.title} ${entry.aliases.join(" ")}`.toLocaleLowerCase("ru").includes(search.toLocaleLowerCase("ru")));
   const newerEntry = editor ? entries.find(entry => entry.id === editor.entry.id && entry.version !== editor.expectedVersion) : undefined;
   return <div className="shell">
-    <header className="header"><Link className="brand" href="/"><span className="brand-icon"><BookOpen size={21} /></span>На связи<span className="brand-dot">.</span></Link><Link className="nav-link" href="/"><ArrowLeft size={16} />К сообщениям</Link></header>
-    <main className="logic-main knowledge-main"><h1>База ответов</h1>
+    <SiteNav active="knowledge" busy={busy} />
+    <main id="main-content" className="logic-main knowledge-main">
+      <div className="secondary-page-heading"><h1>База ответов</h1>{authenticated && <button type="button" className="primary" disabled={busy || refreshing} onClick={() => { if (openEditor(edit(blank(), null), true)) { setNotice(""); setError(""); } }}><Plus size={17} aria-hidden="true" />Новый ответ</button>}</div>
       {loading ? <p role="status">Загрузка…</p> : !authenticated ? <div className="feedback-form knowledge-login">
         {configured ? <form onSubmit={login}><label htmlFor="knowledge-password">Пароль администратора<input id="knowledge-password" type="password" autoComplete="current-password" value={password} onChange={event => setPassword(event.target.value)} required disabled={busy} /></label><button className="primary" disabled={busy || !password}>{busy ? "Вход…" : "Войти"}</button></form> : <p>Пароль администратора не настроен. Перезапустите сайт через start-site.cmd.</p>}
       </div> : <>
-        <div className="knowledge-toolbar"><label htmlFor="knowledge-search">Поиск<input id="knowledge-search" value={search} onChange={event => setSearch(event.target.value)} /></label><button type="button" className="secondary" disabled={busy || refreshing} onClick={() => { setError(""); void load(true); }}>{refreshing ? "Обновление…" : "Обновить базу"}</button><button type="button" className="primary" disabled={busy || refreshing} onClick={() => { if (openEditor(edit(blank(), null), true)) { setNotice(""); setError(""); } }}>Новый ответ</button></div>
         <div className="knowledge-layout">
-          <nav className="knowledge-list" aria-label="Карточки базы ответов">{visible.map(entry => <button type="button" key={entry.id} aria-pressed={editor?.entry.id === entry.id} disabled={busy} onClick={() => { if (entry.id === editor?.entry.id) return; if (openEditor(edit(entry), true)) { setNotice(""); setError(""); } }}><strong>{entry.title}</strong><span>{statuses[entry.status]}</span></button>)}{!visible.length && <p>Карточки не найдены.</p>}</nav>
+          <section className="knowledge-collection" aria-label="Список ответов">
+            <div className="knowledge-toolbar"><label htmlFor="knowledge-search"><span className="sr-only">Поиск по базе ответов</span><Search size={17} aria-hidden="true" /><input id="knowledge-search" placeholder="Найти ответ" value={search} onChange={event => setSearch(event.target.value)} /></label></div>
+            <div className="knowledge-list-heading"><span>{search ? `Найдено: ${visible.length}` : `Ответов: ${entries.length}`}</span><button type="button" className="secondary" disabled={busy || refreshing} onClick={() => { setError(""); void load(true); }}><RefreshCw size={14} aria-hidden="true" />{refreshing ? "Обновление…" : "Обновить"}</button></div>
+            <nav className="knowledge-list" aria-label="Карточки базы ответов">{visible.map(entry => <button type="button" key={entry.id} aria-pressed={editor?.entry.id === entry.id} disabled={busy} onClick={() => { if (entry.id === editor?.entry.id) return; if (openEditor(edit(entry), true)) { setNotice(""); setError(""); } }}><strong>{entry.title}</strong><span className={`knowledge-entry-status status-${entry.status}`}>{statuses[entry.status]}</span></button>)}{!visible.length && <p>Карточки не найдены.</p>}</nav>
+          </section>
           {editor ? <form className="feedback-form knowledge-editor" onSubmit={save}><fieldset disabled={busy}>
-            <legend>{entries.some(entry => entry.id === editor.entry.id) ? "Редактирование ответа" : "Новый ответ"}{dirty ? " · не сохранено" : ""}</legend>
+            <legend>{entries.some(entry => entry.id === editor.entry.id) ? "Редактирование ответа" : "Новый ответ"}{dirty && <span className="knowledge-unsaved">Не сохранено</span>}</legend>
             {newerEntry && <details><summary>Сравнить с новой версией</summary><p><strong>{newerEntry.title}</strong> · {statuses[newerEntry.status]}</p><p>{newerEntry.answer}</p><p>Варианты: {newerEntry.aliases.join("; ")}</p>{!!newerEntry.requiredTerms?.length && <p>Обязательные: {newerEntry.requiredTerms.join("; ")}</p>}{!!newerEntry.excludedTerms?.length && <p>Исключения: {newerEntry.excludedTerms.join("; ")}</p>}<p>{newerEntry.source.title} · {newerEntry.source.ref} · {newerEntry.source.version}</p><div className="support-actions"><button type="button" className="secondary" onClick={() => { if (openEditor(edit(newerEntry), true)) { setError(""); setNotice("Открыта сохранённая версия."); } }}>Загрузить эту версию</button><button type="button" className="secondary" onClick={() => { setEditor({ ...editor, expectedVersion: newerEntry.version, confirmed: false }); setError(""); setNotice("Версии сравнены. Проверьте свой вариант и сохраните его."); }}>Сравнил: оставить мои правки</button></div></details>}
             <label>Название<input value={editor.entry.title} onChange={event => field("title", event.target.value)} maxLength={160} required /></label>
             <label>Ответ игроку<textarea value={editor.entry.answer} onChange={event => field("answer", event.target.value)} maxLength={4000} required /></label>
-            <label>Варианты вопроса — по строке<textarea value={editor.aliases} onChange={event => setEditor({ ...editor, aliases: event.target.value, confirmed: false })} required /></label>
-            <details><summary>Условия применения</summary>
+            <label>Варианты вопроса<textarea placeholder="Каждый вариант — с новой строки" value={editor.aliases} onChange={event => setEditor({ ...editor, aliases: event.target.value, confirmed: false })} required /></label>
+            <details><summary>Дополнительные условия</summary>
               <label>Обязательные фразы — по одной на строке<textarea value={editor.required} onChange={event => setEditor({ ...editor, required: event.target.value, confirmed: false })} /></label>
               <label>Исключающие фразы — по одной на строке<textarea value={editor.excluded} onChange={event => setEditor({ ...editor, excluded: event.target.value, confirmed: false })} /></label>
             </details>
-            <label>Источник<input value={editor.entry.source.title} onChange={event => source("title", event.target.value)} maxLength={300} required={editor.entry.status === "published"} /></label>
-            <label>Пункт или ссылка<input value={editor.entry.source.ref ?? ""} onChange={event => source("ref", event.target.value)} maxLength={160} /></label>
-            <label>Версия или дата источника<input value={editor.entry.source.version} onChange={event => source("version", event.target.value)} maxLength={100} required={editor.entry.status === "published"} /></label>
-            <label>Статус<select value={editor.entry.status} onChange={event => field("status", event.target.value as KnowledgeEntry["status"])}>{Object.entries(statuses).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
+            <div className="knowledge-publication">
+              <h2>Публикация</h2>
+              <div className="knowledge-source-grid"><label>Источник<input value={editor.entry.source.title} onChange={event => source("title", event.target.value)} maxLength={300} required={editor.entry.status === "published"} /></label><label>Версия или дата источника<input value={editor.entry.source.version} onChange={event => source("version", event.target.value)} maxLength={100} required={editor.entry.status === "published"} /></label></div>
+              <label>Пункт или ссылка<input value={editor.entry.source.ref ?? ""} onChange={event => source("ref", event.target.value)} maxLength={160} /></label>
+              <label>Статус<select value={editor.entry.status} onChange={event => field("status", event.target.value as KnowledgeEntry["status"])}>{Object.entries(statuses).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
+            </div>
             {editor.entry.status === "published" && <label className="knowledge-confirm"><input type="checkbox" checked={editor.confirmed} onChange={event => setEditor({ ...editor, confirmed: event.target.checked })} required />Источник и ответ проверены; личных данных нет.</label>}
             {notice && <p role="status" className="notice">{notice}</p>}
             {error && <p role="alert" className="notice error">{error}</p>}
             <button className="primary" disabled={busy || !lines(editor.aliases).length || (editor.entry.status === "published" && !editor.confirmed)}>{busy ? "Сохранение…" : editor.entry.status === "published" ? "Опубликовать" : "Сохранить"}</button>
-          </fieldset></form> : <p>Выберите карточку или создайте ответ.</p>}
+          </fieldset></form> : <div className="knowledge-editor-empty"><h2>Выберите ответ</h2><p>Откройте карточку слева или добавьте новый ответ.</p></div>}
         </div>
       </>}
       {(!editor || !authenticated) && notice && <p role="status" className="notice">{notice}</p>}

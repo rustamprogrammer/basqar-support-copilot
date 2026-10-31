@@ -2,7 +2,7 @@ import { and, desc, eq, gte } from 'drizzle-orm';
 import { env } from 'cloudflare:workers';
 import { getDb } from '@/db';
 import { messages, messageFeedback } from '@/db/schema';
-import { processServerMessage } from '@/lib/server-review';
+import { processServerMessageWithReview, ReviewInProgressError } from '@/lib/server-review';
 import { prepareClarification } from '@/lib/message-context';
 import { messageClearStatements, parseMessageClearRequest } from '@/lib/message-clearing';
 import { isAdmin, publicDemoEnabled, visitor, jsonMutation, rejectMutation } from '@/lib/access';
@@ -64,7 +64,7 @@ export async function POST(request: Request) {
       const duplicate = recent.find(row => row.processing?.route === 'help' && (!row.service || ['queued', 'in_progress'].includes(row.service.state)));
       if (duplicate) return response(duplicate);
     }
-    const processed = processServerMessage(originalText, context, await loadKnowledge());
+    const processed = await processServerMessageWithReview(originalText, context, await loadKnowledge(), { db: db.$client, secret: env.SUPPORT_SETTINGS_SECRET, requestId: `message:${body.id}`, refreshEntries: loadKnowledge });
     const at = Math.max(Date.now(), parent ? parent.createdAt + 1 : 0);
     const message = { id: body.id, text: processed.text, originalText, processing: processed.processing, status: processed.status, createdAt: at,
       ownerHash: parent?.ownerHash ?? owner.hash, service: createSupportState(body.id, at, processed.processing.knowledge?.status === 'answered' ? processed.processing.knowledge : undefined, processed.status === 'pending' ? parent : undefined) };
@@ -77,7 +77,7 @@ export async function POST(request: Request) {
     if (!saved && parent) return Response.json({ error: 'Обращение изменилось. Обновите страницу и отправьте уточнение ещё раз.', latestId: await latestCaseId(parent) }, { status: 409 });
     if (!saved || (!admin && saved.ownerHash !== owner.hash)) return fail('Сообщение недоступно.', 404);
     return response(saved);
-  } catch { return fail('Не удалось отправить. Попробуйте ещё раз.', 503); }
+  } catch (cause) { return cause instanceof ReviewInProgressError ? fail(cause.message, 409) : fail('Не удалось отправить. Попробуйте ещё раз.', 503); }
 }
 export async function PATCH(request: Request) {
   if (!await isAdmin(request, env.SUPPORT_ADMIN_PASSWORD, publicDemoEnabled(env.SUPPORT_DEMO_MODE))) return rejectMutation(request, 'Войдите как администратор.', 401);

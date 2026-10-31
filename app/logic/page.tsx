@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "@/components/site-link";
-import { ArrowLeft, GitBranch, MessageCircle } from "lucide-react";
+import { RefreshCw } from "lucide-react";
+import { SiteNav } from "@/components/site-nav";
 import { ProcessingTimeline } from "@/components/processing-timeline";
 import type { Message } from "@/lib/message-types";
 
@@ -70,22 +71,22 @@ export default function LogicPage() {
 
   const clarifications = selected ? rows.filter(message => message.processing?.context?.parentId === selected.id) : [];
   return <div className="shell">
-    <header className="header">
-      <Link className="brand" href="/" aria-label="На связи — главная"><span className="brand-icon"><MessageCircle size={21} /></span>На связи<span className="brand-dot">.</span></Link>
-      <div className="header-actions"><a className="nav-link" href="/quality">Статистика и тесты</a><Link className="nav-link" href="/"><ArrowLeft size={16} />К сообщениям</Link></div>
-    </header>
-    <main className="logic-main">
-      <div className="heading"><span className="section-icon"><GitBranch size={25} /></span><h1>Как принято решение</h1></div>
+    <SiteNav active="logic" />
+    <main id="main-content" className="logic-main">
+      <div className="secondary-page-heading"><h1>Логика обработки</h1></div>
       {error && <div className="notice error" role="alert">{error}</div>}
-      <div className="workbench-list-tools"><label className="workflow-filter workbench-search">Найти обращение<input value={query} maxLength={200} placeholder="Слова из сообщения…" onChange={event => { setQuery(event.target.value); chooseMessage(''); }} /></label><button className="secondary" disabled={loading || listLoading} onClick={() => setRefreshKey(value => value + 1)}>Обновить</button>{query && <button className="secondary" onClick={() => { setQuery(''); setSearch(''); chooseMessage(''); }}>Сбросить поиск</button>}</div>
-      {(selectorRows.length > 0 || selected) && <div className="logic-selector"><label htmlFor="logic-message">Обращение · последние {selectorRows.length}</label><select id="logic-message" value={selectedId} onChange={e => chooseMessage(e.target.value)}>
+      <section className="logic-picker" aria-label="Выбор обращения">
+        <div className="logic-picker-heading"><h2>Выберите обращение</h2><button className="secondary" disabled={loading || listLoading} onClick={() => setRefreshKey(value => value + 1)}><RefreshCw size={15} aria-hidden="true" />Обновить</button></div>
+        <div className="logic-picker-fields"><div className="logic-search-control"><label htmlFor="logic-search">Поиск по тексту<input id="logic-search" value={query} maxLength={200} placeholder="Слова из сообщения" onChange={event => { setQuery(event.target.value); chooseMessage(''); }} /></label>{query && <button className="secondary" onClick={() => { setQuery(''); setSearch(''); chooseMessage(''); }}>Сбросить поиск</button>}</div>
+      {(selectorRows.length > 0 || selected) && <div className="logic-selector"><label htmlFor="logic-message">{search ? `Найденные обращения · ${selectorRows.length}` : `Последние обращения · ${selectorRows.length}`}</label><select id="logic-message" value={selectedId} onChange={e => chooseMessage(e.target.value)}>
         <option value="">Последнее обращение</option>
         {selectedId && selected?.id === selectedId && !rows.some(row => row.id === selectedId) && <option value={selectedId}>{(selected.originalText || selected.text).slice(0, 72)}</option>}
         {selectorRows.map(message => <option key={message.id} value={message.id}>{new Date(message.createdAt).toLocaleString("ru-RU")} — {(message.originalText || message.text).replace(/\s+/g, " ").slice(0, 72)}</option>)}
-      </select></div>}
+      </select></div>}</div>
+      </section>
       <section aria-label="Обработка обращения" aria-busy={loading} aria-live="polite">
         {loading || listLoading ? <div className="empty">Загрузка…</div> : selected ? <>
-          <div className="workbench-mode"><span>{selected.processing?.version?.startsWith('rules-assistance-') ? 'Алгоритмы · текущая версия' : 'Сохранённая историческая обработка'}</span><Link href="/">К проверке сообщений</Link></div>
+          <div className="workbench-mode"><span>{selected.processing?.version?.startsWith('rules-assistance-') ? 'Алгоритмы · сохранённое решение' : 'Сохранённая историческая обработка'}</span></div>
           <details className="quality-note"><summary>Как выбирается категория</summary>
             {selected.processing?.version?.startsWith('rules-assistance-') ? <>
               <p>Правила определяют цель обращения. В помощи оцениваются текущее событие, возможность вмешательства и срочность. Неясные детали уточняются параллельно с передачей администратору.</p>
@@ -99,7 +100,7 @@ export default function LogicPage() {
             <p>Уточнение связано с исходным сообщением. Готовый ответ можно отметить как полезный или передать вопрос администратору. Выданный ответ, его источник и версия сохраняются в истории.</p>
           </details>
           <ProcessingTimeline message={selected} />{clarifications.length > 0 && <nav aria-label="Уточнения к обращению">{clarifications.map(message => <div key={message.id}><a className="processing-link" href={`/logic?message=${encodeURIComponent(message.id)}`}>Уточнение от {new Date(message.createdAt).toLocaleString("ru-RU")}</a></div>)}</nav>}
-        </> : !error && <div className="empty"><p>{selectedId ? "Обращение не найдено или недоступно в этой сессии" : query ? 'По запросу ничего не найдено' : "Пока нет доступных обращений"}</p><Link className="secondary" href="/">Отправить пример или войти как администратор</Link></div>}
+        </> : !error && <div className="empty"><p>{selectedId ? "Обращение не найдено или недоступно в этой сессии" : query ? 'По запросу ничего не найдено' : "Пока нет доступных обращений"}</p><Link className="secondary" href="/">Проверить сообщение</Link></div>}
       </section>
     </main>
   </div>;

@@ -79,7 +79,7 @@ export function SupportCard({ message, admin = false, onSave }: { message: Messa
     </div>}
     {admin && <>
       <div className="support-actions">
-        {state === "queued" && <button type="button" className="secondary" disabled={busy} onClick={() => void act("claim")}>{pending === "claim" ? "Сохранение…" : "Взять в работу"}</button>}
+        {state === "queued" && <button type="button" className="primary" disabled={busy} onClick={() => void act("claim")}>{pending === "claim" ? "Сохранение…" : "Взять в работу"}</button>}
         {state === "in_progress" && <button type="button" className="secondary" disabled={busy} onClick={() => void act("release")}>{pending === "release" ? "Сохранение…" : "Вернуть в очередь"}</button>}
         {response?.author === "admin" && <Link className="secondary" aria-disabled={busy} onClick={event => { if (busy) event.preventDefault(); }} href={`/knowledge?message=${encodeURIComponent(message.id)}`}>В базу ответов</Link>}
       </div>

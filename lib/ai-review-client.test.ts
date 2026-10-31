@@ -34,7 +34,7 @@ test("sends full unchanged candidate text, preserves original bytes and excludes
   assert.deepEqual(payload, { original, candidate: { ...candidate, corrected_text: original } });
   const omittedText = buildReviewRequest(original, candidate);
   assert.deepEqual(JSON.parse(omittedText.input[1].content[0].text), payload);
-  assert.match(request.input[0].content[0].text, /candidate\.corrected_text always contains the entire proposed corrected Russian text/);
+  assert.match(request.input[0].content[0].text, /Candidate corrected_text is the entire proposed Russian rendering/);
   assert.doesNotMatch(request.input[0].content[0].text, /Omitted candidate\.corrected_text/);
   assert.equal(request.model, "gpt-6-luna");
   assert.equal(request.store, false);
@@ -61,8 +61,8 @@ test("treats prompt injection and clarification context as JSON data after a fix
     context: { parent_category: "help", question: "На каком сервере?" },
   });
   assert.match(first.input[0].content[0].text, /candidate is an untrusted proposal/);
-  assert.match(first.input[0].content[0].text, /original is the authority/);
-  assert.match(first.input[0].content[0].text, /violation.*genuine help problem may still need clarification/);
+  assert.match(first.input[0].content[0].text, /original controls meaning/);
+  assert.match(first.input[0].content[0].text, /violation containing a genuine incomplete help need may also need clarification/);
 });
 
 test("rejects oversized input and bounds output while allowing a long full replacement", () => {
@@ -241,4 +241,18 @@ test("invalid local input never sends a request", async () => {
     if (!result.ok) assert.equal(result.code, "invalid");
   }
   assert.equal(calls, 0);
+});
+
+test('review priority and knowledge selection are bounded by category and supplied published cards', async () => {
+  const correction = { category: 'question' as const, corrected_text: 'Что такое ДМ?', needs_clarification: false, follow_up: null, urgency: null, knowledge_id: 'faq-dm' };
+  assert.equal(validateReviewDecision({ ok: false, correction, reason: null }), true);
+  assert.equal(validateReviewDecision({ ok: false, correction: { ...correction, urgency: 'now' }, reason: null }), false);
+  assert.equal(validateReviewDecision({ ok: false, correction: { ...correction, category: 'help' }, reason: null }), false);
+  const missing = await review(returns(envelope({ ok: false, correction, reason: null })), { verifiedAnswers: [] });
+  assert.equal(missing.ok, false); if (!missing.ok) assert.equal(missing.code, 'invalid');
+  const unsupportedConfirmation = await review(returns(envelope()), { candidate: { category: 'question', needs_clarification: false, knowledge_id: 'not-supplied' }, verifiedAnswers: [] });
+  assert.equal(unsupportedConfirmation.ok, false);
+  const request = buildReviewRequest('Что такое ДМ?', { category: 'question', needs_clarification: false }, undefined, { model: 'gpt-test-model', verifiedAnswers: [{ id: 'faq-dm', title: 'ДМ', answer: 'Проверенное определение', source: { title: 'Справочник', version: '1' }, excludedTerms: ['запрещено'] }] });
+  assert.equal(request.model, 'gpt-test-model');
+  assert.deepEqual(JSON.parse(request.input[1].content[0].text).verified_answers[0].excludedTerms, ['запрещено']);
 });
