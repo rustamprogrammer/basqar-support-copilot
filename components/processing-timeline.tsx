@@ -7,14 +7,18 @@ export function ProcessingTimeline({ message }: { message: Message }) {
     steps.push({
       id: "reviewed",
       title: "Решение администратора",
-      value: message.status === "pending" ? "Ожидает проверки" : message.status === "accepted" ? "Жалоба принята" : "Администратор отправил в корзину",
+      value: message.status === "pending" ? "Ожидает проверки" : message.status === "accepted" ? "Обращение принято" : "Администратор отправил в корзину",
       waiting: message.status === "pending",
     });
   }
-  return <ol className="logic-steps" aria-label="Этапы обработки">
+  return <><ol className="logic-steps" aria-label="Этапы обработки">
     {steps.map((step, index) => <li key={step.id} className={step.waiting ? "step-waiting" : undefined}>
       <span className="step-number" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
       <div className="step-content"><h2>{step.title}</h2><p className="step-value">{step.value}</p>{step.detail && <p className="step-detail">{step.detail}</p>}</div>
     </li>)}
-  </ol>;
+  </ol>
+    {!!message.processing.ai?.sources?.length && <section aria-label="Источники поиска"><h2>Источники для уточнения термина</h2><ul>
+      {message.processing.ai.sources.map(source => <li key={source.url}><a href={source.url} target="_blank" rel="noopener noreferrer">{source.title}</a></li>)}
+    </ul></section>}
+  </>;
 }

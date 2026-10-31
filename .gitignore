@@ -43,3 +43,11 @@ yarn-error.log*
 
 # OS metadata
 .DS_Store
+
+# Private hackathon data and local model outputs
+/data/
+/private-data/
+/eval-results/
+/eval-*.md
+/hack-b6eba4f7-basqar-main/
+!.dev.vars.example

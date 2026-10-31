@@ -1,0 +1,4 @@
+# Copy to .dev.vars and paste your own key there. Never commit .dev.vars.
+OPENAI_API_KEY=
+OPENAI_TRIAGE_MODEL=gpt-6-luna
+TRIAGE_ENABLED=false

@@ -32,7 +32,7 @@ textarea::placeholder { color: #909a91; }
 .notice { margin-top: 24px; display: flex; align-items: center; gap: 10px; padding: 14px 17px; border-radius: 10px; background: #e6efdf; color: #3b5d38; font-size: 14px; }
 .notice.neutral { background: #edece6; color: #65665a; }
 .notice.error { background: #f9e9e6; color: #933f32; }
-.filters { display: flex; gap: 4px; border-bottom: 1px solid #dee4da; margin-bottom: 22px; }
+.filters { display: flex; gap: 4px; border-bottom: 1px solid #dee4da; margin-bottom: 22px; overflow-x: auto; }
 .filters button { display: inline-flex; align-items: center; gap: 8px; padding: 12px 14px 15px; color: #798478; background: transparent; border: 0; border-bottom: 2px solid transparent; font-size: 13px; white-space: nowrap; }
 .filters button[aria-pressed="true"] { border-color: #315e4c; color: #315e4c; font-weight: 600; }
 .filters button span { padding: 2px 6px; background: #e9ede5; border-radius: 5px; font-size: 11px; }
