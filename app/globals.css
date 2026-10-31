@@ -238,9 +238,13 @@ textarea::placeholder { color: #94a3b8; }
 
 /* Shared workspace: navigation, actions and content have one stable hierarchy. */
 .settings-overview { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; padding: 20px 24px; background: #fff; border: 1px solid var(--border); border-radius: 12px; }
-.settings-overview progress { flex: 1; min-width: 120px; height: 8px; accent-color: var(--accent); }
+.settings-overview > div:nth-child(2) { flex: 1; min-width: 0; }
+.settings-overview progress { display: block; appearance: none; width: 100%; height: 6px; overflow: hidden; border: 0; border-radius: 8px; background: #e8edf5; accent-color: var(--accent); }
+.settings-overview progress::-webkit-progress-bar { background: #e8edf5; border-radius: 8px; }
+.settings-overview progress::-webkit-progress-value { background: var(--accent); border-radius: 8px; }
+.settings-overview progress::-moz-progress-bar { background: var(--accent); border-radius: 8px; }
 .settings-card { padding: 24px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 24px; }
-.settings-card h2 { font-size: 18px; margin: 0 0 20px; }
+.settings-card h2 { display: flex; align-items: center; gap: 10px; font-size: 18px; margin: 0 0 20px; }
 .settings-form fieldset { display: grid; gap: 18px; border: 0; padding: 0; margin: 0; min-width: 0; }
 .settings-form label { display: grid; gap: 7px; font-size: 13px; }
 .settings-form input:not([type="checkbox"]), .settings-form select, .settings-form textarea { width: 100%; min-width: 0; min-height: 44px; background: #fff; color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; }
@@ -254,6 +258,9 @@ textarea::placeholder { color: #94a3b8; }
 .settings-policy summary { cursor: pointer; color: var(--text); }
 .settings-policy li { margin-top: 8px; }
 .settings-main > p { color: var(--muted); }
+@media (max-width: 600px) {
+  .settings-overview { flex-direction: column; align-items: stretch; }
+}
 body { font-size: 15px; line-height: 1.5; }
 input, textarea, select, button { font: inherit; }
 a { color: var(--accent); }
