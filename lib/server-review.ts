@@ -1,13 +1,7 @@
-import { env } from "cloudflare:workers";
-import { createReviewService, processHybridMessage } from "./hybrid-processing.ts";
-import type { Reviewer } from "./hybrid-processing.ts";
+import { processSupportMessage } from './support-processing.ts';
+import type { KnowledgeEntry } from './knowledge-base.ts';
 import type { ClarificationContext } from "./message-types.ts";
 
-let reviewer: Reviewer | undefined;
-export function processServerMessage(original: string, context?: ClarificationContext) {
-  if (env.AI_REVIEW_ENABLED === "true" && env.OPENAI_API_KEY) {
-    reviewer ??= createReviewService({ apiKey: env.OPENAI_API_KEY });
-    return processHybridMessage(original, context, reviewer);
-  }
-  return processHybridMessage(original, context);
+export function processServerMessage(original: string, context?: ClarificationContext, entries?: readonly KnowledgeEntry[]) {
+  return processSupportMessage(original, context, entries);
 }

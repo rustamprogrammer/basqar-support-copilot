@@ -8,7 +8,7 @@ export function ProcessingTimeline({ message }: { message: Message }) {
   if (message.processing.context) steps.unshift({ id: "clarification", title: "Уточнение пользователя", value: message.processing.context.answerText, parentId: message.processing.context.parentId });
   const automaticFinal = (message.processing.classification === "violation" && message.status === "violation")
     || (message.processing.classification === "trash" && message.status === "trash");
-  if (!automaticFinal) {
+  if (!automaticFinal && !message.service) {
     steps.push({
       id: "reviewed",
       title: "Решение администратора",
@@ -16,6 +16,8 @@ export function ProcessingTimeline({ message }: { message: Message }) {
       waiting: message.status === "pending",
     });
   }
+  const actionLabels: Record<string, string> = { queued: 'Поставлено в очередь', knowledge_answer: 'Выдан ответ из базы', claim: 'Администратор взял в работу', release: 'Возвращено в очередь', reply: 'Ответ администратора', priority: 'Приоритет изменён', helped: 'Игрок подтвердил решение', need_admin: 'Игрок запросил администратора', status: 'Изменён статус' };
+  if (message.service) for (const [index, event] of message.service.history.entries()) steps.push({ id: `service-${index}`, title: actionLabels[event.action] ?? event.action, value: new Date(event.at).toLocaleString('ru-RU'), detail: event.detail });
   if (message.feedback) {
     const current = message.feedback.routingSchema === ROUTING_SCHEMA;
     const details = current && typeof message.feedback.needsClarification === "boolean"

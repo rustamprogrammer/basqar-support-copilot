@@ -2,9 +2,13 @@ import { eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import { messages, messageFeedback } from "@/db/schema";
 import { exportFeedback, parseFeedback } from "@/lib/feedback";
+import { env } from 'cloudflare:workers';
+import { isAdmin, publicDemoEnabled, jsonMutation, rejectMutation } from '@/lib/access';
 
 export const dynamic = "force-dynamic";
 export async function POST(request: Request) {
+  if (!await isAdmin(request, env.SUPPORT_ADMIN_PASSWORD, publicDemoEnabled(env.SUPPORT_DEMO_MODE))) return rejectMutation(request, 'Войдите как администратор.', 401);
+  if (!jsonMutation(request)) return rejectMutation(request, 'Ожидается JSON.', 415);
   const input = parseFeedback(await request.json().catch(() => null));
   if (!input) return Response.json({ error: "Проверьте категорию и длину текста." }, { status: 400 });
   try {
@@ -17,7 +21,8 @@ export async function POST(request: Request) {
   } catch { return Response.json({ error: "Не удалось сохранить разметку." }, { status: 503 }); }
 }
 
-export async function GET() {
+export async function GET(request: Request) {
+  if (!await isAdmin(request, env.SUPPORT_ADMIN_PASSWORD, publicDemoEnabled(env.SUPPORT_DEMO_MODE))) return Response.json({ error: 'Войдите как администратор.' }, { status: 401 });
   try {
     const rows = await getDb().select({ message: messages, feedback: messageFeedback }).from(messageFeedback)
       .innerJoin(messages, eq(messageFeedback.messageId, messages.id));

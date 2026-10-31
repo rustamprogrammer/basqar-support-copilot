@@ -1,0 +1,326 @@
+{
+  "schema": "assistance-quality-v1",
+  "generatedAt": "2026-10-31T12:57:23.931Z",
+  "humanVerified": false,
+  "assistance": {
+    "stage": "99-final",
+    "createdAt": "2026-10-31T12:54:49.575Z",
+    "overall": {
+      "total": 2000,
+      "families": 100,
+      "correct": 1717,
+      "errors": 283,
+      "accuracyPercent": 85.85,
+      "routeCorrect": 1775,
+      "routeAccuracyPercent": 88.75,
+      "urgency": {
+        "total": 1000,
+        "expectedNow": 300,
+        "correctNow": 244,
+        "missedNow": 56,
+        "nowRecallPercent": 81.33,
+        "falseNow": 0,
+        "unavailable": 68
+      },
+      "faq": {
+        "total": 1000,
+        "answerable": 260,
+        "answered": 216,
+        "correctAnswers": 216,
+        "unsafeAnswers": 0,
+        "answerPrecisionPercent": 100,
+        "answerRecallPercent": 83.08,
+        "coveragePercent": 21.6,
+        "needsAdmin": 366
+      }
+    },
+    "development": {
+      "total": 1600,
+      "families": 80,
+      "correct": 1450,
+      "errors": 150,
+      "accuracyPercent": 90.63,
+      "routeCorrect": 1450,
+      "routeAccuracyPercent": 90.63,
+      "urgency": {
+        "total": 800,
+        "expectedNow": 220,
+        "correctNow": 204,
+        "missedNow": 16,
+        "nowRecallPercent": 92.73,
+        "falseNow": 0,
+        "unavailable": 37
+      },
+      "faq": {
+        "total": 800,
+        "answerable": 220,
+        "answered": 208,
+        "correctAnswers": 208,
+        "unsafeAnswers": 0,
+        "answerPrecisionPercent": 100,
+        "answerRecallPercent": 94.55,
+        "coveragePercent": 26,
+        "needsAdmin": 267
+      }
+    },
+    "holdout": {
+      "total": 400,
+      "families": 20,
+      "correct": 267,
+      "errors": 133,
+      "accuracyPercent": 66.75,
+      "routeCorrect": 325,
+      "routeAccuracyPercent": 81.25,
+      "urgency": {
+        "total": 200,
+        "expectedNow": 80,
+        "correctNow": 40,
+        "missedNow": 40,
+        "nowRecallPercent": 50,
+        "falseNow": 0,
+        "unavailable": 31
+      },
+      "faq": {
+        "total": 200,
+        "answerable": 40,
+        "answered": 8,
+        "correctAnswers": 8,
+        "unsafeAnswers": 0,
+        "answerPrecisionPercent": 100,
+        "answerRecallPercent": 20,
+        "coveragePercent": 4,
+        "needsAdmin": 99
+      }
+    },
+    "languages": [
+      {
+        "language": "ru",
+        "total": 500,
+        "families": 100,
+        "correct": 444,
+        "errors": 56,
+        "accuracyPercent": 88.8,
+        "routeCorrect": 463,
+        "routeAccuracyPercent": 92.6,
+        "urgency": {
+          "total": 250,
+          "expectedNow": 75,
+          "correctNow": 67,
+          "missedNow": 8,
+          "nowRecallPercent": 89.33,
+          "falseNow": 0,
+          "unavailable": 9
+        },
+        "faq": {
+          "total": 250,
+          "answerable": 65,
+          "answered": 54,
+          "correctAnswers": 54,
+          "unsafeAnswers": 0,
+          "answerPrecisionPercent": 100,
+          "answerRecallPercent": 83.08,
+          "coveragePercent": 21.6,
+          "needsAdmin": 101
+        }
+      },
+      {
+        "language": "kk",
+        "total": 500,
+        "families": 100,
+        "correct": 414,
+        "errors": 86,
+        "accuracyPercent": 82.8,
+        "routeCorrect": 426,
+        "routeAccuracyPercent": 85.2,
+        "urgency": {
+          "total": 250,
+          "expectedNow": 75,
+          "correctNow": 56,
+          "missedNow": 19,
+          "nowRecallPercent": 74.67,
+          "falseNow": 0,
+          "unavailable": 26
+        },
+        "faq": {
+          "total": 250,
+          "answerable": 65,
+          "answered": 55,
+          "correctAnswers": 55,
+          "unsafeAnswers": 0,
+          "answerPrecisionPercent": 100,
+          "answerRecallPercent": 84.62,
+          "coveragePercent": 22,
+          "needsAdmin": 86
+        }
+      },
+      {
+        "language": "uk",
+        "total": 500,
+        "families": 100,
+        "correct": 411,
+        "errors": 89,
+        "accuracyPercent": 82.2,
+        "routeCorrect": 428,
+        "routeAccuracyPercent": 85.6,
+        "urgency": {
+          "total": 250,
+          "expectedNow": 75,
+          "correctNow": 61,
+          "missedNow": 14,
+          "nowRecallPercent": 81.33,
+          "falseNow": 0,
+          "unavailable": 18
+        },
+        "faq": {
+          "total": 250,
+          "answerable": 65,
+          "answered": 54,
+          "correctAnswers": 54,
+          "unsafeAnswers": 0,
+          "answerPrecisionPercent": 100,
+          "answerRecallPercent": 83.08,
+          "coveragePercent": 21.6,
+          "needsAdmin": 80
+        }
+      },
+      {
+        "language": "uz",
+        "total": 500,
+        "families": 100,
+        "correct": 448,
+        "errors": 52,
+        "accuracyPercent": 89.6,
+        "routeCorrect": 458,
+        "routeAccuracyPercent": 91.6,
+        "urgency": {
+          "total": 250,
+          "expectedNow": 75,
+          "correctNow": 60,
+          "missedNow": 15,
+          "nowRecallPercent": 80,
+          "falseNow": 0,
+          "unavailable": 15
+        },
+        "faq": {
+          "total": 250,
+          "answerable": 65,
+          "answered": 53,
+          "correctAnswers": 53,
+          "unsafeAnswers": 0,
+          "answerPrecisionPercent": 100,
+          "answerRecallPercent": 81.54,
+          "coveragePercent": 21.2,
+          "needsAdmin": 99
+        }
+      }
+    ]
+  },
+  "benchmark": {
+    "run": "retest-10000-2026-10-31T12-54-30-800Z",
+    "createdAt": "2026-10-31T12:56:54.951Z",
+    "total": 10000,
+    "correct": 7215,
+    "wrong": 2785,
+    "accuracy": 0.7215,
+    "diagnostics": {
+      "undetermined": 2769,
+      "falseViolation": 0,
+      "falseTrash": 20,
+      "missedViolation": 743,
+      "helpAsQuestion": 50,
+      "questionAsHelp": 96
+    },
+    "languages": [
+      {
+        "language": "ru",
+        "total": 2787,
+        "correct": 2132,
+        "wrong": 655,
+        "accuracy": 0.7649802655184786
+      },
+      {
+        "language": "kk",
+        "total": 2501,
+        "correct": 1935,
+        "wrong": 566,
+        "accuracy": 0.7736905237904838
+      },
+      {
+        "language": "uk",
+        "total": 2415,
+        "correct": 1504,
+        "wrong": 911,
+        "accuracy": 0.6227743271221532
+      },
+      {
+        "language": "uz",
+        "total": 2297,
+        "correct": 1644,
+        "wrong": 653,
+        "accuracy": 0.7157161515019591
+      }
+    ],
+    "categories": [
+      {
+        "route": "question",
+        "total": 3332,
+        "correct": 2403,
+        "wrong": 929,
+        "accuracy": 0.7211884753901561
+      },
+      {
+        "route": "help",
+        "total": 3887,
+        "correct": 3060,
+        "wrong": 827,
+        "accuracy": 0.7872395163365064
+      },
+      {
+        "route": "violation",
+        "total": 2168,
+        "correct": 1425,
+        "wrong": 743,
+        "accuracy": 0.6572878228782287
+      },
+      {
+        "route": "trash",
+        "total": 276,
+        "correct": 27,
+        "wrong": 249,
+        "accuracy": 0.09782608695652174
+      },
+      {
+        "route": "undetermined",
+        "total": 337,
+        "correct": 300,
+        "wrong": 37,
+        "accuracy": 0.8902077151335311
+      }
+    ],
+    "comparison": {
+      "baseline": "06-final-site",
+      "baselineCorrect": 7174,
+      "improved": 41,
+      "regressed": 0,
+      "deltaCorrect": 41,
+      "deltaPercentagePoints": 0.40999999999999925
+    },
+    "coverage": {
+      "urgency": {
+        "now": 103,
+        "high": 334,
+        "normal": 2793,
+        "not_evaluated": 6770
+      },
+      "urgencyUncertain": 2498,
+      "faqAnswered": 11,
+      "faqNeedsAdmin": 2518,
+      "faqCoverage": 0.0011
+    },
+    "labels": {
+      "scenarios": 780,
+      "baseTexts": 2304,
+      "disputedReferenceRows": 16
+    }
+  }
+}

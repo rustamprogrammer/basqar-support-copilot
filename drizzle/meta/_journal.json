@@ -36,6 +36,13 @@
       "when": 1793399699505,
       "tag": "0004_feedback_routing",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1793450016337,
+      "tag": "0005_assistance",
+      "breakpoints": true
     }
   ]
 }

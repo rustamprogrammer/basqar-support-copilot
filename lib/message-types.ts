@@ -1,4 +1,7 @@
 import type { RequestEvent } from "./request-analysis.ts";
+import type { HelpUrgency } from './help-urgency.ts';
+import type { KnowledgeDecision } from './knowledge-matching.ts';
+import type { SupportState } from './support-state.ts';
 export type MessageRoute = "question" | "help" | "violation" | "trash";
 export type ClarificationContext = {
   parentId: string;
@@ -9,7 +12,7 @@ export type ClarificationContext = {
 };
 export type Status = "pending" | "accepted" | "trash" | "violation";
 export type ProcessingStep = {
-  id: "received" | "normalized" | "moderated" | "corrected" | "understood" | "context" | "details" | "rules" | "model" | "classified" | "routed" | "ai-review" | "ai-text" | "algorithm-result";
+  id: "received" | "normalized" | "moderated" | "corrected" | "understood" | "context" | "details" | "rules" | "model" | "classified" | "routed" | "ai-review" | "ai-text" | "algorithm-result" | 'urgency' | 'knowledge' | 'answer';
   title: string;
   value: string;
   detail?: string;
@@ -20,7 +23,9 @@ export type ProcessingTrace = {
   routingSchema?: string;
   needsClarification?: boolean;
   missingDetails?: string[];
-  answerReadiness?: "not_evaluated";
+  answerReadiness?: "not_evaluated" | 'ready' | 'needs_admin' | 'not_applicable';
+  urgency?: HelpUrgency;
+  knowledge?: KnowledgeDecision;
   topic?: string;
   version?: string;
   decisionSource?: "rules" | "classifier" | "ai";
@@ -57,4 +62,5 @@ export type Message = {
   createdAt: number;
   processing: ProcessingTrace | null;
   feedback?: Feedback | null;
+  service?: SupportState | null;
 };

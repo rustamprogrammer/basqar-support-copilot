@@ -32,6 +32,15 @@ function Test-LocalSite {
     try { return (Invoke-WebRequest -Uri "$localUrl/api/health" -UseBasicParsing -TimeoutSec 3).StatusCode -eq 200 }
     catch { return $false }
 }
+function Test-TunnelRegistration($state) {
+    if (-not (Get-OwnedProcess $state.tunnel) -or -not $state.url) { return $false }
+    if ($state.log -and (Test-Path -LiteralPath $state.log)) {
+        $recent = (Get-Content -LiteralPath $state.log -Tail 100 -Encoding UTF8) -join "`n"
+        # A live process can remain after Cloudflare has expired its public tunnel.
+        if ($recent.LastIndexOf('Unauthorized: Tunnel not found') -gt $recent.LastIndexOf('Registered tunnel connection')) { return $false }
+    }
+    return $true
+}
 function Clear-Links {
     [IO.File]::WriteAllText($linkPath, "Сайт остановлен. Запустите start-site.cmd.`r`n", [Text.UTF8Encoding]::new($true))
     if (Test-Path -LiteralPath $shortcutPath) { Remove-Item -LiteralPath $shortcutPath }
@@ -52,6 +61,11 @@ function Show-Links($publicUrl) {
     }
     Write-Host ''
     Write-Host "Ссылка сохранена: $linkPath"
+    $adminPasswordPath = Join-Path $runtimePath 'admin-password.txt'
+    $publicDemo = $env:SUPPORT_DEMO_MODE -ne 'false'
+    try { $publicDemo = (Invoke-RestMethod -Uri "$localUrl/api/health" -TimeoutSec 3).publicDemo } catch { }
+    if ($publicDemo) { Write-Host 'Администратор доступен без пароля.' }
+    elseif (Test-Path -LiteralPath $adminPasswordPath) { Write-Host "Файл пароля администратора: $adminPasswordPath" }
     Write-Host 'Чтобы открыть сайт повторно, нажмите open-site.url.'
     Write-Host 'Это окно можно закрыть. Для остановки сайта запустите stop-site.cmd.'
     if ($OpenBrowser) {
@@ -79,7 +93,7 @@ if ($Action -eq 'Stop') {
     exit 0
 }
 $serverReady = (Get-OwnedProcess $state.server) -and (Test-LocalSite)
-$tunnelReady = (Get-OwnedProcess $state.tunnel) -and $state.url
+$tunnelReady = Test-TunnelRegistration $state
 if ($serverReady -and $tunnelReady) { Show-Links $state.url; exit 0 }
 if ($Action -eq 'Status') {
     if ($serverReady) { Show-Links $null; exit 0 }
@@ -104,7 +118,7 @@ try {
         $serverLog = Join-Path $runtimePath "$runId-server.log"
         $serverError = Join-Path $runtimePath "$runId-server-error.log"
         Write-Host 'Запускаю сайт...'
-        $server = Start-Process -FilePath $nodeCommand.Source -WorkingDirectory $projectPath -WindowStyle Hidden -PassThru -RedirectStandardOutput $serverLog -RedirectStandardError $serverError -ArgumentList @('--import', './scripts/sites-env.mjs', './node_modules/wrangler/bin/wrangler.js', 'dev', '--config', 'dist/server/wrangler.json', '--local', '--persist-to', '.wrangler/state', '--ip', '127.0.0.1', '--port', '8787', '--inspector-port', '0')
+        $server = Start-Process -FilePath $nodeCommand.Source -WorkingDirectory $projectPath -WindowStyle Hidden -PassThru -RedirectStandardOutput $serverLog -RedirectStandardError $serverError -ArgumentList @('./scripts/start-local.mjs', '--port', '8787')
         $state.server = Get-Record $server
         Save-State $state
         $deadline = (Get-Date).AddSeconds(45)

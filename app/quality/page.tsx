@@ -1,8 +1,9 @@
 import { ArrowLeft, MessageCircle } from "lucide-react";
-import Link from "next/link";
+import Link from "@/components/site-link";
 import data from "@/lib/routing-quality-summary.json";
 import { routeLabels } from "@/lib/message-routes";
 import BenchmarkSection from "./benchmark-section";
+import AssistanceQuality, { FeedbackDownload } from '@/components/assistance-quality';
 
 type RouteKey = keyof typeof routeLabels | "undetermined";
 type Summary = {
@@ -72,8 +73,10 @@ export default function QualityPage() {
   return <div className="shell">
     <header className="header"><Link className="brand" href="/"><span className="brand-icon"><MessageCircle size={21} /></span>На связи<span className="brand-dot">.</span></Link><Link className="nav-link" href="/"><ArrowLeft size={16} />К сообщениям</Link></header>
     <main className="logic-main">
-      <h1>Качество обработки</h1>
-      <p className="quality-note">Здесь сохранены проверки алгоритма без ИИ. Они не оценивают новую проверку ИИ. Потребность в уточнении проверяется отдельно.</p>
+      <h1>Проверка алгоритмов</h1>
+      <AssistanceQuality />
+      <details className="quality-note"><summary>Предыдущие проверки</summary>
+      <p>Архив результатов прежних версий алгоритма. Эти показатели не оценивают текущую проверку срочности и базу готовых ответов.</p>
       <BenchmarkSection />
       {latest && <>
         <h2>Этапы на {latest.summary.total} знакомых сообщениях</h2>
@@ -114,11 +117,12 @@ export default function QualityPage() {
       <details className="quality-note"><summary>Как читать результаты</summary>
         <p>Разметка предварительная, подготовлена ассистентами. Совпадение с ней не доказывает нарушение и не гарантирует результат на новых сообщениях.</p>
         <p>«Совпадение» — верная категория среди примеров с однозначной разметкой. «Не определено» — система оставила решение админу; это не корзина и не верный ответ. Качество исправления текста этот процент не измеряет.</p>
-        <p>«Помощь → Вопрос» — личная проблема ошибочно принята за справочный вопрос. Раздел «Вопрос» пока не отправляет автоматические ответы.</p>
-        <p>Публичная разметка — предложение для отдельной проверки правил. Сохранение не меняет работающий алгоритм.</p>
+        <p>«Помощь → Вопрос» — личная проблема ошибочно принята за справочный вопрос. Готовый ответ отправляется только при совпадении всего вопроса с опубликованной карточкой базы.</p>
+        <p>Разметку сохраняет администратор. Она используется для отдельной проверки правил; сама запись оценки не меняет алгоритм.</p>
         <p>Проверка: {new Date(quality.generatedAt).toISOString().slice(0, 10)}.</p>
       </details>
-      <a className="secondary" href="/api/feedback">Скачать предложенную разметку</a>
+      <FeedbackDownload />
+      </details>
     </main>
   </div>;
 }

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { evaluateQualityRequest } from "./quality-evaluation.ts";
-import { PROCESSOR_VERSION, processMessageWithTrace } from "./message-processing.ts";
+import { SUPPORT_VERSION, processSupportMessage } from './support-processing.ts';
 
 const request = (body: unknown) => new Request("http://localhost/api/quality/evaluate", {
   method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body),
@@ -12,7 +12,7 @@ test("evaluation preserves order and uses exactly the submission processor", asy
   const result = await evaluateQualityRequest(request({ texts }));
   assert.equal(result.status, 200);
   assert.equal(result.headers.get("cache-control"), "no-store");
-  const expected = { version: PROCESSOR_VERSION, results: texts.map(text => processMessageWithTrace(text)) };
+  const expected = { version: SUPPORT_VERSION, results: texts.map(text => processSupportMessage(text)) };
   assert.deepEqual(await result.json(), JSON.parse(JSON.stringify(expected)));
 });
 

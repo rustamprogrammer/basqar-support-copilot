@@ -1,4 +1,4 @@
-import { PROCESSOR_VERSION, processMessageWithTrace } from "./message-processing.ts";
+import { SUPPORT_VERSION, processSupportMessage } from './support-processing.ts';
 
 const MAX_BODY_BYTES = 80 * 1024;
 const response = (body: unknown, status = 200) => Response.json(body, {
@@ -50,7 +50,7 @@ export async function evaluateQualityRequest(request: Request): Promise<Response
     return response({ error: "Нужно 1–10 текстов, каждый от 1 до 2000 символов." }, 400);
   }
   try {
-    return response({ version: PROCESSOR_VERSION, results: texts.map(text => processMessageWithTrace(text)) });
+    return response({ version: SUPPORT_VERSION, results: texts.map(text => processSupportMessage(text)) });
   } catch {
     return response({ error: "Не удалось проверить сообщения." }, 503);
   }
