@@ -28,6 +28,11 @@ export const aiRequests = sqliteTable('ai_requests', {
   id: text('id').primaryKey(), token: text('token').notNull(), inputHash: text('input_hash').notNull(), createdAt: integer('created_at').notNull(), resultJson: text('result_json'),
 });
 
+export const triageHistory = sqliteTable('triage_history', {
+  id: text('id').primaryKey(), ticketId: text('ticket_id').notNull(), reporter: text('reporter').notNull(),
+  signature: text('signature').notNull(), eventAt: integer('event_at').notNull(), storedAt: integer('stored_at').notNull(),
+}, table => [index('triage_history_lookup').on(table.reporter, table.signature, table.eventAt), index('triage_history_retention').on(table.storedAt)]);
+
 // Public feedback remains a proposal until a separate review of the rules.
 export const messageFeedback = sqliteTable("message_feedback", {
   messageId: text("message_id").primaryKey().references(() => messages.id),

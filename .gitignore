@@ -43,6 +43,10 @@ yarn-error.log*
 /outputs/
 /work/
 /data/
+/private-data/
+/hack-b6eba4f7-basqar-main/
+/eval-*.md
+/artifacts/
 *.local.json
 *.parity.json
 

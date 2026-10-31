@@ -61,6 +61,7 @@ export function inboxStatement(options: InboxOptions, now = Date.now()) {
     sql: `WITH RECURSIVE options(category, workflow, urgency, pattern, requested_page, page_size, now, fold_map) AS (VALUES (?, ?, ?, ?, ?, ?, ?, ?)),
     ranked AS (
       SELECT m.id, m.status, m.created_at, ${messageRouteSql} AS route,
+        json_extract(m.processing, '$.triage.priority') AS triage_priority,
         COALESCE(json_extract(m.service, '$.state'), CASE WHEN m.status = 'accepted' THEN 'resolved' ELSE 'queued' END) AS state,
         COALESCE(json_extract(m.service, '$.manualUrgency'), json_extract(m.processing, '$.urgency.level'), 'normal') AS urgency,
         COALESCE(json_extract(m.service, '$.firstReceivedAt'), m.created_at) AS first_received,
@@ -74,7 +75,8 @@ export function inboxStatement(options: InboxOptions, now = Date.now()) {
       WHERE ${searchMatch}
     ), selected AS (
       SELECT l.*,
-        CASE WHEN o.category <> 'help' THEN 0 WHEN l.urgency = 'now' THEN 0 WHEN l.urgency = 'high' THEN 1
+        CASE WHEN o.category = 'all' AND l.state IN ('queued', 'in_progress') AND l.triage_priority = 'p0' THEN -1
+          WHEN o.category <> 'help' THEN 0 WHEN l.urgency = 'now' THEN 0 WHEN l.urgency = 'high' THEN 1
           WHEN l.state IN ('queued', 'in_progress') AND o.now - l.first_received > 900000 THEN 1 ELSE 2 END AS sort_rank,
         CASE WHEN o.category = 'help' THEN l.first_received ELSE -l.created_at END AS sort_time
       FROM searched l CROSS JOIN options o

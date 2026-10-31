@@ -10,6 +10,8 @@ import { loadKnowledge } from '@/lib/knowledge-store';
 import { createSupportState } from '@/lib/support-state';
 import { caseMutationGuard, latestCaseId } from '@/lib/server-cases';
 import { caseSnapshotGuard } from '@/lib/case-guard';
+import { triage } from '@/lib/triage/engine';
+import { ruleCorpus } from '@/lib/triage/runtime';
 import { selectorStatement } from '@/lib/inbox-query';
 export const dynamic = 'force-dynamic';
 const fail = (error: string, status = 400) => Response.json({ error }, { status });
@@ -65,8 +67,10 @@ export async function POST(request: Request) {
       if (duplicate) return response(duplicate);
     }
     const processed = await processServerMessageWithReview(originalText, context, await loadKnowledge(), { db: db.$client, secret: env.SUPPORT_SETTINGS_SECRET, requestId: `message:${body.id}`, refreshEntries: loadKnowledge });
+    const triageResult = triage({ kind: 'report', ticket_id: body.id, messages: [{ role: 'player', text: originalText }] }, { corpus: ruleCorpus, support: processed, entries: await loadKnowledge() });
+    const processing = { ...processed.processing, triage: triageResult };
     const at = Math.max(Date.now(), parent ? parent.createdAt + 1 : 0);
-    const message = { id: body.id, text: processed.text, originalText, processing: processed.processing, status: processed.status, createdAt: at,
+    const message = { id: body.id, text: processed.text, originalText, processing, status: processed.status, createdAt: at,
       ownerHash: parent?.ownerHash ?? owner.hash, service: createSupportState(body.id, at, processed.processing.knowledge?.status === 'answered' ? processed.processing.knowledge : undefined, processed.status === 'pending' ? parent : undefined) };
     if (parent) {
       const guard = caseSnapshotGuard(parent);

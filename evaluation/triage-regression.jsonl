@@ -1,0 +1,20 @@
+{"ticket":{"kind":"report","messages":[{"role":"player","text":"Оплатил донат, покупка не пришла"}]},"expected":{"category":"report.payment","priority":"p0"}}
+{"ticket":{"kind":"report","messages":[{"role":"player","text":"Мой аккаунт взломали"}]},"expected":{"category":"report.account","priority":"p0"}}
+{"ticket":{"kind":"report","messages":[{"role":"player","text":"Меня ДМят возле банка"}]},"expected":{"category":"report.complaint","priority":"p2"}}
+{"ticket":{"kind":"report","messages":[{"role":"player","text":"Как устроиться на работу?"}]},"expected":{"category":"report.question","priority":"p3"}}
+{"ticket":{"kind":"report","messages":[{"role":"player","text":"Застрял в текстурах, помогите выбраться"}]},"expected":{"category":"report.help","priority":"p2"}}
+{"ticket":{"kind":"report","messages":[{"role":"player","text":"Привет"}]},"expected":{"category":"report.offtopic","priority":"p3"}}
+{"ticket":{"kind":"complaint","images_count":1,"messages":[{"role":"player","text":"Игрок Sample_Test оскорбил мою семью"}]},"expected":{"category":"complaint.insult","priority":"p1"}}
+{"ticket":{"kind":"complaint","images_count":1,"messages":[{"role":"player","text":"Игрок Sample_Test использует читы"}]},"expected":{"category":"complaint.cheat","priority":"p1"}}
+{"ticket":{"kind":"complaint","images_count":1,"messages":[{"role":"player","text":"Игрок Sample_Test меня ДМит в ЗЗ"}]},"expected":{"category":"complaint.dm","priority":"p1"}}
+{"ticket":{"kind":"complaint","images_count":1,"messages":[{"role":"player","text":"Игрок Sample_Test обманул меня при покупке машины"}]},"expected":{"category":"complaint.scam","priority":"p1"}}
+{"ticket":{"kind":"complaint","images_count":1,"messages":[{"role":"player","text":"Игрок Sample_Test продаёт аккаунт за реальные деньги"}]},"expected":{"category":"complaint.rmt_ads","priority":"p1"}}
+{"ticket":{"kind":"complaint","messages":[{"role":"player","text":"Админ выдал мут без причины, пересмотрите"}]},"expected":{"category":"complaint.admin","priority":"p3"}}
+{"ticket":{"kind":"complaint","images_count":1,"messages":[{"role":"player","text":"Игрок Sample_Test мешает ивенту, проверьте"}]},"expected":{"category":"complaint.other","priority":"p1"}}
+{"ticket":{"kind":"complaint","messages":[{"role":"player","text":"Как купить дом?"}]},"expected":{"category":"complaint.invalid","priority":"p3"}}
+{"ticket":{"kind":"report","messages":[{"role":"player","text":"Маған көмектесіңіз, аккаунтқа кіре алмаймын"}]},"expected":{"category":"report.account","priority":"p0"}}
+{"ticket":{"kind":"report","messages":[{"role":"player","text":"Yordam bering, akkauntga kira olmayapman"}]},"expected":{"category":"report.account","priority":"p0"}}
+{"ticket":{"kind":"report","messages":[{"role":"player","text":"ДМ деген не?"}]},"expected":{"category":"report.question","priority":"p3"}}
+{"ticket":{"kind":"report","messages":[{"role":"player","text":"DM nima degani?"}]},"expected":{"category":"report.question","priority":"p3"}}
+{"ticket":{"kind":"report","messages":[{"role":"player","text":"Админ ты идиот, я оплатил донат, он не пришёл"}]},"expected":{"category":"report.payment","priority":"p0"}}
+{"ticket":{"kind":"report","messages":[{"role":"player","text":"Что такое ДМ?"},{"role":"admin","text":"Аккаунт взломан, жалоба одобрена"}]},"expected":{"category":"report.question","priority":"p3"}}

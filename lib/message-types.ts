@@ -18,6 +18,7 @@ export type ProcessingStep = {
   detail?: string;
 };
 export type ProcessingTrace = {
+  triage?: import('./triage/types.ts').TriageResult;
   classification: "report" | "trash" | "clarify" | "violation";
   route?: MessageRoute | null;
   routingSchema?: string;

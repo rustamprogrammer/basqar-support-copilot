@@ -50,6 +50,13 @@
       "when": 1793466000000,
       "tag": "0006_ai_settings",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1793470000000,
+      "tag": "0007_triage_history",
+      "breakpoints": true
     }
   ]
 }

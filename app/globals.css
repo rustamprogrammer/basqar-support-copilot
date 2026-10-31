@@ -450,3 +450,12 @@ button:disabled { opacity: .5; cursor: not-allowed; }
   .logic-search-control { flex-wrap: wrap; }
   .logic-search-control label { flex-basis: 100%; }
 }
+/* Triage drafts reuse the existing support workspace. */
+.triage-summary { margin: 1rem 0; padding: 1rem; border: 1px solid #d7e2db; border-radius: 12px; background: #f8fbf9; }
+.triage-summary > p { white-space: pre-wrap; line-height: 1.6; overflow-wrap: anywhere; }
+.triage-summary details { margin-top: .8rem; }
+.triage-summary blockquote { border-left: 3px solid #7c9a87; margin: .75rem 0; padding-left: .75rem; overflow-wrap: anywhere; }
+.triage-summary ul { padding-left: 1.25rem; }
+.triage-priority { border-radius: 6px; padding: .2rem .5rem; background: #edf1ee; }
+.triage-p0 { background: #ffe5e2; color: #8b2119; }
+.triage-p1 { background: #fff0d6; color: #785016; }

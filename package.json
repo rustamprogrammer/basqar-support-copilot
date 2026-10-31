@@ -8,7 +8,11 @@
   "scripts": {
     "install:ci": "node scripts/install-ci.mjs",
     "dev": "node scripts/run-framework.mjs dev",
+    "prebuild": "node scripts/check-triage-corpus.mjs",
     "build": "node scripts/run-framework.mjs build",
+    "triage:prepare": "node scripts/prepare-triage-corpus.mjs",
+    "triage:predict": "node scripts/predict.mjs",
+    "triage:test": "node --test lib/triage/*.test.ts",
     "start": "node scripts/start-local.mjs",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "drizzle-kit generate",

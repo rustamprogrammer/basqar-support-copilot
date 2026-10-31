@@ -4,6 +4,7 @@ export type ServiceEvent = { at: number; action: string; detail?: string };
 export type SupportState = {
   revision: number; state: QueueState; caseId: string; firstReceivedAt: number; updatedAt: number;
   claimedAt?: number; manualUrgency?: 'now' | 'high' | 'normal'; manualReason?: string;
+  escalatedAt?: number; escalationReason?: string;
   reply?: { text: string; author: 'knowledge' | 'admin'; at: number; entryId?: string; entryVersion?: string };
   history: ServiceEvent[];
 };
@@ -12,6 +13,7 @@ export function createSupportState(id: string, at: number, answer?: { answer?: s
   return { revision: 0, state: reply ? 'answered' : 'queued', caseId: parent?.service?.caseId ?? parent?.id ?? id,
     firstReceivedAt: parent?.service?.firstReceivedAt ?? parent?.createdAt ?? at, updatedAt: at,
     ...(parent?.service?.manualUrgency ? { manualUrgency: parent.service.manualUrgency, manualReason: parent.service.manualReason } : {}),
+    ...(parent?.service?.escalatedAt ? { escalatedAt: parent.service.escalatedAt, escalationReason: parent.service.escalationReason } : {}),
     ...(reply ? { reply } : {}), history: [...(parent?.service?.history ?? []), { at, action: reply ? 'knowledge_answer' : 'queued',
       ...(reply ? { detail: `${reply.text}\nКарточка ${reply.entryId}, версия ${reply.entryVersion}` } : parent ? { detail: `Уточнение обращения ${parent.id}` } : {}) }] };
 }
@@ -38,7 +40,7 @@ export function sortHelpQueue(rows: readonly Message[], now = Date.now()) {
     return aq - bq || (a.service?.firstReceivedAt ?? a.createdAt) - (b.service?.firstReceivedAt ?? b.createdAt) || a.id.localeCompare(b.id);
   });
 }
-export type ServiceAction = 'claim' | 'release' | 'reply' | 'priority' | 'helped' | 'need_admin';
+export type ServiceAction = 'claim' | 'release' | 'reply' | 'priority' | 'helped' | 'need_admin' | 'escalate';
 export function updateSupportState(row: Message, action: ServiceAction, value: { text?: string; level?: 'now' | 'high' | 'normal'; reason?: string }, at: number, admin: boolean): SupportState {
   if (!admin && action !== 'helped' && action !== 'need_admin') throw new Error('Требуется вход администратора.');
   if (!admin && !row.service?.reply) throw new Error('У обращения пока нет ответа.');
@@ -49,6 +51,10 @@ export function updateSupportState(row: Message, action: ServiceAction, value: {
   if (action === 'release') { next.state = 'queued'; delete next.claimedAt; }
   if (action === 'helped') next.state = 'resolved';
   if (action === 'need_admin') { next.state = 'queued'; delete next.claimedAt; detail = 'Ответ не помог. Требуется администратор.'; }
+  if (action === 'escalate') {
+    if (!value.reason?.trim() || value.reason.length > 300) throw new Error('Укажите причину передачи (до 300 символов).');
+    next.state = 'queued'; delete next.claimedAt; next.escalatedAt = at; next.escalationReason = value.reason.trim(); detail = `Передано старшему администратору: ${value.reason.trim()}`;
+  }
   if (action === 'reply') {
     const text = value.text?.trim();
     if (!text || text.length > 4000) throw new Error('Ответ должен содержать от 1 до 4000 символов.');

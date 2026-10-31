@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import Link from "@/components/site-link";
 import type { Message } from "@/lib/message-types";
 import { effectiveState, effectiveUrgency, queueFlags, type ServiceAction } from "@/lib/support-state";
+import { TriageSummary } from '@/components/triage-summary';
 
 const urgencyLabels = { now: "Сейчас", high: "Высокий", normal: "Обычный" };
 const stateLabels = { queued: "В очереди", in_progress: "В работе", answered: "Ответ отправлен", resolved: "Решено" };
@@ -15,6 +16,8 @@ export function SupportCard({ message, admin = false, onSave }: { message: Messa
   const busy = pending !== null;
   const [error, setError] = useState("");
   const [reply, setReply] = useState("");
+  const replyEditor = useRef<HTMLDetailsElement>(null);
+  const [escalation, setEscalation] = useState('');
   const [level, setLevel] = useState(effectiveUrgency(message));
   const [reason, setReason] = useState("");
   const [now, setNow] = useState(() => Date.now());
@@ -27,7 +30,7 @@ export function SupportCard({ message, admin = false, onSave }: { message: Messa
   const knowledge = message.processing?.knowledge;
   const answer = response?.text ?? (knowledge?.status === "answered" ? knowledge.answer : undefined);
   const isKnowledgeAnswer = response ? response.author === "knowledge" : knowledge?.status === "answered";
-  if (message.status === 'trash' || message.status === 'violation' || (route !== "help" && route !== "question" && !message.service)) return null;
+  if (message.status === 'trash' || message.status === 'violation' || (route !== "help" && route !== "question" && !message.service)) return admin && message.processing?.triage ? <TriageSummary result={message.processing.triage} blocked /> : null;
 
   async function act(action: ServiceAction, value: { text?: string; level?: "now" | "high" | "normal"; reason?: string } = {}) {
     if (requestPending.current) return;
@@ -61,6 +64,7 @@ export function SupportCard({ message, admin = false, onSave }: { message: Messa
   return <section className="support-card" aria-label="Обработка обращения" aria-busy={busy}>
     <div className="support-badges">
       <span className="support-state">{stateLabels[state]}</span>
+      {message.service?.escalatedAt && <span className="support-flag">Передано старшему администратору</span>}
       {route === "help" && <span className={`urgency-badge urgency-${effectiveUrgency(message)}`}>{urgencyLabels[effectiveUrgency(message)]}{message.service?.manualUrgency ? " · вручную" : ""}</span>}
       {urgency?.uncertain && !message.service?.manualUrgency && <span className="support-flag">Срочность уточняется</span>}
       {flags.overdue && <span className="support-flag">Ожидание {flags.minutes} мин</span>}
@@ -78,17 +82,19 @@ export function SupportCard({ message, admin = false, onSave }: { message: Messa
       </div>}
     </div>}
     {admin && <>
+      {message.processing?.triage && <TriageSummary result={message.processing.triage} onUseDraft={() => { setReply(message.processing!.triage!.draft_reply.text); if (replyEditor.current) { replyEditor.current.open = true; replyEditor.current.querySelector('textarea')?.focus(); } }} />}
       <div className="support-actions">
         {state === "queued" && <button type="button" className="primary" disabled={busy} onClick={() => void act("claim")}>{pending === "claim" ? "Сохранение…" : "Взять в работу"}</button>}
         {state === "in_progress" && <button type="button" className="secondary" disabled={busy} onClick={() => void act("release")}>{pending === "release" ? "Сохранение…" : "Вернуть в очередь"}</button>}
         {response?.author === "admin" && <Link className="secondary" aria-disabled={busy} onClick={event => { if (busy) event.preventDefault(); }} href={`/knowledge?message=${encodeURIComponent(message.id)}`}>В базу ответов</Link>}
       </div>
-      <details className="feedback-form"><summary>Ответить игроку</summary>
+      <details className="feedback-form" ref={replyEditor}><summary>Ответить игроку</summary>
         <form onSubmit={submitReply}>
           <label htmlFor={`support-reply-${message.id}`}>Ответ<textarea id={`support-reply-${message.id}`} value={reply} onChange={event => setReply(event.target.value)} maxLength={4000} required disabled={busy} /></label>
           <button className="primary" disabled={busy || !reply.trim()}>{pending === "reply" ? "Отправка…" : "Отправить ответ"}</button>
         </form>
       </details>
+      <details className="feedback-form"><summary>Передать старшему администратору</summary><form onSubmit={event => { event.preventDefault(); void act('escalate', { reason: escalation }); }}><label htmlFor={`escalation-${message.id}`}>Причина<input id={`escalation-${message.id}`} value={escalation} onChange={event => setEscalation(event.target.value)} required maxLength={300} disabled={busy} /></label><button className="secondary" disabled={busy || !escalation.trim()}>Передать на рассмотрение</button></form></details>
       {route === "help" && <details className="feedback-form" onToggle={event => { if (event.currentTarget.open) setLevel(effectiveUrgency(message)); }}><summary>Изменить приоритет</summary>
         <form onSubmit={submitPriority}>
           <label htmlFor={`support-priority-${message.id}`}>Приоритет<select id={`support-priority-${message.id}`} value={level} onChange={event => setLevel(event.target.value as typeof level)} disabled={busy}>{Object.entries(urgencyLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
