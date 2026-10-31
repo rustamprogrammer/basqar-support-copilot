@@ -1,0 +1,35 @@
+{
+  "schema": "contest-frozen-final-v1",
+  "createdAt": "2026-10-31",
+  "file": "contest-final.jsonl",
+  "rows": 24,
+  "sha256Lf": "98b144913c68535b5677227dcc1d548ef4c4e4063f9ef7ddb05f98d4f01ba1a6",
+  "labelPolicy": "contest-authored-policy-1",
+  "labelStatus": "assistant-authored-provisional",
+  "humanReviewed": false,
+  "nativeSpeakerReviewed": false,
+  "labelsFrozenBeforeModelRun": true,
+  "inferenceCallsBeforeFreeze": 0,
+  "familyField": "scenario_id",
+  "split": "final",
+  "excludedDevelopmentSets": ["contest-training.jsonl", "contest-holdout.jsonl", "triage-regression.jsonl"],
+  "languageCounts": {"ru": 4, "kk": 4, "uz": 4, "en": 4, "es": 4, "pt": 4},
+  "priorityCounts": {"p0": 4, "p1": 8, "p2": 5, "p3": 7},
+  "categoryCount": 14,
+  "reviewRequiredForEveryRow": true,
+  "protocol": [
+    "Freeze this file and manifest before the first model evaluation.",
+    "Perform one declared final model run using fixed code, prompt, model and budget settings.",
+    "Report failures and abstentions; do not silently omit them or retry until successful.",
+    "Do not change prompts, thresholds, code or labels to improve the score on this final set.",
+    "If these examples later inform changes, reclassify future runs as regression checks."
+  ],
+  "limitations": [
+    "Original authored synthetic examples; no private player data, model predictions or prior model outputs were used as labels.",
+    "The author knew the taxonomy and development context. This is a separately frozen test, not blind independent human annotation.",
+    "Only four examples per language and 24 total; results do not estimate real-world accuracy or native-language fluency.",
+    "The earlier holdout has already been studied; this final file must remain separate from it and from training.",
+    "Exact text, ID and scenario-family overlap checks do not prove absence of all semantic similarity.",
+    "There are no reviewed draft or citation targets. Classification labels alone cannot measure reply usefulness or citation relevance."
+  ]
+}

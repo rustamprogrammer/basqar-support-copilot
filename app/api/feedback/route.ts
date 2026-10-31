@@ -4,12 +4,15 @@ import { messages, messageFeedback } from "@/db/schema";
 import { exportFeedback, parseFeedback } from "@/lib/feedback";
 import { env } from 'cloudflare:workers';
 import { isAdmin, publicDemoEnabled, jsonMutation, rejectMutation } from '@/lib/access';
+import { readRequestJson } from '@/lib/request-json';
 
 export const dynamic = "force-dynamic";
 export async function POST(request: Request) {
   if (!await isAdmin(request, env.SUPPORT_ADMIN_PASSWORD, publicDemoEnabled(env.SUPPORT_DEMO_MODE))) return rejectMutation(request, 'Войдите как администратор.', 401);
   if (!jsonMutation(request)) return rejectMutation(request, 'Ожидается JSON.', 415);
-  const input = parseFeedback(await request.json().catch(() => null));
+  const parsed = await readRequestJson(request);
+  if (parsed.response) return parsed.response;
+  const input = parseFeedback(parsed.data);
   if (!input) return Response.json({ error: "Проверьте категорию и длину текста." }, { status: 400 });
   try {
     const db = getDb();

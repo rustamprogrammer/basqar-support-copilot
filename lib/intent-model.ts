@@ -6,6 +6,11 @@ const model = artifact as IntentModel;
 export const modelInfo = { version: model.version, provenance: model.provenance, training: model.training, validation: model.validation };
 
 export function predictIntent(original: string, understood: string) {
+  return predictIntentWithModel(model, original, understood);
+}
+
+/** Evaluate a candidate before activation; production keeps its bundled artifact. */
+export function predictIntentWithModel(model: IntentModel, original: string, understood: string) {
   const counts = featureCounts(original, understood);
   const entries = Object.entries(counts);
   const vector: [number, number][] = [];

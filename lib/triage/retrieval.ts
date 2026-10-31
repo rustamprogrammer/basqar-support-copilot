@@ -18,14 +18,52 @@ const topicQueries: Partial<Record<Category, string>> = {
   'report.account': 'сохранность аккаунта имущества', 'report.help': 'администрации помощь',
 };
 const words = (text: string) => text.toLowerCase().replaceAll('ё', 'е').match(/[\p{L}]{3,}/gu)?.map(s => s.length > 6 ? s.slice(0, -2) : s) ?? [];
+
+/** Stable glossary identities; these are lookup keys, never invented rule refs. */
+export function glossaryTerms(text: string): string[] {
+  const t = text.toLowerCase();
+  const found = new Set<string>();
+  const aliases: [string, RegExp][] = [
+    ['roleplay', /(?<!\p{L})(?:rp|рп|role[ -]?play)(?!\p{L})/iu],
+    ['nonroleplay', /(?<!\p{L})(?:non[ -]?rp|нон[ -]?рп|нрп|non[ -]?role[ -]?play)(?!\p{L})/iu],
+    ['incharacter', /(?<!\p{L})(?:ic|ис|in[ -]?character)(?!\p{L})/iu],
+    ['outofcharacter', /(?<!\p{L})(?:ooc|оос|out[ -]?of[ -]?character)(?!\p{L})/iu],
+    ['metagaming', /(?<!\p{L})(?:mg|мг|meta[ -]?g[aа]ming|метагейминг)(?!\p{L})/iu],
+    ['powergaming', /(?<!\p{L})(?:pg|пг|power[ -]?gaming|пауэргейминг)(?!\p{L})/iu],
+    ['deathmatch', /(?<!\p{L})(?:dm|дм|death[ -]?match)(?!\p{L})/iu],
+    ['driveby', /(?<!\p{L})(?:db|дб|drive[ -]?by)(?!\p{L})/iu],
+    ['spawnkill', /(?<!\p{L})(?:sk|ск|spawn[ -]?kill)(?!\p{L})/iu],
+    ['revengekill', /(?<!\p{L})(?:rk|рк|revenge[ -]?kill)(?!\p{L})/iu],
+    ['teamkill', /(?<!\p{L})(?:tk|тк|team[ -]?kill)(?!\p{L})/iu],
+  ];
+  for (const [term, pattern] of aliases) if (pattern.test(t)) found.add(term);
+  // Conceptual multilingual queries need both an external information source
+  // and using that knowledge in character. "Discord does not open" is not MG.
+  const external = /discord|дискорд|outside (?:the )?game|вне игры|fuera del juego|fora do jogo|ойыннан тыс|o'yindan tashqari|ooc/iu.test(t);
+  const knowledge = /информац|узна|сведени|information|learn|heard|informaci[oó]n|informaç|saber|мәлімет|ақпарат|ma'lumot/iu.test(t);
+  const character = /персонаж|character|personaje|personagem|кейіпкер|qahramon|(?<!\p{L})ic(?!\p{L})/iu.test(t);
+  if (external && knowledge && character) found.add('metagaming');
+  const death = /смерт|умер|death|died|muer[ts]|morri|morte|өлген|өлді|o'lg|vafot/iu.test(t);
+  const returnOrRevenge = /вернуть|возвра|отомст|месть|return|go back|revenge|volver|regresar|venganza|voltar|vingan|қайта|кек|qayt|qasos/iu.test(t);
+  if (death && returnOrRevenge) found.add('revengekill');
+  if (found.has('nonroleplay')) found.delete('roleplay');
+  return [...found];
+}
+
 export function retrieveRules(text: string, category: Category, corpus: Corpus, limit = 3): RuleChunk[] {
-  if (category === 'report.offtopic' || category === 'report.payment' || category === 'report.question') return [];
+  if (category === 'report.offtopic' || category === 'report.payment') return [];
   // Lexical similarity alone pulled event-specific rules into ordinary reports.
   // Restrict candidates by section and actual rule content before ranking.
   const source = text.toLowerCase();
+  const terms = glossaryTerms(text);
   const candidates = corpus.chunks.filter(chunk => {
     const general = /общие правила|тестов/iu.test(chunk.section);
     const body = chunk.text.toLowerCase();
+    if (category === 'report.question') {
+      if (!/RP термины/iu.test(chunk.section)) return false;
+      const heading = body.split(/[—–(]/u)[0].replaceAll('а', 'a').replace(/[^a-z]/gu, '');
+      return terms.includes(heading);
+    }
     if (category === 'complaint.insult') return general && (/расизм|дискримин/iu.test(source) ? /дискримин|национальн|расизм/iu.test(body) : /оскорблен|оскорбля/iu.test(body));
     if (category === 'complaint.cheat') return general && /стороннее программное|стороннего программного|читы/iu.test(body);
     if (category === 'report.account') return general && /сохранность|сохранност/iu.test(body);
@@ -34,7 +72,7 @@ export function retrieveRules(text: string, category: Category, corpus: Corpus, 
     if (category === 'complaint.admin') return general && /жалобы на администраторов/iu.test(body);
     if (category === 'complaint.dm') {
       if (/RP термины/iu.test(chunk.section)) {
-        const code = /(?:^|\W)(?:дб\p{L}*|db)(?:$|\W)|машин.{0,20}дав/iu.test(source) ? 'DriveBy' : /(?:^|\W)(?:тк|tk)(?:$|\W)/iu.test(source) ? 'Team Kill' : /(?:^|\W)(?:ск|sk)(?:$|\W)/iu.test(source) ? 'Spawn Kill' : 'DeathMatch';
+        const code = /(?<!\p{L})(?:дб\p{L}*|db)(?!\p{L})|машин.{0,20}дав/iu.test(source) ? 'DriveBy' : /(?<!\p{L})(?:тк|tk)(?!\p{L})/iu.test(source) ? 'Team Kill' : /(?<!\p{L})(?:ск|sk)(?!\p{L})/iu.test(source) ? 'Spawn Kill' : 'DeathMatch';
         return body.startsWith(code.toLowerCase()) && !/massive/iu.test(body);
       }
       return /зел[её]ной зоне/iu.test(chunk.section) && /(?:зз|гз|green zone|gz)/iu.test(source) && /убийств|урон|нападен|стрельб/iu.test(body);

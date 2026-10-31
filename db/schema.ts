@@ -27,6 +27,9 @@ export const aiSettings = sqliteTable('ai_settings', {
 export const aiRequests = sqliteTable('ai_requests', {
   id: text('id').primaryKey(), token: text('token').notNull(), inputHash: text('input_hash').notNull(), createdAt: integer('created_at').notNull(), resultJson: text('result_json'),
 });
+export const aiRateLimits = sqliteTable('ai_rate_limits', {
+  bucket: text('bucket').primaryKey(), used: integer('used').notNull().default(0), expiresAt: integer('expires_at').notNull(), token: text('token').notNull().default(''),
+}, table => [index('ai_rate_limits_expiry').on(table.expiresAt)]);
 
 export const triageHistory = sqliteTable('triage_history', {
   id: text('id').primaryKey(), ticketId: text('ticket_id').notNull(), reporter: text('reporter').notNull(),

@@ -6,12 +6,15 @@ import { managedReview } from '@/lib/ai-settings-review';
 import { processSupportMessage } from '@/lib/support-processing';
 import { loadKnowledge } from '@/lib/knowledge-store';
 import { reviewKnowledgeCandidates } from '@/lib/server-review';
+import { readRequestJson } from '@/lib/request-json';
 
 export const dynamic = 'force-dynamic';
 export async function POST(request: Request) {
   if (!isLocalSettingsOperator(request, true)) return rejectMutation(request, 'Проверять ключ можно только на ноутбуке через 127.0.0.1.', 403);
   if (!jsonMutation(request)) return rejectMutation(request, 'Ожидается JSON.', 415);
-  const body = await request.json().catch(() => null) as { id?: unknown; text?: unknown } | null;
+  const parsed = await readRequestJson(request);
+  if (parsed.response) return parsed.response;
+  const body = parsed.data as { id?: unknown; text?: unknown } | null;
   if (typeof body?.id !== 'string' || !/^[\da-f-]{36}$/iu.test(body.id) || typeof body.text !== 'string' || !body.text.trim() || body.text.length > 2000) return Response.json({ error: 'Введите сообщение до 2000 символов.' }, { status: 400 });
   try {
     const db = getDb().$client, entries = await loadKnowledge(), processed = processSupportMessage(body.text, undefined, entries), trace = processed.processing;

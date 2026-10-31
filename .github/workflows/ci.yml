@@ -1,0 +1,45 @@
+name: Public CI
+
+on:
+  push:
+    branches: [main, 'codex/**']
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: '${{ github.workflow }}-${{ github.ref }}'
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CI: 'true'
+      WRANGLER_SEND_METRICS: 'false'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci --include=dev --include=optional --no-fund
+      - name: Prepare synthetic corpus for public CI
+        run: |
+          node --test scripts/ci-corpus.test.mjs
+          node scripts/prepare-ci-corpus.mjs
+      - name: Tests, types, lint and build
+        run: npm run release:check
+      - name: Validate frozen synthetic data and whitespace
+        run: |
+          node scripts/validate-contest-data.mjs
+          git diff --check
+      # No deployment or artifacts: this build contains a synthetic fixture,
+      # never the private rules corpus or a production-ready knowledge base.

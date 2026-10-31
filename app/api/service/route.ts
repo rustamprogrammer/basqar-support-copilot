@@ -5,10 +5,13 @@ import { messages } from '@/db/schema';
 import { isAdmin, publicDemoEnabled, visitor, jsonMutation, rejectMutation } from '@/lib/access';
 import { updateSupportState, type ServiceAction } from '@/lib/support-state';
 import { caseMutationGuard, latestCaseId } from '@/lib/server-cases';
+import { readRequestJson } from '@/lib/request-json';
 export const dynamic = 'force-dynamic';
 export async function POST(request: Request) {
   if (!jsonMutation(request)) return rejectMutation(request, 'Ожидается JSON.', 415);
-  const body = await request.json().catch(() => null) as { id?: unknown; revision?: unknown; action?: unknown; text?: unknown; level?: unknown; reason?: unknown } | null;
+  const parsed = await readRequestJson(request);
+  if (parsed.response) return parsed.response;
+  const body = parsed.data as { id?: unknown; revision?: unknown; action?: unknown; text?: unknown; level?: unknown; reason?: unknown } | null;
   if (typeof body?.id !== 'string' || !Number.isSafeInteger(body.revision) || typeof body.action !== 'string' || !['claim', 'release', 'reply', 'priority', 'helped', 'need_admin', 'escalate'].includes(body.action)) return Response.json({ error: 'Некорректное действие.' }, { status: 400 });
   const admin = await isAdmin(request, env.SUPPORT_ADMIN_PASSWORD, publicDemoEnabled(env.SUPPORT_DEMO_MODE)), owner = await visitor(request);
   const db = getDb(), [row] = await db.select().from(messages).where(eq(messages.id, body.id));
@@ -22,7 +25,8 @@ export async function POST(request: Request) {
     const status = body.action === 'helped' ? 'accepted' : body.action === 'need_admin' || body.action === 'release' || body.action === 'claim' || body.action === 'escalate' ? 'pending' : row.status;
     const [saved] = await db.update(messages).set({ service, status }).where(and(eq(messages.id, row.id), caseMutationGuard(row))).returning();
     if (!saved) return Response.json({ error: 'Обращение изменилось. Обновите страницу.', latestId: await latestCaseId(row) }, { status: 409 });
-    const { ownerHash: _, ...safe } = saved;
+    const safe = { ...saved };
+    Reflect.deleteProperty(safe, 'ownerHash');
     return Response.json(safe);
   } catch (error) { return Response.json({ error: error instanceof Error ? error.message : 'Не удалось сохранить действие.' }, { status: 400 }); }
 }

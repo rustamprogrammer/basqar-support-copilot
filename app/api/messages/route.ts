@@ -2,7 +2,7 @@ import { and, desc, eq, gte } from 'drizzle-orm';
 import { env } from 'cloudflare:workers';
 import { getDb } from '@/db';
 import { messages, messageFeedback } from '@/db/schema';
-import { processServerMessageWithReview, ReviewInProgressError } from '@/lib/server-review';
+import { processServerMessage } from '@/lib/server-review';
 import { prepareClarification } from '@/lib/message-context';
 import { messageClearStatements, parseMessageClearRequest } from '@/lib/message-clearing';
 import { isAdmin, publicDemoEnabled, visitor, jsonMutation, rejectMutation } from '@/lib/access';
@@ -13,9 +13,18 @@ import { caseSnapshotGuard } from '@/lib/case-guard';
 import { triage } from '@/lib/triage/engine';
 import { ruleCorpus } from '@/lib/triage/runtime';
 import { selectorStatement } from '@/lib/inbox-query';
+import { readRequestJson, MAX_DELETE_BODY_BYTES } from '@/lib/request-json';
+import { managedContestModel, ContestInProgressError } from '@/lib/triage/managed-model';
+import { applyContestToSupport } from '@/lib/triage/support-adapter';
+import { refreshTriageAfterKnowledgeChange } from '@/lib/triage/knowledge-refresh';
+import type { Ticket } from '@/lib/triage/types';
 export const dynamic = 'force-dynamic';
 const fail = (error: string, status = 400) => Response.json({ error }, { status });
-const publicRow = <T extends { ownerHash: string | null }>(row: T) => { const { ownerHash: _, ...safe } = row; return safe; };
+const publicRow = <T extends { ownerHash: string | null }>(row: T) => {
+  const safe = { ...row };
+  Reflect.deleteProperty(safe, 'ownerHash');
+  return safe as Omit<T, 'ownerHash'>;
+};
 export async function GET(request: Request) {
   try {
     const admin = await isAdmin(request, env.SUPPORT_ADMIN_PASSWORD, publicDemoEnabled(env.SUPPORT_DEMO_MODE)), owner = await visitor(request), params = new URL(request.url).searchParams;
@@ -39,7 +48,9 @@ export async function GET(request: Request) {
 }
 export async function POST(request: Request) {
   if (!jsonMutation(request)) return rejectMutation(request, 'Ожидается JSON.', 415);
-  const body = await request.json().catch(() => null) as { text?: unknown; id?: unknown; parentId?: unknown } | null;
+  const parsed = await readRequestJson(request);
+  if (parsed.response) return parsed.response;
+  const body = parsed.data as { text?: unknown; id?: unknown; parentId?: unknown } | null;
   let originalText = typeof body?.text === 'string' ? body.text : '';
   if (!originalText.trim()) return fail('Введите сообщение.');
   if (originalText.length > 2000) return fail('Максимум 2000 символов.');
@@ -66,8 +77,24 @@ export async function POST(request: Request) {
       const duplicate = recent.find(row => row.processing?.route === 'help' && (!row.service || ['queued', 'in_progress'].includes(row.service.state)));
       if (duplicate) return response(duplicate);
     }
-    const processed = await processServerMessageWithReview(originalText, context, await loadKnowledge(), { db: db.$client, secret: env.SUPPORT_SETTINGS_SECRET, requestId: `message:${body.id}`, refreshEntries: loadKnowledge });
-    const triageResult = triage({ kind: 'report', ticket_id: body.id, messages: [{ role: 'player', text: originalText }] }, { corpus: ruleCorpus, support: processed, entries: await loadKnowledge() });
+    const entries = await loadKnowledge();
+    let local = processServerMessage(originalText, context, entries);
+    const ticket: Ticket = { kind: 'report', ticket_id: body.id, messages: [{ role: 'player', text: originalText }] };
+    const baseline = triage(ticket, { corpus: ruleCorpus, support: local, entries });
+    const reviewed = await managedContestModel({ ticket, baseline, corpus: ruleCorpus, db: db.$client, secret: env.SUPPORT_SETTINGS_SECRET, clientHash: owner.hash! });
+    // A published FAQ can change while the async review/cache lookup is running.
+    // Re-evaluate a stale card before creating an automatic knowledge reply.
+    const priorAnswer = local.processing.knowledge;
+    if (priorAnswer?.status === 'answered') {
+      const currentEntries = await loadKnowledge();
+      if (!currentEntries.some(entry => entry.id === priorAnswer.entryId && entry.version === priorAnswer.entryVersion && entry.status === 'published')) {
+        local = processServerMessage(originalText, context, currentEntries);
+        if (reviewed.triage.meta.mode === 'local') reviewed.triage = refreshTriageAfterKnowledgeChange(
+          reviewed.triage, triage(ticket, { corpus: ruleCorpus, support: local, entries: currentEntries }), reviewed.review);
+      }
+    }
+    const processed = applyContestToSupport(originalText, local, reviewed.triage, reviewed.review, context);
+    const triageResult = processed.processing.triage ?? reviewed.triage;
     const processing = { ...processed.processing, triage: triageResult };
     const at = Math.max(Date.now(), parent ? parent.createdAt + 1 : 0);
     const message = { id: body.id, text: processed.text, originalText, processing, status: processed.status, createdAt: at,
@@ -81,12 +108,14 @@ export async function POST(request: Request) {
     if (!saved && parent) return Response.json({ error: 'Обращение изменилось. Обновите страницу и отправьте уточнение ещё раз.', latestId: await latestCaseId(parent) }, { status: 409 });
     if (!saved || (!admin && saved.ownerHash !== owner.hash)) return fail('Сообщение недоступно.', 404);
     return response(saved);
-  } catch (cause) { return cause instanceof ReviewInProgressError ? fail(cause.message, 409) : fail('Не удалось отправить. Попробуйте ещё раз.', 503); }
+  } catch (cause) { return cause instanceof ContestInProgressError ? fail(cause.message, 409) : fail('Не удалось отправить. Попробуйте ещё раз.', 503); }
 }
 export async function PATCH(request: Request) {
   if (!await isAdmin(request, env.SUPPORT_ADMIN_PASSWORD, publicDemoEnabled(env.SUPPORT_DEMO_MODE))) return rejectMutation(request, 'Войдите как администратор.', 401);
   if (!jsonMutation(request)) return rejectMutation(request, 'Ожидается JSON.', 415);
-  const body = await request.json().catch(() => null) as { id?: unknown; status?: unknown; revision?: unknown } | null;
+  const parsed = await readRequestJson(request);
+  if (parsed.response) return parsed.response;
+  const body = parsed.data as { id?: unknown; status?: unknown; revision?: unknown } | null;
   if (typeof body?.id !== 'string' || !['accepted', 'trash', 'violation', 'pending'].includes(String(body.status))) return fail('Некорректное действие.');
   try {
     const db = getDb(), [row] = await db.select().from(messages).where(eq(messages.id, body.id));
@@ -104,7 +133,9 @@ export async function PATCH(request: Request) {
 export async function DELETE(request: Request) {
   if (!await isAdmin(request, env.SUPPORT_ADMIN_PASSWORD, publicDemoEnabled(env.SUPPORT_DEMO_MODE))) return rejectMutation(request, 'Войдите как администратор.', 401);
   if (!jsonMutation(request)) return rejectMutation(request, 'Ожидается JSON.', 415);
-  const ids = parseMessageClearRequest(await request.json().catch(() => null));
+  const parsed = await readRequestJson(request, MAX_DELETE_BODY_BYTES);
+  if (parsed.response) return parsed.response;
+  const ids = parseMessageClearRequest(parsed.data);
   if (!ids) return fail('Подтвердите список сообщений для удаления.');
   try {
     const client = getDb().$client;

@@ -1,5 +1,6 @@
 import { env } from 'cloudflare:workers';
 import { isAdmin, publicDemoEnabled, adminCookie, clearAdminCookie, constantEqual, digest, jsonMutation, rejectMutation, discardRequestBody } from '@/lib/access';
+import { readRequestJson } from '@/lib/request-json';
 export const dynamic = 'force-dynamic';
 const attempts = new Map<string, { count: number; until: number }>();
 export async function GET(request: Request) {
@@ -16,7 +17,9 @@ export async function POST(request: Request) {
   const ip = request.headers.get('cf-connecting-ip') ?? 'local';
   const now = Date.now(), record = attempts.get(ip);
   if (record && record.until > now && record.count >= 10) return rejectMutation(request, 'Слишком много попыток. Повторите через 5 минут.', 429);
-  const body = await request.json().catch(() => null) as { password?: unknown } | null;
+  const parsed = await readRequestJson(request);
+  if (parsed.response) return parsed.response;
+  const body = parsed.data as { password?: unknown } | null;
   if (typeof body?.password !== 'string' || body.password.length > 512 || !constantEqual(await digest(body.password), await digest(env.SUPPORT_ADMIN_PASSWORD))) {
     if (attempts.size > 1000) for (const [key, value] of attempts) if (value.until <= now) attempts.delete(key);
     attempts.set(ip, { count: record && record.until > now ? record.count + 1 : 1, until: record && record.until > now ? record.until : now + 300_000 });

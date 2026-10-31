@@ -14,9 +14,13 @@
     "triage:predict": "node scripts/predict.mjs",
     "triage:test": "node --test lib/triage/*.test.ts",
     "start": "node scripts/start-local.mjs",
-    "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
+    "ai:configure": "node scripts/configure-ai.mjs",
+    "setup:local": "node scripts/setup-local.mjs",
+    "lint": "eslint . --ignore-pattern dist --ignore-pattern .next --max-warnings 0",
+    "typecheck": "tsc --noEmit",
+    "release:check": "npm test && npm run typecheck && npm run lint && npm run build",
     "db:generate": "drizzle-kit generate",
-    "test": "node --test lib/*.test.ts scripts/routing-evaluate.test.mjs",
+    "test": "node --test lib/*.test.ts lib/triage/*.test.ts scripts/routing-evaluate.test.mjs scripts/adversarial*.test.mjs scripts/configure-ai.test.mjs scripts/ci-corpus.test.mjs scripts/setup-local.test.mjs scripts/ml/*.test.mjs",
     "rules:review": "node scripts/rules-review.mjs",
     "rules:evaluate": "node scripts/rules-evaluate.mjs",
     "rules:publish": "node scripts/rules-publish.mjs",
@@ -35,7 +39,7 @@
     "embla-carousel-react": "^8.6.0",
     "input-otp": "^1.4.2",
     "lucide-react": "^1.31.0",
-    "next": "16.3.4",
+    "next": "16.4.3",
     "next-themes": "^0.4.6",
     "radix-ui": "^1.6.7",
     "react": "19.2.6",
@@ -47,7 +51,7 @@
     "sonner": "^2.0.8",
     "tailwind-merge": "3.6.0",
     "vaul": "^1.1.2",
-    "zod": "^3.25.76"
+    "zod": "4.6.7"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "1.37.1",
@@ -60,7 +64,7 @@
     "@vitejs/plugin-rsc": "0.5.26",
     "drizzle-kit": "0.31.10",
     "eslint": "9.39.4",
-    "eslint-config-next": "16.3.4",
+    "eslint-config-next": "16.4.3",
     "json-rpc-2.0": "1.7.1",
     "raw-body": "3.0.2",
     "react-server-dom-webpack": "19.2.6",
@@ -74,7 +78,10 @@
   "type": "module",
   "overrides": {
     "miniflare": {
-      "sharp": "0.35.4"
-    }
+      "sharp": "0.35.5"
+    },
+    "source-map-js": "1.2.2",
+    "fast-uri": "3.1.9",
+    "baseline-browser-mapping": "2.11.0"
   }
 }

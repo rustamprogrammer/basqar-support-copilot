@@ -70,6 +70,8 @@ export default function LogicPage() {
   }
 
   const clarifications = selected ? rows.filter(message => message.processing?.context?.parentId === selected.id) : [];
+  const reviewedByAi = selected?.processing?.aiReview?.outcome === 'confirmed' || selected?.processing?.aiReview?.outcome === 'replaced';
+  const assistanceRules = selected?.processing?.version?.startsWith('rules-assistance-');
   return <div className="shell">
     <SiteNav active="logic" />
     <main id="main-content" className="logic-main">
@@ -86,11 +88,14 @@ export default function LogicPage() {
       </section>
       <section aria-label="Обработка обращения" aria-busy={loading} aria-live="polite">
         {loading || listLoading ? <div className="empty">Загрузка…</div> : selected ? <>
-          <div className="workbench-mode"><span>{selected.processing?.version?.startsWith('rules-assistance-') ? 'Алгоритмы · сохранённое решение' : 'Сохранённая историческая обработка'}</span></div>
+          <div className="workbench-mode"><span>{reviewedByAi ? 'Алгоритмы + ИИ · сохранённое решение' : assistanceRules ? 'Алгоритмы · сохранённое решение' : 'Сохранённая историческая обработка'}</span></div>
           <details className="quality-note"><summary>Как выбирается категория</summary>
-            {selected.processing?.version?.startsWith('rules-assistance-') ? <>
+            {reviewedByAi ? <>
+              <p>Алгоритм предложил исправленный текст, категорию и уточнение. ИИ проверил исходное сообщение и это решение: {selected.processing?.aiReview?.outcome === 'confirmed' ? 'подтвердил результат алгоритма.' : 'вернул исправленный вариант решения.'}</p>
+              <p>Исходник, результат алгоритма и итог сохранены в этапах ниже. Разметка и ответы администратора не обучают модель и не меняют правила автоматически.</p>
+            </> : assistanceRules ? <>
               <p>Правила определяют цель обращения. В помощи оцениваются текущее событие, возможность вмешательства и срочность. Неясные детали уточняются параллельно с передачей администратору.</p>
-              <p>Для вопросов проверяется база утверждённых ответов. Если подходящего ответа нет или нужна помощь в конкретной ситуации, обращение остаётся у администратора. Эта версия не вызывает ИИ.</p>
+              <p>Для вопросов проверяется база утверждённых ответов. Если подходящего ответа нет или нужна помощь в конкретной ситуации, обращение остаётся у администратора. В этом обращении сохранено решение алгоритма; статус проверки ИИ показан в этапах ниже.</p>
             </> : selected.processing?.aiReview ? <>
               <p>Алгоритм предлагает исправленный текст, категорию и уточнение. ИИ получает исходное сообщение и этот результат: подтверждает его или возвращает собственный полный вариант. При проверке смысл определяется по исходнику.</p>
               <p>Исходник, результат алгоритма и итог сохраняются. Если ИИ отключён, недоступен или достигнут лимит, остаётся результат алгоритма с отметкой, что ИИ его не проверил. Правила автоматически не меняются.</p>

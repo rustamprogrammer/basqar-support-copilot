@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import { ArrowRight, Check, GitBranch, Inbox, ScanText, ShieldAlert, Trash2, Undo2, UserRound } from "lucide-react";
 import { SiteNav } from '@/components/site-nav';
 import type { Message, MessageRoute, Status } from "@/lib/message-types";
@@ -69,7 +69,6 @@ export default function Home() {
   const refreshing = role === 'admin' && settledLoadKey !== loadKey;
   const receiptId = receipt?.id;
 
-  useEffect(() => { if (new URLSearchParams(window.location.search).get('view') === 'inbox') void enterAdmin(); }, []);
   useEffect(() => { const timer = setTimeout(() => setSearch(query.trim()), 300); return () => clearTimeout(timer); }, [query]);
   useEffect(() => {
     const id = localStorage.getItem('basqar-last-message');
@@ -83,7 +82,7 @@ export default function Home() {
     return () => { active = false; clearInterval(timer); };
   }, [role, receiptId]);
 
-  async function enterAdmin() {
+  const enterAdmin = useCallback(async () => {
     if (role === 'admin' || actionLock.current) return;
     actionLock.current = true;
     setError('');
@@ -94,7 +93,11 @@ export default function Home() {
       else setLoginOpen(true);
     } catch { setError('Не удалось проверить вход.'); }
     finally { actionLock.current = false; }
-  }
+  }, [role]);
+  useEffect(() => {
+    const timer = setTimeout(() => { if (new URLSearchParams(window.location.search).get('view') === 'inbox') void enterAdmin(); }, 0);
+    return () => clearTimeout(timer);
+  }, [enterAdmin]);
   async function login(event: FormEvent) {
     event.preventDefault(); if (actionLock.current) return; actionLock.current = true; setBusy('login'); setError('');
     try {
@@ -263,7 +266,7 @@ export default function Home() {
             {row.originalText && row.originalText.trim() !== row.text && <details className="message-original"><summary>Исходный текст</summary><p>{row.originalText}</p></details>}
             {row.processing && <a className="processing-link" href={`/logic?message=${row.id}`}><GitBranch size={16} />Этапы обработки</a>}
             {row.processing?.context && <a className="processing-link" href={`/logic?message=${encodeURIComponent(row.processing.context.parentId)}`}>Исходное обращение</a>}
-            <FeedbackForm message={row} onSave={feedback => setRows(current => current.map(item => item.id === row.id ? { ...item, feedback } : item))} />
+            <FeedbackForm key={row.id} message={row} onSave={feedback => setRows(current => current.map(item => item.id === row.id ? { ...item, feedback } : item))} />
             </details>
             <div className="message-footer">
               {row.status === "pending" && <button className="secondary" disabled={!!busy} onClick={() => review(row.id, "accepted")}><Check size={16} />Завершить обращение</button>}

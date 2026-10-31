@@ -1,0 +1,6 @@
+# LOCAL ONLY: copy to .dev.vars and paste the team's API key after =.
+# Never commit .dev.vars or put its contents in public issues or screenshots.
+# The team may provide an authorized jury key separately through a private channel.
+# Start the site, then run: npm run ai:configure
+# If a key is already saved, use --replace-key only for intentional rotation.
+OPENAI_API_KEY=

@@ -1,0 +1,26 @@
+{
+  "schema": "contest-authored-data-v1",
+  "createdAt": "2026-10-31",
+  "labelPolicy": "contest-authored-policy-1",
+  "source": "Original synthetic scenarios authored by an AI coding assistant; no private player tickets or administrator outcomes used.",
+  "labelStatus": "assistant-authored-provisional",
+  "humanReviewed": false,
+  "nativeSpeakerReviewed": false,
+  "labelsFrozenBeforeModelRun": true,
+  "inferenceUsedToCreateLabels": false,
+  "familyField": "scenario_id",
+  "splitSource": "file",
+  "files": {
+    "training": { "file": "contest-training.jsonl", "rows": 72, "sha256Lf": "b8d7a29e7f8e6cba6d6ea6aa0b4a2756f980c9ce1c249ef63ad443303f67bea1" },
+    "holdout": { "file": "contest-holdout.jsonl", "rows": 24, "sha256Lf": "07a3fcba7f286e65dc454256dee147c0070ba7a56dafa8ff94c4993313737856" }
+  },
+  "limitations": [
+    "These are small authored smoke datasets, not independent real-world accuracy estimates.",
+    "Both splits were authored in one development session; thematic category overlap is intentional.",
+    "Holdout incidents have separate scenario families, not translated or spelling variants of training rows.",
+    "The taxonomy and priority interpretation still require organizer confirmation.",
+    "Six-language text and labels require human/native-speaker review before production or paid training.",
+    "No draft replies or citation targets have been authored; these labels alone are not a complete supervised fine-tuning target.",
+    "No model training, API upload or provider call is authorized or performed by data validation."
+  ]
+}

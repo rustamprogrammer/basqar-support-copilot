@@ -1,0 +1,56 @@
+{
+  "schema": "adversarial-authored-v1",
+  "createdAt": "2026-10-31",
+  "file": "adversarial-100.jsonl",
+  "datasetSha256Lf": "2bbedbff0fc58de0784261f7464a1096e821671239c22180b2d63e4e6ab451b7",
+  "total": 100,
+  "ids": [
+    "adv-ru-001", "adv-ru-002", "adv-ru-003", "adv-ru-004", "adv-ru-005", "adv-ru-006", "adv-ru-007", "adv-ru-008", "adv-ru-009", "adv-ru-010",
+    "adv-ru-011", "adv-ru-012", "adv-ru-013", "adv-ru-014", "adv-ru-015", "adv-ru-016", "adv-ru-017", "adv-ru-018", "adv-ru-019", "adv-ru-020",
+    "adv-ru-021", "adv-ru-022", "adv-ru-023", "adv-ru-024", "adv-ru-025", "adv-ru-026", "adv-ru-027", "adv-ru-028", "adv-ru-029", "adv-ru-030",
+    "adv-ru-031", "adv-ru-032", "adv-ru-033", "adv-ru-034", "adv-ru-035", "adv-ru-036", "adv-ru-037", "adv-ru-038", "adv-ru-039", "adv-ru-040",
+    "adv-ru-041", "adv-ru-042", "adv-ru-043", "adv-ru-044", "adv-ru-045", "adv-ru-046", "adv-ru-047", "adv-ru-048", "adv-ru-049", "adv-ru-050",
+    "adv-ru-051", "adv-ru-052", "adv-ru-053", "adv-ru-054", "adv-ru-055", "adv-ru-056", "adv-ru-057", "adv-ru-058", "adv-ru-059", "adv-ru-060",
+    "adv-kk-061", "adv-kk-062", "adv-kk-063", "adv-kk-064", "adv-kk-065", "adv-kk-066", "adv-kk-067", "adv-kk-068",
+    "adv-uz-069", "adv-uz-070", "adv-uz-071", "adv-uz-072", "adv-uz-073", "adv-uz-074", "adv-uz-075", "adv-uz-076",
+    "adv-en-077", "adv-en-078", "adv-en-079", "adv-en-080", "adv-en-081", "adv-en-082", "adv-en-083", "adv-en-084",
+    "adv-es-085", "adv-es-086", "adv-es-087", "adv-es-088", "adv-es-089", "adv-es-090", "adv-es-091", "adv-es-092",
+    "adv-pt-093", "adv-pt-094", "adv-pt-095", "adv-pt-096", "adv-pt-097", "adv-pt-098", "adv-pt-099", "adv-pt-100"
+  ],
+  "languageCounts": {"ru": 60, "kk": 8, "uz": 8, "en": 8, "es": 8, "pt": 8},
+  "channelCounts": {"report": 50, "complaint": 50},
+  "priorityCounts": {"p0": 19, "p1": 30, "p2": 22, "p3": 29},
+  "categoryCount": 14,
+  "humanRequired": 98,
+  "automaticPublishedFaqPermitted": 2,
+  "labelPolicy": "contest-authored-policy-1",
+  "labelStatus": "assistant-authored-provisional",
+  "source": "New synthetic incidents and intentionally noisy language authored before inference; no private player tickets or prior model predictions used as labels.",
+  "humanReviewed": false,
+  "nativeSpeakerReviewed": false,
+  "labelsFrozenBeforeModelRun": true,
+  "inferenceCallsBeforeFreeze": 0,
+  "exactOverlapWithPriorContestAndRegression": false,
+  "semantics": [
+    "expected.needs_human=true is a safety requirement; false permits a verified published FAQ but does not forbid human escalation.",
+    "Only two single-topic Russian glossary questions permit automatic published FAQ replies. Rule permissions, multi-topic questions, personal incidents and non-Russian drafts require review.",
+    "Contest p0-p3 priority is separate from the support UI's now/high/normal urgency and must not silently replace it.",
+    "Only ticket is model input. expected, label_reason and challenge_tags are evaluator metadata and must never be sent to the model.",
+    "An attachment count means an attachment was supplied, not that guilt or attachment content has been verified. Merely saying a recording exists is not an attachment.",
+    "Quoted abuse, negated incidents, input channel and stated target of a complaint are material to the labels."
+  ],
+  "protocol": [
+    "Check the SHA and exact ordered IDs before running algorithm-only or AI-only baselines.",
+    "Preserve baseline predictions separately before modifying the hybrid.",
+    "Keep these source labels frozen when analysing errors or improving implementation.",
+    "After errors from this set inform changes, label later scores as regression results on a studied development set, not fresh independent evaluation.",
+    "Record provider failures, abstentions, latency and actual usage; do not silently drop failed rows."
+  ],
+  "limitations": [
+    "All 100 examples and labels are synthetic and provisional; none is an independent human-annotated real player case.",
+    "The dataset author knew the taxonomy and project context. The author did not run classifiers, inspect predictions or call a model while authoring these labels.",
+    "Translations, informal phrasing and noisy six-language text have not been checked by native speakers.",
+    "Unique text and scenario IDs do not prove all scenarios are semantically independent.",
+    "No reviewed draft text or citation target is provided. These labels cannot establish reply fluency or source relevance."
+  ]
+}

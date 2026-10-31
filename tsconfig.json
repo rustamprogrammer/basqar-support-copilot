@@ -49,6 +49,8 @@
     ".wrangler",
     ".sites-runtime",
     "outputs",
-    "work"
+    "work",
+    "artifacts",
+    "hack-b6eba4f7-basqar-main"
   ]
 }

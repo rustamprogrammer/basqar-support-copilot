@@ -70,7 +70,8 @@ const evaluated = rows.map(row => {
   const before = old?.after;
   const acceptedCorrections = row.allowedCorrectedTexts ?? (row.expectedCorrectedText !== undefined ? [row.expectedCorrectedText] : null);
   // Ignore historical input.before: older files contain trained-model outputs.
-  const { before: ignored, ...metadata } = row;
+  const metadata = { ...row };
+  delete metadata.before;
   return { ...metadata, ...(before && { before, beforeAssessment: assess(row, before) }), after, afterAssessment: assess(row, after), correction: acceptedCorrections ? { before: before ? acceptedCorrections.includes(before.text) : null, after: acceptedCorrections.includes(after.text) } : null };
 });
 function stats(items, side) {
@@ -114,5 +115,6 @@ const summary = {
 const outputPath = path.resolve(arg('--output'));
 fs.mkdirSync(path.dirname(outputPath), { recursive: true });
 fs.writeFileSync(outputPath, JSON.stringify({ summary, changes: changed, rows: evaluated }, null, 2));
-const { groups: savedGroups, ...consoleSummary } = summary;
+const consoleSummary = { ...summary };
+delete consoleSummary.groups;
 console.log(JSON.stringify({ output: outputPath, ...consoleSummary }, null, 2));

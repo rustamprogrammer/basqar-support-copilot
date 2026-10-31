@@ -6,7 +6,7 @@ export function detectLanguage(text: string, hint?: Language): Language {
     kk: (t.match(/(?:көмек\p{L}*|көмектес\p{L}*|мені|маған|жатыр|жатр|қалай|қайда|жоқ|емес|деген|себепсіз|komek\p{L}*|magan|jatyr|qalay)/gu) ?? []).length * 3 + (/[әөұүң]/u.test(t) ? 2 : 0),
     uz: (t.match(/(?:yordam|bering|meni|menga|nima|qanday|qayer\p{L}*|yo'q|emas|akkaunt\p{L}*|qil\p{L}*|bo'\p{L}*|йўқ|ёрдам|беринг|қандай|нима|менга|ҳақорат)/gu) ?? []).length * 3,
     ru: (t.match(/(?:меня|мне|как|что|почему|помог\p{L}*|игрок\p{L}*|оплат\p{L}*|забан\p{L}*)/gu) ?? []).length * 2,
-    en: (t.match(/\b(?:please|help|what|how|where|account|payment|banned|player)\b/gu) ?? []).length * 2,
+    en: (t.match(/\b(?:please|help|what|how|where|account|payment|paid|purchase|charged|receive|stolen|hacked|banned|player)\b/gu) ?? []).length * 2,
     es: (t.match(/\b(?:ayuda|ayuden|cuenta|pago|dónde|cómo|jugador|por favor)\b/gu) ?? []).length * 3,
     pt: (t.match(/\b(?:ajuda|ajudem|conta|pagamento|onde|como|jogador|não)\b/gu) ?? []).length * 3,
   };

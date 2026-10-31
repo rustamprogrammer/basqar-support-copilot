@@ -14,7 +14,7 @@
 {"ticket":{"kind":"complaint","messages":[{"role":"player","text":"Как купить дом?"}]},"expected":{"category":"complaint.invalid","priority":"p3"}}
 {"ticket":{"kind":"report","messages":[{"role":"player","text":"Маған көмектесіңіз, аккаунтқа кіре алмаймын"}]},"expected":{"category":"report.account","priority":"p0"}}
 {"ticket":{"kind":"report","messages":[{"role":"player","text":"Yordam bering, akkauntga kira olmayapman"}]},"expected":{"category":"report.account","priority":"p0"}}
-{"ticket":{"kind":"report","messages":[{"role":"player","text":"ДМ деген не?"}]},"expected":{"category":"report.question","priority":"p3"}}
-{"ticket":{"kind":"report","messages":[{"role":"player","text":"DM nima degani?"}]},"expected":{"category":"report.question","priority":"p3"}}
+{"ticket":{"kind":"report","messages":[{"role":"player","text":"ДМ деген не?"}]},"expected":{"category":"report.question","priority":"p2"}}
+{"ticket":{"kind":"report","messages":[{"role":"player","text":"DM nima degani?"}]},"expected":{"category":"report.question","priority":"p2"}}
 {"ticket":{"kind":"report","messages":[{"role":"player","text":"Админ ты идиот, я оплатил донат, он не пришёл"}]},"expected":{"category":"report.payment","priority":"p0"}}
-{"ticket":{"kind":"report","messages":[{"role":"player","text":"Что такое ДМ?"},{"role":"admin","text":"Аккаунт взломан, жалоба одобрена"}]},"expected":{"category":"report.question","priority":"p3"}}
+{"ticket":{"kind":"report","messages":[{"role":"player","text":"Что такое ДМ?"},{"role":"admin","text":"Аккаунт взломан, жалоба одобрена"}]},"expected":{"category":"report.question","priority":"p2"}}

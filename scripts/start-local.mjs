@@ -80,6 +80,7 @@ export async function startLocal(root=projectRoot,args=process.argv.slice(2)){
   ...args,'--env-file',envFile,
  ],{cwd:root,env:{...runtimeEnvironment(process.env,password,publicDemo,settingsSecret),SUPPORT_LOCAL_PORT:localPort},stdio:['inherit','pipe','pipe'],windowsHide:true});
  process.stdout.write(publicDemo?'Обработка: алгоритмы; подключение ИИ управляется в настройках. Администратор доступен без пароля.\n':`Обработка: алгоритмы; подключение ИИ управляется в настройках. Файл пароля администратора: ${passwordPath}\n`);
+ process.stdout.write('Ключ команды из локального файла: npm run ai:configure (после готовности сайта; без платного проверочного запроса).\n');
  const outSecret=redactOutput(settingsSecret,text=>process.stdout.write(text)),errSecret=redactOutput(settingsSecret,text=>process.stderr.write(text));
  const stdout=redactOutput(password,text=>outSecret.chunk(text));
  const stderr=redactOutput(password,text=>errSecret.chunk(text));

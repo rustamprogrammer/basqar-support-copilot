@@ -1,0 +1,51 @@
+{
+  "schema": "adversarial-evaluation-manifest-v1",
+  "dataset": "evaluation/adversarial-holdout-20.jsonl",
+  "datasetSha256Lf": "ef907ddfffe813f00e4f95fcd8879a96a4443f811410d0009889dbc94a85539e",
+  "total": 20,
+  "ids": [
+    "fresh20-ru-01", "fresh20-ru-02", "fresh20-ru-03", "fresh20-ru-04", "fresh20-ru-05",
+    "fresh20-ru-06", "fresh20-ru-07", "fresh20-ru-08", "fresh20-ru-09", "fresh20-ru-10",
+    "fresh20-kk-01", "fresh20-kk-02", "fresh20-uz-01", "fresh20-uz-02", "fresh20-en-01",
+    "fresh20-en-02", "fresh20-es-01", "fresh20-es-02", "fresh20-pt-01", "fresh20-pt-02"
+  ],
+  "frozenAt": "2026-10-31T17:44:36Z",
+  "purpose": "One final check after development on the separate 100-case adversarial dataset; never train or tune on these labels before that check.",
+  "provenance": {
+    "kind": "authored-synthetic",
+    "authorRole": "separate triage review agent",
+    "labelStatus": "assistant-authored-provisional",
+    "humanReviewed": false,
+    "nativeSpeakerReviewed": false,
+    "privateHandoutTicketTextsUsed": false,
+    "main100DatasetOrPredictionsReadByAuthor": false,
+    "inferenceRunDuringAuthoring": false,
+    "apiCallsDuringAuthoring": 0,
+    "priorContext": "Author knows existing implementation, earlier audits and previously used contest fixtures; this is a fresh synthetic final check, not independent real-world or blind expert ground truth."
+  },
+  "distribution": {
+    "languages": { "ru": 10, "kk": 2, "uz": 2, "en": 2, "es": 2, "pt": 2 },
+    "priorities": { "p0": 6, "p1": 6, "p2": 4, "p3": 4 },
+    "uniqueScenarioIds": 20
+  },
+  "labelPolicy": [
+    "Only player messages establish intent; synthetic administrator messages and reported-player denials cannot supply target labels.",
+    "Actual payment problems, lost account access, mass technical failure and credible out-of-game threats take p0.",
+    "Cheating, RMT advertising, large-property scams and valid complaints with attachments take p1.",
+    "Ordinary help/property loss with access intact and rule-interpretation questions take p2.",
+    "Other complaints without attachments, mechanics questions and off-topic take p3.",
+    "All selected cases need human review: questions require case-specific rule interpretation or an unpublished mechanics answer; no direct verified glossary FAQ is used."
+  ],
+  "evaluationRules": [
+    "Verify datasetSha256Lf before calling any model.",
+    "Send only ticket data to inference; never send expected, challenge_tags or label_reason.",
+    "Freeze code, prompt and retrieval settings before the final run.",
+    "Count API errors and invalid outputs explicitly; never silently replace AI-only predictions with algorithm output.",
+    "If these cases are used to tune the implementation after inspection, mark the dataset consumed and obtain a new final check."
+  ],
+  "limitations": [
+    "Twenty synthetic scenarios are too small to estimate production accuracy reliably.",
+    "Language quality and rule interpretations require independent human and native-speaker review.",
+    "The dataset contains no real user data and no raw private handout excerpts."
+  ]
+}

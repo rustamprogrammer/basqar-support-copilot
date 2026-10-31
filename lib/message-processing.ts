@@ -5,7 +5,7 @@ import { understandMessage } from "./message-understanding.ts";
 import { inspectModeration } from "./message-moderation.ts";
 import { routeLabels, ROUTING_SCHEMA } from "./message-routes.ts";
 import {clarifyDecision} from "./message-details.ts";
-import {useClarification} from "./clarification-routing.ts";
+import {applyClarification} from "./clarification-routing.ts";
 import { normalizeInputScripts } from "./input-script-normalization.ts";
 
 
@@ -42,8 +42,8 @@ export function processMessageWithTrace(original: string, context?: Clarificatio
   }
   const text = correctText(original, normalized.text);
   const understanding = understandMessage(text);
-  const rule = clarifyDecision(normalized.text, understanding.text, useClarification(routeMessage(normalized.text, text, understanding.text), context));
-  const { status, reason, classification, topic } = rule;
+  const rule = clarifyDecision(normalized.text, understanding.text, applyClarification(routeMessage(normalized.text, text, understanding.text), context));
+  const { status, classification, topic } = rule;
   const corrected = text !== original.trim();
   const processing: ProcessingTrace = {
     classification,

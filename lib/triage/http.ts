@@ -27,7 +27,7 @@ export async function handleTriageRequest(request: Request, corpus: Corpus, run?
     const result = run ? await run(ticket) : triage(ticket, { corpus });
     result.meta.elapsed_ms = Math.round((performance.now() - started) * 100) / 100;
     return Response.json(result, { headers: { 'Cache-Control': 'no-store', 'X-Triage-Version': result.meta.version, 'X-Triage-Mode': result.meta.mode } });
-  } catch (error) {
+  } catch {
     return Response.json({ error: 'Triage is temporarily unavailable. Check database migrations and server logs.' }, { status: 503 });
   }
 }

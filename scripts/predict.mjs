@@ -1,7 +1,7 @@
 import { open, rename, unlink } from 'node:fs/promises';
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
-import { triage, ticketText, problemSignature } from '../lib/triage/engine.ts';
+import { triage, ticketSignature } from '../lib/triage/engine.ts';
 import { parseTicket } from '../lib/triage/types.ts';
 import { ruleCorpus } from '../lib/triage/runtime.ts';
 
@@ -25,7 +25,7 @@ try {
     const result = triage(ticket, { corpus: ruleCorpus, recent });
     latencies.push(result.meta.elapsed_ms);
     await output.write(JSON.stringify({ ...(ticket.ticket_id ? { ticket_id: ticket.ticket_id } : {}), ...result }) + '\n');
-    if (ticket.reporter_hash && ticket.created_at) recent.push({ id: ticket.ticket_id ?? String(count), reporter: ticket.reporter_hash, time: Date.parse(ticket.created_at), signature: problemSignature(ticketText(ticket)) });
+    if (ticket.reporter_hash && ticket.created_at) recent.push({ id: ticket.ticket_id ?? String(count), reporter: ticket.reporter_hash, time: Date.parse(ticket.created_at), signature: ticketSignature(ticket) });
     if (recent.length > 10000) recent.shift();
   }
   await output.close(); output = undefined;

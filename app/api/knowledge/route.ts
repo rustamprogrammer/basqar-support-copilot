@@ -5,6 +5,7 @@ import { knowledgeEntries } from '@/db/schema';
 import { isAdmin, publicDemoEnabled, jsonMutation, rejectMutation } from '@/lib/access';
 import { loadKnowledge, validateKnowledge } from '@/lib/knowledge-store';
 import { KNOWLEDGE_ENTRIES } from '@/lib/knowledge-base';
+import { readRequestJson, MAX_KNOWLEDGE_BODY_BYTES } from '@/lib/request-json';
 export const dynamic = 'force-dynamic';
 export async function GET(request: Request) {
   if (!await isAdmin(request, env.SUPPORT_ADMIN_PASSWORD, publicDemoEnabled(env.SUPPORT_DEMO_MODE))) return Response.json({ error: 'Войдите как администратор.' }, { status: 401 });
@@ -13,7 +14,9 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   if (!await isAdmin(request, env.SUPPORT_ADMIN_PASSWORD, publicDemoEnabled(env.SUPPORT_DEMO_MODE))) return rejectMutation(request, 'Войдите как администратор.', 401);
   if (!jsonMutation(request)) return rejectMutation(request, 'Ожидается JSON.', 415);
-  const body = await request.json().catch(() => null) as { entry?: unknown; confirmed?: unknown; expectedVersion?: unknown } | null;
+  const parsed = await readRequestJson(request, MAX_KNOWLEDGE_BODY_BYTES);
+  if (parsed.response) return parsed.response;
+  const body = parsed.data as { entry?: unknown; confirmed?: unknown; expectedVersion?: unknown } | null;
   const entry = validateKnowledge(body?.entry);
   if (!entry || (entry.status === 'published' && body?.confirmed !== true)) return Response.json({ error: 'Проверьте поля карточки и подтвердите источник перед публикацией.' }, { status: 400 });
   const db = getDb(), [stored] = await db.select().from(knowledgeEntries).where(eq(knowledgeEntries.id, entry.id));
