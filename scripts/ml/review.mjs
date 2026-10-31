@@ -1,0 +1,11 @@
+import fs from 'node:fs';
+import { textHash } from './dataset.mjs';
+const args=process.argv.slice(2), arg=name=>args[args.indexOf(name)+1];
+if(!['--input','--ids','--output'].every(name=>args.includes(name))) throw new Error('Usage: npm run ml:review -- --input feedback.jsonl --ids approved-ids.txt --output reviewed.jsonl');
+const ids=new Set(fs.readFileSync(arg('--ids'),'utf8').trim().split(/\s+/));
+const rows=fs.readFileSync(arg('--input'),'utf8').replace(/^\uFEFF/,'').trim().split(/\r?\n/).filter(Boolean).map(line=>JSON.parse(line));
+for(const id of ids) if(!rows.some(row=>row.id===id)) throw new Error(`Missing reviewed id: ${id}`);
+const approved=rows.filter(row=>ids.has(row.id)).map(row=>({...row,reviewStatus:'approved',reviewedAt:new Date().toISOString(),reviewedBy:'local-owner',split:parseInt(textHash(row.text).slice(0,8),16)%5===0?'validation':'train'}));
+if(fs.existsSync(arg('--output'))) throw new Error('Choose a new output file to preserve the previous reviewed dataset');
+fs.writeFileSync(arg('--output'),approved.map(row=>JSON.stringify(row)).join('\n'));
+console.log(`Approved ${approved.length} explicitly selected examples. Model unchanged.`);

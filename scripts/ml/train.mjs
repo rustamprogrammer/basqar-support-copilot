@@ -1,0 +1,25 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { spawnSync } from 'node:child_process';
+import { featureCounts, FEATURE_VERSION } from '../../lib/intent-features.ts';
+import { correctText } from '../../lib/message-processing.ts';
+import { understandMessage } from '../../lib/message-understanding.ts';
+import { validateDataset } from './dataset.mjs';
+const args = process.argv.slice(2);
+const arg = name => args[args.indexOf(name) + 1];
+if (!args.includes('--input')) throw new Error('Usage: npm run ml:train -- --input examples.jsonl [--allow-provisional] [--output candidate.json]');
+const rows = fs.readFileSync(arg('--input'), 'utf8').replace(/^\uFEFF/, '').trim().split(/\r?\n/).filter(Boolean).map(line => JSON.parse(line));
+const registryPath = '.sites-runtime/ml/holdout-hashes.json';
+const heldout = new Set(fs.existsSync(registryPath) ? JSON.parse(fs.readFileSync(registryPath,'utf8')) : []);
+const selected = validateDataset(rows, args.includes('--allow-provisional'), heldout);
+const output = path.resolve(args.includes('--output') ? arg('--output') : '.sites-runtime/ml/candidate.json');
+fs.mkdirSync(path.dirname(output), { recursive: true });
+const featuresPath = path.join(path.dirname(output), 'training-features.local.json');
+fs.writeFileSync(featuresPath, JSON.stringify({ featureVersion: FEATURE_VERSION, rows: selected.map(row => {
+  const understood = understandMessage(correctText(row.text)).text;
+  return { ...row, understood, features: featureCounts(row.text, understood) };
+}) }));
+const python = process.env.ML_PYTHON || (fs.existsSync('.sites-runtime/ml-venv/Scripts/python.exe') ? path.resolve('.sites-runtime/ml-venv/Scripts/python.exe') : 'python');
+const result = spawnSync(python, [path.join(import.meta.dirname, 'train.py'), featuresPath, output], { stdio: 'inherit', env: { ...process.env, PYTHONIOENCODING: 'utf-8' } });
+if (result.error) throw result.error;
+process.exitCode = result.status ?? 1;

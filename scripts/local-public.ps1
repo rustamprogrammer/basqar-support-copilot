@@ -1,8 +1,15 @@
-param([ValidateSet('Start', 'Stop', 'Status')][string]$Action = 'Start')
+﻿param(
+    [ValidateSet('Start', 'Stop', 'Status')][string]$Action = 'Start',
+    [switch]$OpenBrowser
+)
 $ErrorActionPreference = 'Stop'
+[Console]::OutputEncoding = [Text.UTF8Encoding]::new($false)
 $projectPath = Split-Path -Parent $PSScriptRoot
 $runtimePath = Join-Path $projectPath '.sites-runtime'
 $statePath = Join-Path $runtimePath 'public-site.json'
+$linkPath = Join-Path $projectPath 'site-link.txt'
+$shortcutPath = Join-Path $projectPath 'open-site.url'
+$localUrl = 'http://127.0.0.1:8787'
 New-Item -ItemType Directory -Path $runtimePath -Force | Out-Null
 
 function Get-OwnedProcess($record) {
@@ -14,77 +21,149 @@ function Get-OwnedProcess($record) {
 function Get-Record($process) {
     return @{ id = $process.Id; started = [string]$process.StartTime.ToUniversalTime().Ticks }
 }
-function Stop-OwnedProcesses($state) {
-    foreach ($record in @($state.tunnel, $state.server)) {
-        $process = Get-OwnedProcess $record
-        if ($process) { & taskkill.exe /PID $process.Id /T /F 2>$null | Out-Null }
-    }
+function Stop-OwnedProcess($record) {
+    $process = Get-OwnedProcess $record
+    if ($process) { & taskkill.exe /PID $process.Id /T /F 2>$null | Out-Null }
 }
 function Save-State($state) {
-    $json = $state | ConvertTo-Json -Depth 4
-    [IO.File]::WriteAllText($statePath, $json, [Text.UTF8Encoding]::new($false))
+    [IO.File]::WriteAllText($statePath, ($state | ConvertTo-Json -Depth 4), [Text.UTF8Encoding]::new($false))
+}
+function Test-LocalSite {
+    try { return (Invoke-WebRequest -Uri "$localUrl/api/health" -UseBasicParsing -TimeoutSec 3).StatusCode -eq 200 }
+    catch { return $false }
+}
+function Clear-Links {
+    [IO.File]::WriteAllText($linkPath, "Сайт остановлен. Запустите start-site.cmd.`r`n", [Text.UTF8Encoding]::new($true))
+    if (Test-Path -LiteralPath $shortcutPath) { Remove-Item -LiteralPath $shortcutPath }
+}
+function Show-Links($publicUrl) {
+    $url = if ($publicUrl) { $publicUrl } else { $localUrl }
+    [IO.File]::WriteAllText($linkPath, "$url`r`n", [Text.UTF8Encoding]::new($true))
+    [IO.File]::WriteAllText($shortcutPath, "[InternetShortcut]`r`nURL=$url`r`n", [Text.UTF8Encoding]::new($false))
+    Write-Host ''
+    Write-Host 'САЙТ ЗАПУЩЕН' -ForegroundColor Green
+    Write-Host "На этом ноутбуке: $localUrl"
+    Write-Host ''
+    if ($publicUrl) {
+        Write-Host 'ССЫЛКА ДЛЯ ДРУГИХ УСТРОЙСТВ:' -ForegroundColor Cyan
+        Write-Host $publicUrl -ForegroundColor Cyan
+    } else {
+        Write-Host 'Публичная ссылка не создана. Сайт доступен на этом ноутбуке.' -ForegroundColor Yellow
+    }
+    Write-Host ''
+    Write-Host "Ссылка сохранена: $linkPath"
+    Write-Host 'Чтобы открыть сайт повторно, нажмите open-site.url.'
+    Write-Host 'Это окно можно закрыть. Для остановки сайта запустите stop-site.cmd.'
+    if ($OpenBrowser) {
+        try { Start-Process -FilePath $url | Out-Null }
+        catch { Write-Host 'Не удалось открыть браузер. Скопируйте ссылку выше.' -ForegroundColor Yellow }
+    }
 }
 
-$state = if (Test-Path -LiteralPath $statePath) { Get-Content -LiteralPath $statePath -Raw | ConvertFrom-Json } else { $null }
+$state = @{ server = $null; tunnel = $null; url = $null; log = $null }
+if (Test-Path -LiteralPath $statePath) {
+    try {
+        $saved = Get-Content -LiteralPath $statePath -Raw -Encoding UTF8 | ConvertFrom-Json
+        $state.server = $saved.server
+        $state.tunnel = $saved.tunnel
+        $state.log = $saved.log
+        if ($saved.url -match '^https://[a-z0-9-]+\.trycloudflare\.com/?$') { $state.url = $saved.url }
+    } catch { Write-Host 'Не удалось прочитать состояние прошлого запуска.' -ForegroundColor Yellow }
+}
 if ($Action -eq 'Stop') {
-    if ($state) { Stop-OwnedProcesses $state; Remove-Item -LiteralPath $statePath }
-    Write-Output 'Site stopped. The public link is offline.'
+    Stop-OwnedProcess $state.tunnel
+    Stop-OwnedProcess $state.server
+    if (Test-Path -LiteralPath $statePath) { Remove-Item -LiteralPath $statePath }
+    Clear-Links
+    Write-Host 'Сайт остановлен. Публичная ссылка больше не работает.'
     exit 0
 }
-if ($state -and (Get-OwnedProcess $state.server) -and (Get-OwnedProcess $state.tunnel) -and $state.url) {
-    Write-Output $state.url
-    exit 0
+$serverReady = (Get-OwnedProcess $state.server) -and (Test-LocalSite)
+$tunnelReady = (Get-OwnedProcess $state.tunnel) -and $state.url
+if ($serverReady -and $tunnelReady) { Show-Links $state.url; exit 0 }
+if ($Action -eq 'Status') {
+    if ($serverReady) { Show-Links $null; exit 0 }
+    Clear-Links
+    Write-Host 'Сайт не запущен. Откройте start-site.cmd.' -ForegroundColor Yellow
+    exit 1
 }
-if ($Action -eq 'Status') { Write-Output 'Site is not running.'; exit 1 }
-if ($state) { Stop-OwnedProcesses $state }
-if (-not (Test-Path -LiteralPath (Join-Path $projectPath 'dist/server/wrangler.json'))) {
-    throw 'Build output is missing. Run npm run build first.'
-}
-if (Get-NetTCPConnection -LocalPort 8787 -State Listen -ErrorAction SilentlyContinue) {
-    throw 'Port 8787 is used by another application.'
-}
-$nodePath = (Get-Command node.exe -ErrorAction Stop).Source
-$tunnelPath = (Get-Command cloudflared.exe -ErrorAction Stop).Source
-$runId = Get-Date -Format 'yyyyMMdd-HHmmss'
-$serverLog = Join-Path $runtimePath "$runId-server.log"
-$serverError = Join-Path $runtimePath "$runId-server-error.log"
-$tunnelLog = Join-Path $runtimePath "$runId-tunnel.log"
-$tunnelError = Join-Path $runtimePath "$runId-tunnel-error.log"
-$state = @{ server = $null; tunnel = $null; url = $null; log = $tunnelError }
+
 try {
-    $server = Start-Process -FilePath $nodePath -WorkingDirectory $projectPath -WindowStyle Hidden -PassThru -RedirectStandardOutput $serverLog -RedirectStandardError $serverError -ArgumentList @('--import', './scripts/sites-env.mjs', './node_modules/wrangler/bin/wrangler.js', 'dev', '--config', 'dist/server/wrangler.json', '--local', '--persist-to', '.wrangler/state', '--ip', '127.0.0.1', '--port', '8787', '--inspector-port', '0')
-    $state.server = Get-Record $server
-    Save-State $state
-    $ready = $false
-    $deadline = (Get-Date).AddSeconds(50)
-    while ((Get-Date) -lt $deadline) {
-        if (-not (Get-OwnedProcess $state.server)) { throw "Server stopped. See $serverError" }
-        try {
-            $response = Invoke-WebRequest -Uri 'http://127.0.0.1:8787/api/messages' -UseBasicParsing -TimeoutSec 2
-            if ($response.StatusCode -eq 200) { $ready = $true; break }
-        } catch { Start-Sleep -Milliseconds 500 }
+    if (-not $serverReady) {
+        Stop-OwnedProcess $state.server
+        $state.server = $null
+        if (Get-NetTCPConnection -LocalPort 8787 -State Listen -ErrorAction SilentlyContinue) {
+            throw 'Порт 8787 занят другим запуском. Если открыт npm start, остановите его через Ctrl+C и повторите запуск.'
+        }
+        if (-not (Test-Path -LiteralPath (Join-Path $projectPath 'dist/server/wrangler.json'))) {
+            throw 'Сайт ещё не собран. Выполните установку и сборку из README: npm run install:ci, затем npm run build и создание базы.'
+        }
+        $nodeCommand = Get-Command node.exe -ErrorAction SilentlyContinue
+        if (-not $nodeCommand) { throw 'Не найден Node.js. Установите Node.js 24 и повторно откройте start-site.cmd.' }
+        $runId = Get-Date -Format 'yyyyMMdd-HHmmss-fff'
+        $serverLog = Join-Path $runtimePath "$runId-server.log"
+        $serverError = Join-Path $runtimePath "$runId-server-error.log"
+        Write-Host 'Запускаю сайт...'
+        $server = Start-Process -FilePath $nodeCommand.Source -WorkingDirectory $projectPath -WindowStyle Hidden -PassThru -RedirectStandardOutput $serverLog -RedirectStandardError $serverError -ArgumentList @('--import', './scripts/sites-env.mjs', './node_modules/wrangler/bin/wrangler.js', 'dev', '--config', 'dist/server/wrangler.json', '--local', '--persist-to', '.wrangler/state', '--ip', '127.0.0.1', '--port', '8787', '--inspector-port', '0')
+        $state.server = Get-Record $server
+        Save-State $state
+        $deadline = (Get-Date).AddSeconds(45)
+        while ((Get-Date) -lt $deadline) {
+            if (-not (Get-OwnedProcess $state.server)) { throw "Сервер завершился. Подробности: $serverError" }
+            if (Test-LocalSite) { $serverReady = $true; break }
+            Start-Sleep -Milliseconds 500
+        }
+        if (-not $serverReady) { throw "Сайт не отвечает. Проверьте создание базы по README. Подробности: $serverError" }
     }
-    if (-not $ready) { throw "Server did not start. See $serverError" }
-    $tunnel = Start-Process -FilePath $tunnelPath -WorkingDirectory $projectPath -WindowStyle Hidden -PassThru -RedirectStandardOutput $tunnelLog -RedirectStandardError $tunnelError -ArgumentList @('tunnel', '--no-autoupdate', '--url', 'http://127.0.0.1:8787', '--protocol', 'http2')
+    # Recover the local server without changing an already running tunnel's URL.
+    if ($tunnelReady) { Show-Links $state.url; exit 0 }
+    Stop-OwnedProcess $state.tunnel
+    $state.tunnel = $null
+    $state.url = $null
+    Save-State $state
+    Write-Host "Сайт доступен на этом ноутбуке: $localUrl"
+    $tunnelCommand = Get-Command cloudflared.exe -ErrorAction SilentlyContinue
+    if (-not $tunnelCommand) { throw 'Не найден cloudflared. Установите его по ссылке в README, затем повторите запуск для получения публичной ссылки.' }
+    Write-Host ''
+    Write-Host 'Создаю публичную ссылку...'
+    $runId = Get-Date -Format 'yyyyMMdd-HHmmss-fff'
+    $tunnelLog = Join-Path $runtimePath "$runId-tunnel.log"
+    $tunnelError = Join-Path $runtimePath "$runId-tunnel-error.log"
+    $tunnel = Start-Process -FilePath $tunnelCommand.Source -WorkingDirectory $projectPath -WindowStyle Hidden -PassThru -RedirectStandardOutput $tunnelLog -RedirectStandardError $tunnelError -ArgumentList @('tunnel', '--no-autoupdate', '--url', $localUrl, '--protocol', 'http2')
     $state.tunnel = Get-Record $tunnel
+    $state.log = $tunnelError
     Save-State $state
     $deadline = (Get-Date).AddSeconds(55)
     while ((Get-Date) -lt $deadline) {
-        if (-not (Get-OwnedProcess $state.tunnel)) { throw "Tunnel stopped. See $tunnelError" }
-        $log = Get-Content -LiteralPath $tunnelError -Raw -ErrorAction SilentlyContinue
-        if (-not $log) { Start-Sleep -Milliseconds 500; continue }
-        $urlMatch = [regex]::Match([string]$log, 'https://[a-z0-9-]+\.trycloudflare\.com')
-        if ($urlMatch.Success -and $log -match 'Registered tunnel connection') {
-            $state.url = $urlMatch.Value
-            Save-State $state
-            Write-Output $state.url
-            exit 0
+        if (-not (Get-OwnedProcess $state.tunnel)) { throw "Туннель завершился. Подробности: $tunnelError" }
+        $log = Get-Content -LiteralPath $tunnelError -Raw -Encoding UTF8 -ErrorAction SilentlyContinue
+        if ($log) {
+            $urlMatch = [regex]::Match([string]$log, 'https://[a-z0-9-]+\.trycloudflare\.com')
+            if ($urlMatch.Success -and $log -match 'Registered tunnel connection') {
+                $state.url = $urlMatch.Value
+                Save-State $state
+                Show-Links $state.url
+                exit 0
+            }
         }
         Start-Sleep -Milliseconds 500
     }
-    throw "Tunnel did not connect. See $tunnelError"
+    throw "Не удалось создать публичную ссылку. Проверьте интернет и повторите запуск. Подробности: $tunnelError"
 } catch {
-    Stop-OwnedProcesses $state
-    Save-State $state
-    throw
+    $message = $_.Exception.Message
+    Stop-OwnedProcess $state.tunnel
+    $state.tunnel = $null
+    $state.url = $null
+    if ((Get-OwnedProcess $state.server) -and (Test-LocalSite)) {
+        Save-State $state
+        Write-Host $message -ForegroundColor Yellow
+        Show-Links $null
+    } else {
+        Stop-OwnedProcess $state.server
+        $state.server = $null
+        Save-State $state
+        Clear-Links
+        Write-Host "Ошибка запуска: $message" -ForegroundColor Red
+    }
+    exit 1
 }

@@ -1,0 +1,1484 @@
+{
+  "generatedAt": "2026-10-31T00:28:25.932Z",
+  "schema": "purpose-v1",
+  "stages": [
+    {
+      "file": "../routing-v4-2026-10-31/stage-0-baseline.json",
+      "title": "До изменений",
+      "report": {
+        "stage": "baseline",
+        "processorVersion": "rules-3.0",
+        "datasetSha256": "5b993d37d4aeb631599251e720c1174ff06943c8b5ad86a72279bebc08967b69",
+        "labelStatus": "assistant-provisional",
+        "humanReviewed": 0,
+        "summary": {
+          "total": 1000,
+          "scored": 931,
+          "correct": 633,
+          "wrong": 7,
+          "abstained": 291,
+          "ambiguous": 69,
+          "matrix": {
+            "question": {
+              "question": 22,
+              "help": 3,
+              "violation": 0,
+              "trash": 0,
+              "undetermined": 13
+            },
+            "help": {
+              "question": 2,
+              "help": 590,
+              "violation": 0,
+              "trash": 0,
+              "undetermined": 239
+            },
+            "violation": {
+              "question": 0,
+              "help": 2,
+              "violation": 13,
+              "trash": 0,
+              "undetermined": 10
+            },
+            "trash": {
+              "question": 0,
+              "help": 0,
+              "violation": 0,
+              "trash": 8,
+              "undetermined": 29
+            },
+            "undetermined": {
+              "question": 0,
+              "help": 12,
+              "violation": 0,
+              "trash": 1,
+              "undetermined": 56
+            }
+          },
+          "routeAccuracy": 0.6799140708915145,
+          "coverage": 0.6874328678839957,
+          "decisionPrecision": 0.9890625,
+          "helpAsQuestion": 2,
+          "questionAsHelp": 3,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "missedViolation": 12,
+          "ambiguousTerminal": 1,
+          "details": {
+            "evaluated": 960,
+            "correct": 626,
+            "unnecessary": 274,
+            "missing": 60
+          }
+        },
+        "comparison": null
+      }
+    },
+    {
+      "file": "../routing-v4-2026-10-31/stage-1-contract.json",
+      "title": "Категория отдельно от статуса",
+      "report": {
+        "stage": "contract",
+        "processorVersion": "rules-4.0-contract",
+        "datasetSha256": "5b993d37d4aeb631599251e720c1174ff06943c8b5ad86a72279bebc08967b69",
+        "labelStatus": "assistant-provisional",
+        "humanReviewed": 0,
+        "summary": {
+          "total": 1000,
+          "scored": 931,
+          "correct": 633,
+          "wrong": 7,
+          "abstained": 291,
+          "ambiguous": 69,
+          "matrix": {
+            "question": {
+              "question": 22,
+              "help": 3,
+              "violation": 0,
+              "trash": 0,
+              "undetermined": 13
+            },
+            "help": {
+              "question": 2,
+              "help": 590,
+              "violation": 0,
+              "trash": 0,
+              "undetermined": 239
+            },
+            "violation": {
+              "question": 0,
+              "help": 2,
+              "violation": 13,
+              "trash": 0,
+              "undetermined": 10
+            },
+            "trash": {
+              "question": 0,
+              "help": 0,
+              "violation": 0,
+              "trash": 8,
+              "undetermined": 29
+            },
+            "undetermined": {
+              "question": 0,
+              "help": 12,
+              "violation": 0,
+              "trash": 1,
+              "undetermined": 56
+            }
+          },
+          "routeAccuracy": 0.6799140708915145,
+          "coverage": 0.6874328678839957,
+          "decisionPrecision": 0.9890625,
+          "helpAsQuestion": 2,
+          "questionAsHelp": 3,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "missedViolation": 12,
+          "ambiguousTerminal": 1,
+          "details": {
+            "evaluated": 960,
+            "correct": 626,
+            "unnecessary": 274,
+            "missing": 60
+          }
+        },
+        "comparison": {
+          "baseline": "baseline",
+          "improved": 0,
+          "lostCorrect": 0,
+          "abstainedToWrong": 0
+        }
+      }
+    },
+    {
+      "file": "../routing-v4-2026-10-31/stage-2-purpose.json",
+      "title": "Цель: вопрос или помощь",
+      "report": {
+        "stage": "purpose",
+        "processorVersion": "rules-4.1-purpose",
+        "datasetSha256": "5b993d37d4aeb631599251e720c1174ff06943c8b5ad86a72279bebc08967b69",
+        "labelStatus": "assistant-provisional",
+        "humanReviewed": 0,
+        "summary": {
+          "total": 1000,
+          "scored": 931,
+          "correct": 756,
+          "wrong": 3,
+          "abstained": 172,
+          "ambiguous": 69,
+          "matrix": {
+            "question": {
+              "question": 28,
+              "help": 0,
+              "violation": 0,
+              "trash": 0,
+              "undetermined": 10
+            },
+            "help": {
+              "question": 1,
+              "help": 707,
+              "violation": 0,
+              "trash": 0,
+              "undetermined": 123
+            },
+            "violation": {
+              "question": 0,
+              "help": 2,
+              "violation": 13,
+              "trash": 0,
+              "undetermined": 10
+            },
+            "trash": {
+              "question": 0,
+              "help": 0,
+              "violation": 0,
+              "trash": 8,
+              "undetermined": 29
+            },
+            "undetermined": {
+              "question": 0,
+              "help": 11,
+              "violation": 0,
+              "trash": 1,
+              "undetermined": 57
+            }
+          },
+          "routeAccuracy": 0.8120300751879699,
+          "coverage": 0.8152524167561761,
+          "decisionPrecision": 0.9960474308300395,
+          "helpAsQuestion": 1,
+          "questionAsHelp": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "missedViolation": 12,
+          "ambiguousTerminal": 1,
+          "details": {
+            "evaluated": 960,
+            "correct": 629,
+            "unnecessary": 270,
+            "missing": 61
+          }
+        },
+        "comparison": {
+          "baseline": "contract",
+          "improved": 124,
+          "lostCorrect": 1,
+          "abstainedToWrong": 0
+        }
+      }
+    },
+    {
+      "file": "../routing-v4-2026-10-31/stage-3-language.json",
+      "title": "Язык, жаргон и связи с игроком",
+      "report": {
+        "stage": "language",
+        "processorVersion": "rules-4.2-language",
+        "datasetSha256": "5b993d37d4aeb631599251e720c1174ff06943c8b5ad86a72279bebc08967b69",
+        "labelStatus": "assistant-provisional",
+        "humanReviewed": 0,
+        "summary": {
+          "total": 1000,
+          "scored": 931,
+          "correct": 775,
+          "wrong": 2,
+          "abstained": 154,
+          "ambiguous": 69,
+          "matrix": {
+            "question": {
+              "question": 28,
+              "help": 0,
+              "violation": 0,
+              "trash": 0,
+              "undetermined": 10
+            },
+            "help": {
+              "question": 0,
+              "help": 726,
+              "violation": 0,
+              "trash": 0,
+              "undetermined": 105
+            },
+            "violation": {
+              "question": 0,
+              "help": 2,
+              "violation": 13,
+              "trash": 0,
+              "undetermined": 10
+            },
+            "trash": {
+              "question": 0,
+              "help": 0,
+              "violation": 0,
+              "trash": 8,
+              "undetermined": 29
+            },
+            "undetermined": {
+              "question": 0,
+              "help": 11,
+              "violation": 0,
+              "trash": 1,
+              "undetermined": 57
+            }
+          },
+          "routeAccuracy": 0.832438238453276,
+          "coverage": 0.8345864661654135,
+          "decisionPrecision": 0.9974259974259975,
+          "helpAsQuestion": 0,
+          "questionAsHelp": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "missedViolation": 12,
+          "ambiguousTerminal": 1,
+          "details": {
+            "evaluated": 960,
+            "correct": 632,
+            "unnecessary": 266,
+            "missing": 62
+          }
+        },
+        "comparison": {
+          "baseline": "purpose",
+          "improved": 19,
+          "lostCorrect": 0,
+          "abstainedToWrong": 0
+        }
+      }
+    },
+    {
+      "file": "../routing-v4-2026-10-31/stage-4-moderation.json",
+      "title": "Собственное нарушение и корзина",
+      "report": {
+        "stage": "moderation",
+        "processorVersion": "rules-4.3-moderation",
+        "datasetSha256": "5b993d37d4aeb631599251e720c1174ff06943c8b5ad86a72279bebc08967b69",
+        "labelStatus": "assistant-provisional",
+        "humanReviewed": 0,
+        "summary": {
+          "total": 1000,
+          "scored": 931,
+          "correct": 784,
+          "wrong": 0,
+          "abstained": 147,
+          "ambiguous": 69,
+          "matrix": {
+            "question": {
+              "question": 28,
+              "help": 0,
+              "violation": 0,
+              "trash": 0,
+              "undetermined": 10
+            },
+            "help": {
+              "question": 0,
+              "help": 726,
+              "violation": 0,
+              "trash": 0,
+              "undetermined": 105
+            },
+            "violation": {
+              "question": 0,
+              "help": 0,
+              "violation": 18,
+              "trash": 0,
+              "undetermined": 7
+            },
+            "trash": {
+              "question": 0,
+              "help": 0,
+              "violation": 0,
+              "trash": 12,
+              "undetermined": 25
+            },
+            "undetermined": {
+              "question": 0,
+              "help": 11,
+              "violation": 0,
+              "trash": 1,
+              "undetermined": 57
+            }
+          },
+          "routeAccuracy": 0.8421052631578947,
+          "coverage": 0.8421052631578947,
+          "decisionPrecision": 1,
+          "helpAsQuestion": 0,
+          "questionAsHelp": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "missedViolation": 7,
+          "ambiguousTerminal": 1,
+          "details": {
+            "evaluated": 960,
+            "correct": 640,
+            "unnecessary": 258,
+            "missing": 62
+          }
+        },
+        "comparison": {
+          "baseline": "language",
+          "improved": 9,
+          "lostCorrect": 0,
+          "abstainedToWrong": 0
+        }
+      }
+    },
+    {
+      "file": "../routing-v4-2026-10-31/stage-5-final.json",
+      "title": "Независимые уточнения и контекст",
+      "report": {
+        "stage": "details",
+        "processorVersion": "rules-4.4-details",
+        "datasetSha256": "5b993d37d4aeb631599251e720c1174ff06943c8b5ad86a72279bebc08967b69",
+        "labelStatus": "assistant-provisional",
+        "humanReviewed": 0,
+        "summary": {
+          "total": 1000,
+          "scored": 931,
+          "correct": 784,
+          "wrong": 0,
+          "abstained": 147,
+          "ambiguous": 69,
+          "matrix": {
+            "question": {
+              "question": 28,
+              "help": 0,
+              "violation": 0,
+              "trash": 0,
+              "undetermined": 10
+            },
+            "help": {
+              "question": 0,
+              "help": 726,
+              "violation": 0,
+              "trash": 0,
+              "undetermined": 105
+            },
+            "violation": {
+              "question": 0,
+              "help": 0,
+              "violation": 18,
+              "trash": 0,
+              "undetermined": 7
+            },
+            "trash": {
+              "question": 0,
+              "help": 0,
+              "violation": 0,
+              "trash": 12,
+              "undetermined": 25
+            },
+            "undetermined": {
+              "question": 0,
+              "help": 11,
+              "violation": 0,
+              "trash": 1,
+              "undetermined": 57
+            }
+          },
+          "routeAccuracy": 0.8421052631578947,
+          "coverage": 0.8421052631578947,
+          "decisionPrecision": 1,
+          "helpAsQuestion": 0,
+          "questionAsHelp": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "missedViolation": 7,
+          "ambiguousTerminal": 1,
+          "details": {
+            "evaluated": 960,
+            "correct": 707,
+            "unnecessary": 200,
+            "missing": 53
+          }
+        },
+        "comparison": {
+          "baseline": "moderation",
+          "improved": 0,
+          "lostCorrect": 0,
+          "abstainedToWrong": 0
+        }
+      }
+    },
+    {
+      "file": "../routing-v4-2026-10-31/stage-6-interface.json",
+      "title": "Панель, логика и обратная связь",
+      "report": {
+        "stage": "interface",
+        "processorVersion": "rules-4.4-details",
+        "datasetSha256": "5b993d37d4aeb631599251e720c1174ff06943c8b5ad86a72279bebc08967b69",
+        "labelStatus": "assistant-provisional",
+        "humanReviewed": 0,
+        "summary": {
+          "total": 1000,
+          "scored": 931,
+          "correct": 784,
+          "wrong": 0,
+          "abstained": 147,
+          "ambiguous": 69,
+          "matrix": {
+            "question": {
+              "question": 28,
+              "help": 0,
+              "violation": 0,
+              "trash": 0,
+              "undetermined": 10
+            },
+            "help": {
+              "question": 0,
+              "help": 726,
+              "violation": 0,
+              "trash": 0,
+              "undetermined": 105
+            },
+            "violation": {
+              "question": 0,
+              "help": 0,
+              "violation": 18,
+              "trash": 0,
+              "undetermined": 7
+            },
+            "trash": {
+              "question": 0,
+              "help": 0,
+              "violation": 0,
+              "trash": 12,
+              "undetermined": 25
+            },
+            "undetermined": {
+              "question": 0,
+              "help": 11,
+              "violation": 0,
+              "trash": 1,
+              "undetermined": 57
+            }
+          },
+          "routeAccuracy": 0.8421052631578947,
+          "coverage": 0.8421052631578947,
+          "decisionPrecision": 1,
+          "helpAsQuestion": 0,
+          "questionAsHelp": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "missedViolation": 7,
+          "ambiguousTerminal": 1,
+          "details": {
+            "evaluated": 960,
+            "correct": 707,
+            "unnecessary": 200,
+            "missing": 53
+          }
+        },
+        "comparison": {
+          "baseline": "details",
+          "improved": 0,
+          "lostCorrect": 0,
+          "abstainedToWrong": 0
+        }
+      }
+    },
+    {
+      "file": "../routing-v4-2026-10-31/stage-7-guards.json",
+      "title": "Проверка смешанных целей и источника цитаты",
+      "report": {
+        "stage": "context-guards",
+        "processorVersion": "rules-4.5-context-guards",
+        "datasetSha256": "5b993d37d4aeb631599251e720c1174ff06943c8b5ad86a72279bebc08967b69",
+        "labelStatus": "assistant-provisional",
+        "humanReviewed": 0,
+        "summary": {
+          "total": 1000,
+          "scored": 931,
+          "correct": 784,
+          "wrong": 0,
+          "abstained": 147,
+          "ambiguous": 69,
+          "matrix": {
+            "question": {
+              "question": 28,
+              "help": 0,
+              "violation": 0,
+              "trash": 0,
+              "undetermined": 10
+            },
+            "help": {
+              "question": 0,
+              "help": 726,
+              "violation": 0,
+              "trash": 0,
+              "undetermined": 105
+            },
+            "violation": {
+              "question": 0,
+              "help": 0,
+              "violation": 18,
+              "trash": 0,
+              "undetermined": 7
+            },
+            "trash": {
+              "question": 0,
+              "help": 0,
+              "violation": 0,
+              "trash": 12,
+              "undetermined": 25
+            },
+            "undetermined": {
+              "question": 0,
+              "help": 11,
+              "violation": 0,
+              "trash": 1,
+              "undetermined": 57
+            }
+          },
+          "routeAccuracy": 0.8421052631578947,
+          "coverage": 0.8421052631578947,
+          "decisionPrecision": 1,
+          "helpAsQuestion": 0,
+          "questionAsHelp": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "missedViolation": 7,
+          "ambiguousTerminal": 1,
+          "details": {
+            "evaluated": 960,
+            "correct": 707,
+            "unnecessary": 200,
+            "missing": 53
+          }
+        },
+        "comparison": {
+          "baseline": "interface",
+          "improved": 0,
+          "lostCorrect": 0,
+          "abstainedToWrong": 0
+        }
+      }
+    }
+  ],
+  "fresh": {
+    "baseline": {
+      "stage": "fresh-before",
+      "processorVersion": "rules-3.0",
+      "datasetSha256": "009b15e5cb578ea272fcf2a6883c950ea52b3fd2d2c06ca0b77c4e79a4886ea6",
+      "labelStatus": "assistant-provisional",
+      "humanReviewed": 0,
+      "summary": {
+        "total": 1000,
+        "scored": 912,
+        "correct": 542,
+        "wrong": 11,
+        "abstained": 359,
+        "ambiguous": 88,
+        "matrix": {
+          "question": {
+            "question": 16,
+            "help": 2,
+            "violation": 0,
+            "trash": 0,
+            "undetermined": 18
+          },
+          "help": {
+            "question": 6,
+            "help": 521,
+            "violation": 1,
+            "trash": 0,
+            "undetermined": 301
+          },
+          "violation": {
+            "question": 1,
+            "help": 1,
+            "violation": 5,
+            "trash": 0,
+            "undetermined": 17
+          },
+          "trash": {
+            "question": 0,
+            "help": 0,
+            "violation": 0,
+            "trash": 0,
+            "undetermined": 23
+          },
+          "undetermined": {
+            "question": 2,
+            "help": 16,
+            "violation": 0,
+            "trash": 0,
+            "undetermined": 70
+          }
+        },
+        "routeAccuracy": 0.5942982456140351,
+        "coverage": 0.606359649122807,
+        "decisionPrecision": 0.9801084990958409,
+        "helpAsQuestion": 6,
+        "questionAsHelp": 2,
+        "falseViolation": 1,
+        "falseTrash": 0,
+        "missedViolation": 19,
+        "ambiguousTerminal": 0,
+        "details": {
+          "evaluated": 945,
+          "correct": 589,
+          "unnecessary": 301,
+          "missing": 55
+        }
+      },
+      "comparison": null
+    },
+    "final": {
+      "stage": "fresh-after",
+      "processorVersion": "rules-4.4-details",
+      "datasetSha256": "009b15e5cb578ea272fcf2a6883c950ea52b3fd2d2c06ca0b77c4e79a4886ea6",
+      "labelStatus": "assistant-provisional",
+      "humanReviewed": 0,
+      "summary": {
+        "total": 1000,
+        "scored": 912,
+        "correct": 628,
+        "wrong": 18,
+        "abstained": 266,
+        "ambiguous": 88,
+        "matrix": {
+          "question": {
+            "question": 18,
+            "help": 3,
+            "violation": 0,
+            "trash": 0,
+            "undetermined": 15
+          },
+          "help": {
+            "question": 11,
+            "help": 604,
+            "violation": 1,
+            "trash": 0,
+            "undetermined": 213
+          },
+          "violation": {
+            "question": 2,
+            "help": 1,
+            "violation": 5,
+            "trash": 0,
+            "undetermined": 16
+          },
+          "trash": {
+            "question": 0,
+            "help": 0,
+            "violation": 0,
+            "trash": 1,
+            "undetermined": 22
+          },
+          "undetermined": {
+            "question": 2,
+            "help": 15,
+            "violation": 0,
+            "trash": 0,
+            "undetermined": 71
+          }
+        },
+        "routeAccuracy": 0.6885964912280702,
+        "coverage": 0.7083333333333334,
+        "decisionPrecision": 0.9721362229102167,
+        "helpAsQuestion": 11,
+        "questionAsHelp": 3,
+        "falseViolation": 1,
+        "falseTrash": 0,
+        "missedViolation": 19,
+        "ambiguousTerminal": 0,
+        "details": {
+          "evaluated": 945,
+          "correct": 656,
+          "unnecessary": 234,
+          "missing": 55
+        }
+      },
+      "comparison": {
+        "baseline": "fresh-before",
+        "improved": 92,
+        "lostCorrect": 6,
+        "abstainedToWrong": 3
+      }
+    }
+  },
+  "retest": {
+    "stage": "reviewed-retest",
+    "processorVersion": "rules-4.5-context-guards",
+    "datasetSha256": "009b15e5cb578ea272fcf2a6883c950ea52b3fd2d2c06ca0b77c4e79a4886ea6",
+    "labelStatus": "assistant-provisional",
+    "humanReviewed": 0,
+    "summary": {
+      "total": 1000,
+      "scored": 912,
+      "correct": 638,
+      "wrong": 10,
+      "abstained": 264,
+      "ambiguous": 88,
+      "matrix": {
+        "question": {
+          "question": 19,
+          "help": 2,
+          "violation": 0,
+          "trash": 0,
+          "undetermined": 15
+        },
+        "help": {
+          "question": 5,
+          "help": 613,
+          "violation": 0,
+          "trash": 0,
+          "undetermined": 211
+        },
+        "violation": {
+          "question": 2,
+          "help": 1,
+          "violation": 5,
+          "trash": 0,
+          "undetermined": 16
+        },
+        "trash": {
+          "question": 0,
+          "help": 0,
+          "violation": 0,
+          "trash": 1,
+          "undetermined": 22
+        },
+        "undetermined": {
+          "question": 2,
+          "help": 15,
+          "violation": 0,
+          "trash": 0,
+          "undetermined": 71
+        }
+      },
+      "routeAccuracy": 0.6995614035087719,
+      "coverage": 0.7105263157894737,
+      "decisionPrecision": 0.9845679012345679,
+      "helpAsQuestion": 5,
+      "questionAsHelp": 2,
+      "falseViolation": 0,
+      "falseTrash": 0,
+      "missedViolation": 19,
+      "ambiguousTerminal": 0,
+      "details": {
+        "evaluated": 945,
+        "correct": 657,
+        "unnecessary": 235,
+        "missing": 53
+      }
+    },
+    "comparison": {
+      "baseline": "fresh-after",
+      "improved": 10,
+      "lostCorrect": 0,
+      "abstainedToWrong": 0
+    }
+  },
+  "regression": {
+    "stage": "known-release",
+    "processorVersion": "rules-4.5-context-guards",
+    "datasetSha256": "149be25bf09671421e955460537fa43a4922a84391af830d6e02a02e04b7c71e",
+    "labelStatus": "assistant-provisional",
+    "humanReviewed": 0,
+    "summary": {
+      "total": 1300,
+      "scored": 1207,
+      "correct": 990,
+      "wrong": 5,
+      "abstained": 212,
+      "ambiguous": 93,
+      "matrix": {
+        "question": {
+          "question": 30,
+          "help": 1,
+          "violation": 0,
+          "trash": 0,
+          "undetermined": 13
+        },
+        "help": {
+          "question": 3,
+          "help": 924,
+          "violation": 0,
+          "trash": 0,
+          "undetermined": 157
+        },
+        "violation": {
+          "question": 0,
+          "help": 1,
+          "violation": 23,
+          "trash": 0,
+          "undetermined": 7
+        },
+        "trash": {
+          "question": 0,
+          "help": 0,
+          "violation": 0,
+          "trash": 13,
+          "undetermined": 35
+        },
+        "undetermined": {
+          "question": 0,
+          "help": 14,
+          "violation": 0,
+          "trash": 1,
+          "undetermined": 78
+        }
+      },
+      "routeAccuracy": 0.820215410107705,
+      "coverage": 0.824357912178956,
+      "decisionPrecision": 0.9949748743718593,
+      "helpAsQuestion": 3,
+      "questionAsHelp": 1,
+      "falseViolation": 0,
+      "falseTrash": 0,
+      "missedViolation": 8,
+      "ambiguousTerminal": 1,
+      "details": {
+        "evaluated": 1243,
+        "correct": 904,
+        "unnecessary": 264,
+        "missing": 75
+      }
+    },
+    "comparison": {
+      "baseline": "known-regression",
+      "improved": 0,
+      "lostCorrect": 0,
+      "abstainedToWrong": 0
+    }
+  },
+  "followUps": [
+    {
+      "title": "Транслит и раскладка — знакомые 1000 сообщений",
+      "baseline": {
+        "stage": "input-scripts-before-known",
+        "processorVersion": "rules-4.5-context-guards",
+        "datasetSha256": "5b993d37d4aeb631599251e720c1174ff06943c8b5ad86a72279bebc08967b69",
+        "labelStatus": "assistant-provisional",
+        "humanReviewed": 0,
+        "summary": {
+          "total": 1000,
+          "scored": 931,
+          "correct": 784,
+          "wrong": 0,
+          "abstained": 147,
+          "ambiguous": 69,
+          "matrix": {
+            "question": {
+              "question": 28,
+              "help": 0,
+              "violation": 0,
+              "trash": 0,
+              "undetermined": 10
+            },
+            "help": {
+              "question": 0,
+              "help": 726,
+              "violation": 0,
+              "trash": 0,
+              "undetermined": 105
+            },
+            "violation": {
+              "question": 0,
+              "help": 0,
+              "violation": 18,
+              "trash": 0,
+              "undetermined": 7
+            },
+            "trash": {
+              "question": 0,
+              "help": 0,
+              "violation": 0,
+              "trash": 12,
+              "undetermined": 25
+            },
+            "undetermined": {
+              "question": 0,
+              "help": 11,
+              "violation": 0,
+              "trash": 1,
+              "undetermined": 57
+            }
+          },
+          "routeAccuracy": 0.8421052631578947,
+          "coverage": 0.8421052631578947,
+          "decisionPrecision": 1,
+          "helpAsQuestion": 0,
+          "questionAsHelp": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "missedViolation": 7,
+          "ambiguousTerminal": 1,
+          "details": {
+            "evaluated": 960,
+            "correct": 707,
+            "unnecessary": 200,
+            "missing": 53
+          }
+        },
+        "comparison": null
+      },
+      "final": {
+        "stage": "input-scripts-after-known",
+        "processorVersion": "rules-4.6-input-scripts",
+        "datasetSha256": "5b993d37d4aeb631599251e720c1174ff06943c8b5ad86a72279bebc08967b69",
+        "labelStatus": "assistant-provisional",
+        "humanReviewed": 0,
+        "summary": {
+          "total": 1000,
+          "scored": 931,
+          "correct": 784,
+          "wrong": 0,
+          "abstained": 147,
+          "ambiguous": 69,
+          "matrix": {
+            "question": {
+              "question": 28,
+              "help": 0,
+              "violation": 0,
+              "trash": 0,
+              "undetermined": 10
+            },
+            "help": {
+              "question": 0,
+              "help": 726,
+              "violation": 0,
+              "trash": 0,
+              "undetermined": 105
+            },
+            "violation": {
+              "question": 0,
+              "help": 0,
+              "violation": 18,
+              "trash": 0,
+              "undetermined": 7
+            },
+            "trash": {
+              "question": 0,
+              "help": 0,
+              "violation": 0,
+              "trash": 12,
+              "undetermined": 25
+            },
+            "undetermined": {
+              "question": 0,
+              "help": 11,
+              "violation": 0,
+              "trash": 1,
+              "undetermined": 57
+            }
+          },
+          "routeAccuracy": 0.8421052631578947,
+          "coverage": 0.8421052631578947,
+          "decisionPrecision": 1,
+          "helpAsQuestion": 0,
+          "questionAsHelp": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "missedViolation": 7,
+          "ambiguousTerminal": 1,
+          "details": {
+            "evaluated": 960,
+            "correct": 707,
+            "unnecessary": 200,
+            "missing": 53
+          }
+        },
+        "comparison": {
+          "baseline": "input-scripts-before-known",
+          "improved": 0,
+          "lostCorrect": 0,
+          "abstainedToWrong": 0
+        }
+      }
+    },
+    {
+      "title": "Транслит и раскладка — ранее разобранные 1000 сообщений",
+      "baseline": {
+        "stage": "input-scripts-before-reviewed",
+        "processorVersion": "rules-4.5-context-guards",
+        "datasetSha256": "009b15e5cb578ea272fcf2a6883c950ea52b3fd2d2c06ca0b77c4e79a4886ea6",
+        "labelStatus": "assistant-provisional",
+        "humanReviewed": 0,
+        "summary": {
+          "total": 1000,
+          "scored": 912,
+          "correct": 638,
+          "wrong": 10,
+          "abstained": 264,
+          "ambiguous": 88,
+          "matrix": {
+            "question": {
+              "question": 19,
+              "help": 2,
+              "violation": 0,
+              "trash": 0,
+              "undetermined": 15
+            },
+            "help": {
+              "question": 5,
+              "help": 613,
+              "violation": 0,
+              "trash": 0,
+              "undetermined": 211
+            },
+            "violation": {
+              "question": 2,
+              "help": 1,
+              "violation": 5,
+              "trash": 0,
+              "undetermined": 16
+            },
+            "trash": {
+              "question": 0,
+              "help": 0,
+              "violation": 0,
+              "trash": 1,
+              "undetermined": 22
+            },
+            "undetermined": {
+              "question": 2,
+              "help": 15,
+              "violation": 0,
+              "trash": 0,
+              "undetermined": 71
+            }
+          },
+          "routeAccuracy": 0.6995614035087719,
+          "coverage": 0.7105263157894737,
+          "decisionPrecision": 0.9845679012345679,
+          "helpAsQuestion": 5,
+          "questionAsHelp": 2,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "missedViolation": 19,
+          "ambiguousTerminal": 0,
+          "details": {
+            "evaluated": 945,
+            "correct": 657,
+            "unnecessary": 235,
+            "missing": 53
+          }
+        },
+        "comparison": null
+      },
+      "final": {
+        "stage": "input-scripts-after-reviewed",
+        "processorVersion": "rules-4.6-input-scripts",
+        "datasetSha256": "009b15e5cb578ea272fcf2a6883c950ea52b3fd2d2c06ca0b77c4e79a4886ea6",
+        "labelStatus": "assistant-provisional",
+        "humanReviewed": 0,
+        "summary": {
+          "total": 1000,
+          "scored": 912,
+          "correct": 638,
+          "wrong": 10,
+          "abstained": 264,
+          "ambiguous": 88,
+          "matrix": {
+            "question": {
+              "question": 19,
+              "help": 2,
+              "violation": 0,
+              "trash": 0,
+              "undetermined": 15
+            },
+            "help": {
+              "question": 5,
+              "help": 613,
+              "violation": 0,
+              "trash": 0,
+              "undetermined": 211
+            },
+            "violation": {
+              "question": 2,
+              "help": 1,
+              "violation": 5,
+              "trash": 0,
+              "undetermined": 16
+            },
+            "trash": {
+              "question": 0,
+              "help": 0,
+              "violation": 0,
+              "trash": 1,
+              "undetermined": 22
+            },
+            "undetermined": {
+              "question": 2,
+              "help": 15,
+              "violation": 0,
+              "trash": 0,
+              "undetermined": 71
+            }
+          },
+          "routeAccuracy": 0.6995614035087719,
+          "coverage": 0.7105263157894737,
+          "decisionPrecision": 0.9845679012345679,
+          "helpAsQuestion": 5,
+          "questionAsHelp": 2,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "missedViolation": 19,
+          "ambiguousTerminal": 0,
+          "details": {
+            "evaluated": 945,
+            "correct": 657,
+            "unnecessary": 235,
+            "missing": 53
+          }
+        },
+        "comparison": {
+          "baseline": "input-scripts-before-reviewed",
+          "improved": 0,
+          "lostCorrect": 0,
+          "abstainedToWrong": 0
+        }
+      }
+    },
+    {
+      "title": "Три языка — знакомые 1000 сообщений",
+      "baseline": {
+        "stage": "language-before-known",
+        "processorVersion": "rules-4.6-input-scripts",
+        "datasetSha256": "5b993d37d4aeb631599251e720c1174ff06943c8b5ad86a72279bebc08967b69",
+        "labelStatus": "assistant-provisional",
+        "humanReviewed": 0,
+        "summary": {
+          "total": 1000,
+          "scored": 931,
+          "correct": 784,
+          "wrong": 0,
+          "abstained": 147,
+          "ambiguous": 69,
+          "matrix": {
+            "question": {
+              "question": 28,
+              "help": 0,
+              "violation": 0,
+              "trash": 0,
+              "undetermined": 10
+            },
+            "help": {
+              "question": 0,
+              "help": 726,
+              "violation": 0,
+              "trash": 0,
+              "undetermined": 105
+            },
+            "violation": {
+              "question": 0,
+              "help": 0,
+              "violation": 18,
+              "trash": 0,
+              "undetermined": 7
+            },
+            "trash": {
+              "question": 0,
+              "help": 0,
+              "violation": 0,
+              "trash": 12,
+              "undetermined": 25
+            },
+            "undetermined": {
+              "question": 0,
+              "help": 11,
+              "violation": 0,
+              "trash": 1,
+              "undetermined": 57
+            }
+          },
+          "routeAccuracy": 0.8421052631578947,
+          "coverage": 0.8421052631578947,
+          "decisionPrecision": 1,
+          "helpAsQuestion": 0,
+          "questionAsHelp": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "missedViolation": 7,
+          "ambiguousTerminal": 1,
+          "details": {
+            "evaluated": 960,
+            "correct": 707,
+            "unnecessary": 200,
+            "missing": 53
+          }
+        },
+        "comparison": null
+      },
+      "final": {
+        "stage": "language-after-known",
+        "processorVersion": "rules-4.7-multilingual",
+        "datasetSha256": "5b993d37d4aeb631599251e720c1174ff06943c8b5ad86a72279bebc08967b69",
+        "labelStatus": "assistant-provisional",
+        "humanReviewed": 0,
+        "summary": {
+          "total": 1000,
+          "scored": 931,
+          "correct": 784,
+          "wrong": 0,
+          "abstained": 147,
+          "ambiguous": 69,
+          "matrix": {
+            "question": {
+              "question": 28,
+              "help": 0,
+              "violation": 0,
+              "trash": 0,
+              "undetermined": 10
+            },
+            "help": {
+              "question": 0,
+              "help": 726,
+              "violation": 0,
+              "trash": 0,
+              "undetermined": 105
+            },
+            "violation": {
+              "question": 0,
+              "help": 0,
+              "violation": 18,
+              "trash": 0,
+              "undetermined": 7
+            },
+            "trash": {
+              "question": 0,
+              "help": 0,
+              "violation": 0,
+              "trash": 12,
+              "undetermined": 25
+            },
+            "undetermined": {
+              "question": 0,
+              "help": 11,
+              "violation": 0,
+              "trash": 1,
+              "undetermined": 57
+            }
+          },
+          "routeAccuracy": 0.8421052631578947,
+          "coverage": 0.8421052631578947,
+          "decisionPrecision": 1,
+          "helpAsQuestion": 0,
+          "questionAsHelp": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "missedViolation": 7,
+          "ambiguousTerminal": 1,
+          "details": {
+            "evaluated": 960,
+            "correct": 707,
+            "unnecessary": 200,
+            "missing": 53
+          }
+        },
+        "comparison": {
+          "baseline": "language-before-known",
+          "improved": 0,
+          "lostCorrect": 0,
+          "abstainedToWrong": 0
+        }
+      }
+    },
+    {
+      "title": "Три языка — ранее разобранные 1000 сообщений",
+      "baseline": {
+        "stage": "language-before-reviewed",
+        "processorVersion": "rules-4.6-input-scripts",
+        "datasetSha256": "009b15e5cb578ea272fcf2a6883c950ea52b3fd2d2c06ca0b77c4e79a4886ea6",
+        "labelStatus": "assistant-provisional",
+        "humanReviewed": 0,
+        "summary": {
+          "total": 1000,
+          "scored": 912,
+          "correct": 638,
+          "wrong": 10,
+          "abstained": 264,
+          "ambiguous": 88,
+          "matrix": {
+            "question": {
+              "question": 19,
+              "help": 2,
+              "violation": 0,
+              "trash": 0,
+              "undetermined": 15
+            },
+            "help": {
+              "question": 5,
+              "help": 613,
+              "violation": 0,
+              "trash": 0,
+              "undetermined": 211
+            },
+            "violation": {
+              "question": 2,
+              "help": 1,
+              "violation": 5,
+              "trash": 0,
+              "undetermined": 16
+            },
+            "trash": {
+              "question": 0,
+              "help": 0,
+              "violation": 0,
+              "trash": 1,
+              "undetermined": 22
+            },
+            "undetermined": {
+              "question": 2,
+              "help": 15,
+              "violation": 0,
+              "trash": 0,
+              "undetermined": 71
+            }
+          },
+          "routeAccuracy": 0.6995614035087719,
+          "coverage": 0.7105263157894737,
+          "decisionPrecision": 0.9845679012345679,
+          "helpAsQuestion": 5,
+          "questionAsHelp": 2,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "missedViolation": 19,
+          "ambiguousTerminal": 0,
+          "details": {
+            "evaluated": 945,
+            "correct": 657,
+            "unnecessary": 235,
+            "missing": 53
+          }
+        },
+        "comparison": null
+      },
+      "final": {
+        "stage": "language-after-reviewed",
+        "processorVersion": "rules-4.7-multilingual",
+        "datasetSha256": "009b15e5cb578ea272fcf2a6883c950ea52b3fd2d2c06ca0b77c4e79a4886ea6",
+        "labelStatus": "assistant-provisional",
+        "humanReviewed": 0,
+        "summary": {
+          "total": 1000,
+          "scored": 912,
+          "correct": 639,
+          "wrong": 10,
+          "abstained": 263,
+          "ambiguous": 88,
+          "matrix": {
+            "question": {
+              "question": 19,
+              "help": 2,
+              "violation": 0,
+              "trash": 0,
+              "undetermined": 15
+            },
+            "help": {
+              "question": 5,
+              "help": 614,
+              "violation": 0,
+              "trash": 0,
+              "undetermined": 210
+            },
+            "violation": {
+              "question": 2,
+              "help": 1,
+              "violation": 5,
+              "trash": 0,
+              "undetermined": 16
+            },
+            "trash": {
+              "question": 0,
+              "help": 0,
+              "violation": 0,
+              "trash": 1,
+              "undetermined": 22
+            },
+            "undetermined": {
+              "question": 2,
+              "help": 15,
+              "violation": 0,
+              "trash": 0,
+              "undetermined": 71
+            }
+          },
+          "routeAccuracy": 0.7006578947368421,
+          "coverage": 0.7116228070175439,
+          "decisionPrecision": 0.9845916795069337,
+          "helpAsQuestion": 5,
+          "questionAsHelp": 2,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "missedViolation": 19,
+          "ambiguousTerminal": 0,
+          "details": {
+            "evaluated": 945,
+            "correct": 658,
+            "unnecessary": 235,
+            "missing": 52
+          }
+        },
+        "comparison": {
+          "baseline": "language-before-reviewed",
+          "improved": 1,
+          "lostCorrect": 0,
+          "abstainedToWrong": 0
+        }
+      }
+    }
+  ]
+}

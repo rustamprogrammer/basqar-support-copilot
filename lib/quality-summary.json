@@ -1,0 +1,1418 @@
+{
+  "generatedAt": "2026-10-30T21:06:30.978Z",
+  "regression": {
+    "generatedAt": "2026-10-30T21:05:40.851Z",
+    "processorVersion": "rules-3.0",
+    "baselineProcessorVersion": "rules-2.1-context-pure-rules",
+    "total": 1000,
+    "datasetSha256": "e628145df8086812f43d45a7689cdb562da95021f809598f720eab7ca06d224a",
+    "labelStatus": "provisional",
+    "before": {
+      "correct": 593,
+      "wrong": 45,
+      "missed": 336,
+      "uncertain": 26,
+      "falseViolation": 0,
+      "falseTrash": 0,
+      "violationsDetected": 6,
+      "violationsTotal": 24,
+      "violationsSelected": 6,
+      "trashDetected": 6,
+      "trashTotal": 37,
+      "classifiedCoverage": 0.5431211498973306
+    },
+    "after": {
+      "correct": 716,
+      "wrong": 35,
+      "missed": 223,
+      "uncertain": 26,
+      "falseViolation": 0,
+      "falseTrash": 0,
+      "violationsDetected": 13,
+      "violationsTotal": 24,
+      "violationsSelected": 13,
+      "trashDetected": 9,
+      "trashTotal": 37,
+      "classifiedCoverage": 0.6591375770020534
+    },
+    "correction": {
+      "evaluated": 0,
+      "beforeCorrect": 0,
+      "afterCorrect": 0
+    },
+    "changes": {
+      "total": 147,
+      "improved": 124,
+      "regressed": 1
+    },
+    "groups": {
+      "ДМ, ДБ, РП и действия игроков": {
+        "total": 194,
+        "before": {
+          "correct": 156,
+          "wrong": 0,
+          "missed": 38,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.8041237113402062
+        },
+        "after": {
+          "correct": 170,
+          "wrong": 1,
+          "missed": 23,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.8814432989690721
+        }
+      },
+      "Обжалования наказаний": {
+        "total": 183,
+        "before": {
+          "correct": 104,
+          "wrong": 30,
+          "missed": 49,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.73224043715847
+        },
+        "after": {
+          "correct": 135,
+          "wrong": 16,
+          "missed": 32,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.825136612021858
+        }
+      },
+      "Недостаточно сведений для определения темы": {
+        "total": 110,
+        "before": {
+          "correct": 109,
+          "wrong": 1,
+          "missed": 0,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.00909090909090909
+        },
+        "after": {
+          "correct": 109,
+          "wrong": 1,
+          "missed": 0,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.00909090909090909
+        }
+      },
+      "Жалобы на оскорбления, угрозы и чат": {
+        "total": 140,
+        "before": {
+          "correct": 103,
+          "wrong": 0,
+          "missed": 37,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.7357142857142858
+        },
+        "after": {
+          "correct": 113,
+          "wrong": 2,
+          "missed": 25,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.8214285714285714
+        }
+      },
+      "Оскорбления и нарушения в самом обращении": {
+        "total": 24,
+        "before": {
+          "correct": 6,
+          "wrong": 2,
+          "missed": 16,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 6,
+          "violationsTotal": 24,
+          "violationsSelected": 6,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.3333333333333333
+        },
+        "after": {
+          "correct": 13,
+          "wrong": 4,
+          "missed": 7,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 13,
+          "violationsTotal": 24,
+          "violationsSelected": 13,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.7083333333333334
+        }
+      },
+      "Работа администрации": {
+        "total": 55,
+        "before": {
+          "correct": 14,
+          "wrong": 10,
+          "missed": 31,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.43636363636363634
+        },
+        "after": {
+          "correct": 25,
+          "wrong": 9,
+          "missed": 21,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.6181818181818182
+        }
+      },
+      "Помощь и технические проблемы": {
+        "total": 93,
+        "before": {
+          "correct": 30,
+          "wrong": 1,
+          "missed": 62,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.3333333333333333
+        },
+        "after": {
+          "correct": 52,
+          "wrong": 0,
+          "missed": 41,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.5591397849462365
+        }
+      },
+      "Читы и использование багов": {
+        "total": 36,
+        "before": {
+          "correct": 28,
+          "wrong": 0,
+          "missed": 8,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.7777777777777778
+        },
+        "after": {
+          "correct": 29,
+          "wrong": 0,
+          "missed": 7,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.8055555555555556
+        }
+      },
+      "Мошенничество и сделки": {
+        "total": 42,
+        "before": {
+          "correct": 29,
+          "wrong": 0,
+          "missed": 13,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.6904761904761905
+        },
+        "after": {
+          "correct": 35,
+          "wrong": 1,
+          "missed": 6,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.8571428571428571
+        }
+      },
+      "Неоднозначный смысл — нужна экспертная оценка": {
+        "total": 26,
+        "before": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "uncertain": 26,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": null
+        },
+        "after": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "uncertain": 26,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": null
+        }
+      },
+      "Вопросы по игре": {
+        "total": 42,
+        "before": {
+          "correct": 5,
+          "wrong": 1,
+          "missed": 36,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.14285714285714285
+        },
+        "after": {
+          "correct": 23,
+          "wrong": 1,
+          "missed": 18,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.5714285714285714
+        }
+      },
+      "Другие нарушения игроков": {
+        "total": 16,
+        "before": {
+          "correct": 2,
+          "wrong": 0,
+          "missed": 14,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.125
+        },
+        "after": {
+          "correct": 2,
+          "wrong": 0,
+          "missed": 14,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.125
+        }
+      },
+      "Оффтоп и сообщения без запроса": {
+        "total": 37,
+        "before": {
+          "correct": 6,
+          "wrong": 0,
+          "missed": 31,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 6,
+          "trashTotal": 37,
+          "classifiedCoverage": 0.16216216216216217
+        },
+        "after": {
+          "correct": 9,
+          "wrong": 0,
+          "missed": 28,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 9,
+          "trashTotal": 37,
+          "classifiedCoverage": 0.24324324324324326
+        }
+      },
+      "Аккаунт и пропажа имущества": {
+        "total": 2,
+        "before": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 1,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.5
+        },
+        "after": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 1,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.5
+        }
+      }
+    }
+  },
+  "additional": {
+    "generatedAt": "2026-10-30T21:05:39.721Z",
+    "processorVersion": "rules-3.0",
+    "baselineProcessorVersion": "rules-2.1-context-pure-rules",
+    "total": 200,
+    "datasetSha256": "7b81212fa8f1f8f07fc8ef5a4575ede86da8d5db39ce7168c0ae9a1e795e853d",
+    "labelStatus": "provisional",
+    "before": {
+      "correct": 118,
+      "wrong": 11,
+      "missed": 62,
+      "uncertain": 9,
+      "falseViolation": 0,
+      "falseTrash": 0,
+      "violationsDetected": 2,
+      "violationsTotal": 4,
+      "violationsSelected": 2,
+      "trashDetected": 1,
+      "trashTotal": 11,
+      "classifiedCoverage": 0.581151832460733
+    },
+    "after": {
+      "correct": 131,
+      "wrong": 11,
+      "missed": 49,
+      "uncertain": 9,
+      "falseViolation": 0,
+      "falseTrash": 0,
+      "violationsDetected": 2,
+      "violationsTotal": 4,
+      "violationsSelected": 2,
+      "trashDetected": 1,
+      "trashTotal": 11,
+      "classifiedCoverage": 0.6492146596858639
+    },
+    "correction": {
+      "evaluated": 0,
+      "beforeCorrect": 0,
+      "afterCorrect": 0
+    },
+    "changes": {
+      "total": 26,
+      "improved": 15,
+      "regressed": 2
+    },
+    "groups": {
+      "Читы и использование багов": {
+        "total": 10,
+        "before": {
+          "correct": 9,
+          "wrong": 1,
+          "missed": 0,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 1
+        },
+        "after": {
+          "correct": 9,
+          "wrong": 1,
+          "missed": 0,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 1
+        }
+      },
+      "Работа администрации": {
+        "total": 11,
+        "before": {
+          "correct": 4,
+          "wrong": 2,
+          "missed": 5,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.5454545454545454
+        },
+        "after": {
+          "correct": 3,
+          "wrong": 3,
+          "missed": 5,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.5454545454545454
+        }
+      },
+      "Неоднозначный смысл — нужна экспертная оценка": {
+        "total": 9,
+        "before": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "uncertain": 9,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": null
+        },
+        "after": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "uncertain": 9,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": null
+        }
+      },
+      "Жалобы на оскорбления, угрозы и чат": {
+        "total": 21,
+        "before": {
+          "correct": 17,
+          "wrong": 0,
+          "missed": 4,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.8095238095238095
+        },
+        "after": {
+          "correct": 17,
+          "wrong": 0,
+          "missed": 4,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.8095238095238095
+        }
+      },
+      "Обжалования наказаний": {
+        "total": 44,
+        "before": {
+          "correct": 30,
+          "wrong": 6,
+          "missed": 8,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.8181818181818182
+        },
+        "after": {
+          "correct": 36,
+          "wrong": 2,
+          "missed": 6,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.8636363636363636
+        }
+      },
+      "Помощь и технические проблемы": {
+        "total": 32,
+        "before": {
+          "correct": 9,
+          "wrong": 0,
+          "missed": 23,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.28125
+        },
+        "after": {
+          "correct": 16,
+          "wrong": 1,
+          "missed": 15,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.53125
+        }
+      },
+      "Недостаточно сведений для определения темы": {
+        "total": 18,
+        "before": {
+          "correct": 18,
+          "wrong": 0,
+          "missed": 0,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0
+        },
+        "after": {
+          "correct": 18,
+          "wrong": 0,
+          "missed": 0,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0
+        }
+      },
+      "ДМ, ДБ, РП и действия игроков": {
+        "total": 29,
+        "before": {
+          "correct": 26,
+          "wrong": 0,
+          "missed": 3,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.896551724137931
+        },
+        "after": {
+          "correct": 26,
+          "wrong": 0,
+          "missed": 3,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.896551724137931
+        }
+      },
+      "Аккаунт и пропажа имущества": {
+        "total": 1,
+        "before": {
+          "correct": 0,
+          "wrong": 1,
+          "missed": 0,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 1
+        },
+        "after": {
+          "correct": 0,
+          "wrong": 1,
+          "missed": 0,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 1
+        }
+      },
+      "Другие нарушения игроков": {
+        "total": 7,
+        "before": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 7,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0
+        },
+        "after": {
+          "correct": 1,
+          "wrong": 2,
+          "missed": 4,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.42857142857142855
+        }
+      },
+      "Оффтоп и сообщения без запроса": {
+        "total": 11,
+        "before": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 10,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 1,
+          "trashTotal": 11,
+          "classifiedCoverage": 0.09090909090909091
+        },
+        "after": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 10,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 1,
+          "trashTotal": 11,
+          "classifiedCoverage": 0.09090909090909091
+        }
+      },
+      "Оскорбления и нарушения в самом обращении": {
+        "total": 4,
+        "before": {
+          "correct": 2,
+          "wrong": 1,
+          "missed": 1,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 2,
+          "violationsTotal": 4,
+          "violationsSelected": 2,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.75
+        },
+        "after": {
+          "correct": 2,
+          "wrong": 1,
+          "missed": 1,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 2,
+          "violationsTotal": 4,
+          "violationsSelected": 2,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.75
+        }
+      },
+      "Вопросы по игре": {
+        "total": 1,
+        "before": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 1
+        },
+        "after": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 1
+        }
+      },
+      "Мошенничество и сделки": {
+        "total": 2,
+        "before": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 1,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.5
+        },
+        "after": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 1,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.5
+        }
+      }
+    }
+  },
+  "holdout": {
+    "generatedAt": "2026-10-30T21:05:39.573Z",
+    "processorVersion": "rules-3.0",
+    "baselineProcessorVersion": "rules-2.1-context-pure-rules",
+    "total": 100,
+    "datasetSha256": "d995f20860dfc280cbcb913d952d571ff58b722a003692c13daa1a3e941f4bf8",
+    "labelStatus": "provisional",
+    "before": {
+      "correct": 58,
+      "wrong": 6,
+      "missed": 32,
+      "uncertain": 4,
+      "falseViolation": 0,
+      "falseTrash": 0,
+      "violationsDetected": 0,
+      "violationsTotal": 2,
+      "violationsSelected": 0,
+      "trashDetected": 0,
+      "trashTotal": 2,
+      "classifiedCoverage": 0.4791666666666667
+    },
+    "after": {
+      "correct": 68,
+      "wrong": 5,
+      "missed": 23,
+      "uncertain": 4,
+      "falseViolation": 0,
+      "falseTrash": 0,
+      "violationsDetected": 0,
+      "violationsTotal": 2,
+      "violationsSelected": 0,
+      "trashDetected": 0,
+      "trashTotal": 2,
+      "classifiedCoverage": 0.5729166666666666
+    },
+    "correction": {
+      "evaluated": 0,
+      "beforeCorrect": 0,
+      "afterCorrect": 0
+    },
+    "changes": {
+      "total": 11,
+      "improved": 10,
+      "regressed": 0
+    },
+    "groups": {
+      "Работа администрации": {
+        "total": 4,
+        "before": {
+          "correct": 1,
+          "wrong": 1,
+          "missed": 2,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.5
+        },
+        "after": {
+          "correct": 1,
+          "wrong": 1,
+          "missed": 2,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.5
+        }
+      },
+      "Недостаточно сведений для определения темы": {
+        "total": 18,
+        "before": {
+          "correct": 18,
+          "wrong": 0,
+          "missed": 0,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0
+        },
+        "after": {
+          "correct": 18,
+          "wrong": 0,
+          "missed": 0,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0
+        }
+      },
+      "Неоднозначный смысл — нужна экспертная оценка": {
+        "total": 4,
+        "before": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "uncertain": 4,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": null
+        },
+        "after": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "uncertain": 4,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": null
+        }
+      },
+      "Жалобы на оскорбления, угрозы и чат": {
+        "total": 12,
+        "before": {
+          "correct": 9,
+          "wrong": 0,
+          "missed": 3,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.75
+        },
+        "after": {
+          "correct": 11,
+          "wrong": 0,
+          "missed": 1,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.9166666666666666
+        }
+      },
+      "Обжалования наказаний": {
+        "total": 21,
+        "before": {
+          "correct": 12,
+          "wrong": 3,
+          "missed": 6,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.7142857142857143
+        },
+        "after": {
+          "correct": 16,
+          "wrong": 2,
+          "missed": 3,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.8571428571428571
+        }
+      },
+      "ДМ, ДБ, РП и действия игроков": {
+        "total": 15,
+        "before": {
+          "correct": 11,
+          "wrong": 0,
+          "missed": 4,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.7333333333333333
+        },
+        "after": {
+          "correct": 11,
+          "wrong": 0,
+          "missed": 4,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.7333333333333333
+        }
+      },
+      "Оскорбления и нарушения в самом обращении": {
+        "total": 2,
+        "before": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 2,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 2,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0
+        },
+        "after": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 2,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 2,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0
+        }
+      },
+      "Помощь и технические проблемы": {
+        "total": 11,
+        "before": {
+          "correct": 5,
+          "wrong": 0,
+          "missed": 6,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.45454545454545453
+        },
+        "after": {
+          "correct": 8,
+          "wrong": 0,
+          "missed": 3,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.7272727272727273
+        }
+      },
+      "Вопросы по игре": {
+        "total": 6,
+        "before": {
+          "correct": 0,
+          "wrong": 2,
+          "missed": 4,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.3333333333333333
+        },
+        "after": {
+          "correct": 1,
+          "wrong": 2,
+          "missed": 3,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.5
+        }
+      },
+      "Оффтоп и сообщения без запроса": {
+        "total": 2,
+        "before": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 2,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 2,
+          "classifiedCoverage": 0
+        },
+        "after": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 2,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 2,
+          "classifiedCoverage": 0
+        }
+      },
+      "Другие нарушения игроков": {
+        "total": 2,
+        "before": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 2,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0
+        },
+        "after": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 2,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0
+        }
+      },
+      "Мошенничество и сделки": {
+        "total": 1,
+        "before": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 1
+        },
+        "after": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 1
+        }
+      },
+      "Читы и использование багов": {
+        "total": 2,
+        "before": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 1,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.5
+        },
+        "after": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 1,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0,
+          "violationsSelected": 0,
+          "trashDetected": 0,
+          "trashTotal": 0,
+          "classifiedCoverage": 0.5
+        }
+      }
+    }
+  }
+}

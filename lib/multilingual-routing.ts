@@ -1,0 +1,59 @@
+import { contextText } from './game-language.ts';
+
+type IntentEvidence = {route: 'question' | 'help'; reason: string} | null;
+const cache = new Map<string, RegExp>();
+function has(text: string, expression: string) {
+  let re = cache.get(expression);
+  if (!re) {re = new RegExp(`(?<![\\p{L}\\p{N}_])(?:${expression})(?![\\p{L}\\p{N}_])`, 'u');cache.set(expression, re);}
+  return re.test(text);
+}
+const L = '[\\p{L}]*';
+function fold(input: string) {
+  const letters: Record<string,string> = {ә:'а',ғ:'г',қ:'к',ң:'н',ө:'о',ұ:'у',ү:'у',һ:'х',і:'и',ї:'и',є:'е',ґ:'г',ё:'е'};
+  return contextText(input).normalize('NFKC').toLowerCase().replace(/\[(?:стикер|стікер|stiker):[^\]]*\]/giu,' ')
+    .replace(/[\u200b-\u200d\ufeff]/gu,'').replace(/[‘’ʻʼ`´]/gu,"'")
+    .replace(/[әғқңөұүһіїєґё]/gu,c=>letters[c]).replace(/([\p{L}])\1{2,}/gu,'$1').replace(/\s+/gu,' ').trim();
+}
+
+/** Intent grammar works on the author's unquoted text, before a partial word-for-word translation.
+ * It requires a purpose cue and a concrete topic/action; a bare question mark or admin mention is not enough.
+ * These are productive language rules, not a lookup of benchmark sentences.
+ */
+export function inspectMultilingualIntent(original: string, corrected: string): IntentEvidence {
+  for (const input of [corrected,original]) {
+    const text=fold(input), tokens=text.match(/[\p{L}]+/gu)??[];
+    if(tokens.length<2)continue;
+    const knownDomain=has(text,String.raw`игр${L}|грав${L}|ойын${L}|o'yin${L}|oyin${L}|аккаунт${L}|акаунт${L}|akkaunt${L}|персонаж${L}|кейипкер${L}|qahramon${L}|админ${L}|адм${L}|акимши${L}|admin${L}|поддерж${L}|сервер${L}|server${L}|машин${L}|машин${L}|авто${L}|автомоб${L}|колик${L}|mashina${L}|транспорт${L}|transport${L}|чат${L}|chat${L}|войс|voice|микрофон${L}|mikrofon${L}|телефон${L}|telefon${L}|настрой${L}|баптау${L}|налашту${L}|sozlama${L}|график${L}|grafika${L}|интерфейс${L}|меню|мазир${L}|menyu${L}|батырма${L}|кноп${L}|tugma${L}|квест${L}|задан${L}|тапсырма${L}|topshiriq${L}|робот${L}|работ${L}|жумыс${L}|ish|зарплат${L}|жалак${L}|маош${L}|банк${L}|bank${L}|деньг${L}|кошт${L}|акша${L}|pul${L}|донат${L}|donat${L}|платеж${L}|оплат${L}|покуп${L}|толем${L}|to'lov${L}|баланс${L}|баланс${L}|balans${L}|имуществ${L}|инвентар${L}|inventar${L}|зат${L}|buyum${L}|вещ${L}|предмет${L}|ресурс${L}|resurs${L}|рецепт${L}|крафт${L}|kraft${L}|торгов${L}|маркет${L}|market${L}|аукцион${L}|auksion${L}|контейнер${L}|konteyner${L}|обмен${L}|обмин${L}|айырбас${L}|almash${L}|сделк${L}|угод${L}|сауда${L}|savdo${L}|семь${L}|сим'${L}|отбас${L}|oila${L}|казн${L}|казын${L}|хазна${L}|xazina${L}|сейф${L}|seyf${L}|дом${L}|квартир${L}|уй|уйге|уйди|уйдин|uy|uyga|uyni|uydan|бизнес${L}|biznes${L}|груз${L}|жук${L}|yuk${L}|посыл${L}|пошт${L}|почт${L}|pochta${L}|такси${L}|taxi|автобус${L}|avtobus${L}|шахт${L}|shaxta${L}|ферм${L}|ferma${L}|завод${L}|zavod${L}|tesla|twix|карьер${L}|karyer${L}|каменолом${L}|каменяр${L}|механик${L}|mexanik${L}|дальноб${L}|далекоб${L}|dalnoboy${L}|инкасса${L}|inkassa${L}|дорож${L}|жол|yo'l|мусор${L}|смитт${L}|кокыс${L}|chiqindi${L}|вертолет${L}|геликоптер${L}|helicopter|тюмнинг${L}|тюнинг${L}|tuning${L}|лодк${L}|катер${L}|кайык${L}|qayiq${L}|мотоцикл${L}|mototsikl${L}|велосипед${L}|velosiped${L}|паспорт${L}|pasport${L}|медкарт${L}|медицин${L}|полици${L}|politsi${L}|уйым${L}|организац${L}|организац${L}|фракц${L}|fraksi${L}|правил${L}|ереж${L}|koida${L}|qoida${L}|жалоб${L}|жб|скарг${L}|шагым${L}|shikoyat${L}|бан${L}|мут${L}|варн${L}|деморган${L}|жаза${L}|жазо${L}|jazo${L}|наказан${L}|покаран${L}|arena|арен${L}|дрифт${L}|drift${L}|спавн${L}|spavn${L}|dm|db|rp|pg|mg|tk|sk|ic|ooc|дм|дб|рп|пг|мг|тк|ск|зз|нонрп|нрп|vip|вип|логин${L}|login${L}|парол${L}|parol${L}|код${L}|kod${L}|скрин${L}|откат${L}|видео|бейне${L}|video|доказательств${L}|доказ${L}|далел${L}|dalil${L}`);
+    const domain=knownDomain||has(text,String.raw`приглаш${L}|запрош${L}|шакыр${L}|taklif${L}|лиценз${L}|лиценс${L}|litsenzi${L}|куалик${L}|посвидчен${L}|удостовере${L}|права|обучен${L}|навчан${L}|окыту${L}|dars${L}|навигат${L}|navigator${L}|карт${L}|xarita${L}|камера${L}|камери|kamera${L}|байк${L}|байк${L}|вертолит${L}|helikopter${L}|кар'єр${L}|инкаса${L}|завдан${L}|сортув${L}|обликов${L}|повидомл${L}|звернен${L}|обращен${L}|уведомл${L}|звук${L}|двигател${L}|двигун${L}|керуван${L}|керування|прорисов${L}|расположени${L}|вместимост${L}|зовнишн${L}|внешност${L}|перс|posilka${L}|tashkilot${L}|harbiy${L}|arena${L}|smena${L}|smenadan|personaj${L}|hisob${L}|hosil${L}|ombor${L}|match${L}|e'lon${L}|yo'l${L}|шикоят${L}`);
+    const specificHelp=has(text,String.raw`проверьте|проверь|разберитесь|разберись|пересмотрите|пересмотри|исправьте|восстановите|разблокируйте|почините|вытащите|верните|верни|освободите|помогите|помоги|помощь|хелп|спасите|спек|перевирте|перевир|допомож${L}|допомога|повернить|витягнить|полагодьте|розбериться|розбериться|розберися|перегляньте|тексер${L}|карап\s+бер${L}|караныз${L}|комектес${L}|комек\s+керек|аралас${L}|босаты${L}|кайтарып\s+бер${L}|tekshiri${L}|tekshirvor${L}|yordam\s+(?:kerak|ber${L})|yordamlashi${L}|ko'rib\s+ber${L}|qarab\s+ber${L}|qaytarib\s+ber${L}|hal\s+qilib\s+ber${L}`);
+    const genericProcedure=has(text,String.raw`как|где|куда|когда|какой|какие|какую|каком|сколько|чем|зачем|як|де|куди|коли|який|яки|яку|якому|скільки|калай|кайда|кайдан|кайсы|кандай|канша|кай\s+(?:жер${L}|мазир${L}|батырма${L})|qanday|qayer${L}|qaysi|qachon|nechta|qancha|nima(?:ni|ga|dan)?`);
+    const teaching=has(text,String.raw`объясни${L}|подскаж${L}|расскаж${L}|поясни${L}|тусиндир${L}|тусиндини${L}|tushuntir${L}|aytib\s+ber${L}|поясни${L}|розкаж${L}`);
+    const definition=has(text,String.raw`что\s+(?:такое|значит|означает)|що\s+(?:таке|означае|мають\s+на\s+увази)|деген\s+не|нени\s+билдир${L}|nimani\s+anglat${L}|nima\s+degani|расшифров${L}|розшифрува${L}|разниц${L}|айырмашылы${L}|farq${L}|это\s+(?:про|одно\s+и\s+то\s+же)|це\s+одне\s+й\s+те\s+саме`);
+    const interrogativeSuffix=/(?:ма|ме|ба|бе|па|пе|mi|mikan)[\p{P}\p{S}\s]*$/u.test(text)
+      || has(text,String.raw`бола\s+ма|болады\s+ма|бола\s+ме|болады\s+ме|мумкин\s+бе|mumkinmi|bo'ladimi|oladimi|kerakmi|amalmi|борми|мумкинми|буладими`);
+    const question=domain&&(genericProcedure||teaching||definition||interrogativeSuffix||has(text,String.raw`(?:в|у)\s+каком|(?:в|у)\s+якому|можно\s+ли|чи\s+можна|есть\s+ли|какие\s+условия|талап${L}|shart${L}|для\s+(?:чего|чого)|что\s+(?:нужно|надо)|що\s+(?:потрибно|позначено)|хто\s+може|kim\s+(?:beradi|sotadi|qabul)|можно\s+(?:(?:ли|самому|заранее)\s+)?(?:изменить|увеличить|сделать|узнать|посмотреть|проверить|пригласить|поселить|отключить|включить|настроить|получить|купить|скрыть|сменить|увидеть|поменять)|есть\s+(?:настройка|способ|возможность)|чому\s+.{0,30}пишуть`));
+    const cancelled=has(text,String.raw`помощь\s+(?:больше\s+)?не\s+нужна|не\s+(?:надо|нужно)\s+(?:помогать|проверять)|допомога\s+не\s+потрибна|комек\s+керек\s+емес|yordam\s+kerak\s+emas`);
+    const infoOnly=has(text,String.raw`только\s+(?:спрашиваю|хочу\s+узнать)|спрашиваю\s+(?:порядок|правило)|конкретной\s+жалобы\s+.{0,20}нет|не\s+прошу\s+(?:проверять|вмешиваться)|на\s+будущее|для\s+будущего|жалпы\s+(?:тартип|ереж${L})|жалпы\s+сурак|umumiy\s+(?:tartib|qoida)|загальний\s+порядок|просто\s+хочу\s+знати`);
+    if (definition && has(text,String.raw`помоги(?:те)?\s+(?:мне\s+)?понять|допомож${L}\s+зрозум${L}`)) return {route:'question',reason:'Автор просит объяснить понятие, а не вмешаться в событие.'};
+    if(specificHelp&&!cancelled&&!infoOnly){
+      // General "how can I help / check / restore" is an instruction, not an imperative.
+      const indirect=has(text,String.raw`как\s+(?:мне\s+)?(?:помочь|проверить|вернуть|восстановить)|як\s+(?:мени\s+)?допомогти|калай\s+комектесуге|qanday\s+yordam\s+berish`);
+      if(!indirect&&!(question&&teaching&&!has(text,'проверьте|разберитесь|перевирте|тексериниз|tekshiring')))return {route:'help',reason:'На языке автора найдена просьба помочь или проверить конкретную ситуацию.'};
+    }
+    // Asking where one's missing property went is a personal lookup, not a general instruction.
+    const personalLookup=has(text,String.raw`(?:где|куда)\s+(?:мои|мой|моя|мое|мне)|де\s+(?:мое|моя|мои|мий)|(?:менин|менинг)\s+.{0,30}кайда|(?:mening|o'zimning)\s+.{0,30}qayer${L}`);
+    const lostProperty=has(text,String.raw`списал${L}|списан${L}|пропал${L}|исчез${L}|зник${L}|немае|жогал${L}|yo'qol${L}|yo'q|нет`);
+    if (domain&&personalLookup&&lostProperty&&!cancelled&&!infoOnly) return {route:'help',reason:'Автор ищет собственное пропавшее имущество или оплату; нужна проверка конкретного случая.'};
+    // A question about the procedure outranks a past incident used only as background.
+    if(question)return {route:'question',reason:'На языке автора найден вопрос о способе действия, настройке, месте или значении игрового понятия.'};
+    const needAdmin=has(text,String.raw`(?:нужен|нужна|нужно|потрибен|потрибна)\s+(?:админ${L}|провер${L}|перевир${L}|помощ${L}|допом${L})|(?:акимши|админ)\s+(?:керек|карасын${L})|админ\s+керек|admin\s+(?:kerak|kelsin|qarasin)|админ\s+потрибен|shikoyat${L}\s+bor`);
+    if(needAdmin&&!cancelled)return {route:'help',reason:'Автор явно просит помощь администратора; подробности можно уточнить отдельно.'};
+    const failure=has(text,String.raw`не\s+(?:работа${L}|запуска${L}|открыва${L}|включа${L}|заверша${L}|засчит${L}|начисл${L}|начисля${L}|приш${L}|поступ${L}|вернул${L}|верта${L}|доставля${L}|принима${L}|реагиру${L}|отобража${L}|срабатыва${L}|сработа${L}|з'яв${L}|працю${L}|надход${L}|поверну${L}|зараху${L}|вида${L}|дода${L})|не\s+(?:могу|можу|получается|виходить)|невозможно|неможливо|застр${L}|завис${L}|пропал${L}|исчез${L}|провалил${L}|потерял${L}|обнули${L}|заблокир${L}|списал${L}|утрат${L}|зник${L}|зникл${L}|списал${L}|списан${L}|зникли|обнул${L}|жогал${L}|жок|истемей${L}|ашылмай${L}|косылмай${L}|келмеди|келмей${L}|берилмеди|саналма${L}|есептелм${L}|туспеди|туспей${L}|калды${L}|алмай${L}|кире\s+алмай${L}|тура\s+алмай${L}|токтап\s+калды|тустим|колымнан\s+келмей${L}|yo'q${L}|yoqoldi|yo'qoldi|yo'qol${L}|qoldi${L}|qolgan${L}|ishlam${L}|ochilm${L}|kelma${L}|tushma${L}|qo'shilma${L}|hisoblanma${L}|berilma${L}|chiqolma${L}|olmay${L}|ketdi|spisal${L}|aldan${L}`);
+    const complaint=has(text,String.raw`меня\s+(?:убива${L}|дав${L}|обман${L}|связ${L}|оскорб${L})|стреля${L}\s+(?:по|в)|давит|дбш${L}|дмит|дмят|належ${L}|обража${L}|лае|погрож${L}|корлап${L}|корлайды|тил\s+тигиз${L}|аткыла${L}|олтир${L}|коркытып${L}|байлап${L}|haqorat${L}|so'k${L}|so'kyap${L}|tahdid${L}|o'ldir${L}|otib\s+yur${L}|aldadi|aldab|urib${L}`);
+    const moreFailure=has(text,String.raw`немае|не\s+(?:зберига${L}|спрацьов${L}|включил${L}|прийш${L}|можна|найти|знайти)|пропада${L}|сломан${L}|зламан${L}|qaytma${L}|ko'rinma${L}|kamay${L}|qolma${L}|qaytarib\s+olishim\s+kerak`);
+    const hypothetical=has(text,'если|допустим|например|егер|якщо|masalan|agar');
+    const denial=has(text,String.raw`не\s+(?:утверждаю|говорил|писал)|это\s+не\s+жалоба|шағым\s+емес|шагым\s+емес|shikoyat\s+emas|so'kma${L}|sokma${L}|haqorat\s+qilma${L}|o'ldirma${L}|корлаган\s+жок${L}|тил\s+тигизген\s+жок${L}`);
+    if(domain&&(failure||moreFailure||complaint)&&!hypothetical&&!denial&&!cancelled)return {route:'help',reason:'Описана конкретная неисправность, утрата или чужое действие; нужна проверка ситуации.'};
+  }
+  return null;
+}

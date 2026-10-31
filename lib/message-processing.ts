@@ -1,69 +1,84 @@
-import type { ProcessingTrace } from "./message-types.ts";
+import type { ClarificationContext, ProcessingStep, ProcessingTrace } from "./message-types.ts";
+import { correctText } from "./text-correction.ts";
+import { routeMessage } from "./message-routing.ts";
+import { understandMessage } from "./message-understanding.ts";
+import { inspectModeration } from "./message-moderation.ts";
+import { routeLabels, ROUTING_SCHEMA } from "./message-routes.ts";
+import {clarifyDecision} from "./message-details.ts";
+import {useClarification} from "./clarification-routing.ts";
+import { normalizeInputScripts } from "./input-script-normalization.ts";
 
-const dictionary: Record<string, string> = {
-  памагите: "помогите", помагите: "помогите", памогите: "помогите", помогити: "помогите", памаги: "помоги", помаги: "помоги",
-  помошь: "помощь", памощь: "помощь", помощьь: "помощь", помощ: "помощь", помош: "помощь",
-  пажалуста: "пожалуйста", пожалуста: "пожалуйста", пожалусто: "пожалуйста", пажалуйста: "пожалуйста",
-  немогу: "не могу", неможем: "не можем", неработает: "не работает", неработаит: "не работает",
-  работаит: "работает", работоет: "работает", рабоатет: "работает", неработают: "не работают",
-  акаунт: "аккаунт", акаунта: "аккаунта", акаунте: "аккаунте", акаунту: "аккаунту", аккаунд: "аккаунт",
-  саабщение: "сообщение", соабщение: "сообщение", саобщение: "сообщение", сообщние: "сообщение", саабщения: "сообщения",
-  атправляится: "отправляется", отправляится: "отправляется", отпровляется: "отправляется", атправить: "отправить", отпровить: "отправить",
-  ашибка: "ошибка", ошипка: "ошибка", ашибку: "ошибку", ошипку: "ошибку", ашибки: "ошибки", ошипки: "ошибки",
-  парол: "пароль", параль: "пароль", кнпока: "кнопка", кнопака: "кнопка", заити: "зайти", зойти: "зайти", ваити: "войти",
-  палучается: "получается", получаеться: "получается", открываеться: "открывается", отправляеться: "отправляется",
-  загружаиться: "загружается", загружаеться: "загружается", ничиво: "ничего", севодня: "сегодня", спасиба: "спасибо",
-};
-const word = (pattern: string) => new RegExp(`(?<![\\p{L}\\p{N}_])(?:${pattern})(?![\\p{L}\\p{N}_])`, "iu");
-const help = word("помощь|помогите|помоги|помочь");
-const problem = word("не\\s+(?:могу|можем|получается|удается|удаётся)\\s+(?:войти|зайти|открыть|отправить|загрузить|оплатить)|не\\s+(?:работает|работают|открывается|отправляется|загружается|приходит)");
-const declinedHelp = word("помощь\\s+(?:больше\\s+)?не\\s+нужна|не\\s+нужна\\s+(?:мне\\s+)?помощь");
 
-function keepCase(source: string, replacement: string) {
-  if (source === source.toUpperCase()) return replacement.toUpperCase();
-  return source[0] === source[0].toUpperCase() ? replacement[0].toUpperCase() + replacement.slice(1) : replacement;
-}
+export const PROCESSOR_VERSION = "rules-5.3-context-guards";
 
-function correctText(original: string) {
-  const input = original.trim();
-  // Keep quoted text, code, links, email addresses and numeric identifiers verbatim.
-  const protectedParts = new RegExp('(```[\\s\\S]*?```|`[^`\\n]*`|https?://[^\\s]+|www\\.[^\\s]+|[\\w.+-]+@[\\w.-]+\\.[a-z]{2,}|«[^»]*»|"[^"]*"|[\\p{L}\\p{N}_-]*\\d[\\p{L}\\p{N}_-]*)', 'giu');
-  let text = input.split(protectedParts).map((part, index) => {
-    if (index % 2) return part;
-    return part
-      .replace(new RegExp('(?<![\\p{L}\\p{N}_])[а-яё]+(?![\\p{L}\\p{N}_])', 'giu'), token => dictionary[token.toLowerCase()] ? keepCase(token, dictionary[token.toLowerCase()]) : token)
-      .replace(new RegExp('(?<![\\p{L}\\p{N}_])(не|я)\\s+магу(?![\\p{L}\\p{N}_])', 'giu'), match => keepCase(match, match.toLowerCase().replace('магу', 'могу')))
-      .replace(new RegExp('(?<![\\p{L}\\p{N}_])у\\s+(?:миня|мня)(?![\\p{L}\\p{N}_])', 'giu'), match => keepCase(match, 'у меня'))
-      .replace(new RegExp('(?<![\\p{L}\\p{N}_])не\\s+удеться(?![\\p{L}\\p{N}_])', 'giu'), match => keepCase(match, 'не получается'))
-      .replace(new RegExp('(?<![\\p{L}\\p{N}_])(помогите|помоги)[ \\t]+(пожалуйста)(?![\\p{L}\\p{N}_])', 'giu'), '$1, $2')
-      .replace(new RegExp('(?<![\\p{L}\\p{N}_])(пожалуйста)[ \\t]+(?=(?:не|у|я|мне|нам)(?![\\p{L}\\p{N}_]))', 'giu'), '$1, ');
-  }).join('');
-  if (text !== input) text = text.replace(/^[а-яё]/u, first => first.toUpperCase());
-  return text;
-}
+export { correctText } from "./text-correction.ts";
 
-function classifyText(text: string) {
-  const normalized = text.normalize("NFKC");
-  const problemMatch = normalized.match(problem);
-  if (problemMatch) return { status: "pending" as const, reason: `Обнаружена проблема: «${problemMatch[0]}».` };
-  if (declinedHelp.test(normalized)) return { status: "trash" as const, reason: "В сообщении сказано, что помощь не нужна." };
-  const helpMatch = normalized.match(help);
-  if (helpMatch) return { status: "pending" as const, reason: `Найдена просьба о помощи: «${helpMatch[0]}».` };
-  return { status: "trash" as const, reason: "Просьба о помощи или известная проблема не найдена." };
-}
-
-export function processMessageWithTrace(original: string) {
-  const text = correctText(original);
-  // Classification always uses the corrected text, never the raw message.
-  const { status, reason } = classifyText(text);
+export function processMessageWithTrace(original: string, context?: ClarificationContext) {
+  // Restore only known input forms before attribution; keep the original as evidence.
+  // In particular, a restored reporting clause must participate in the same moderation check.
+  const normalized = normalizeInputScripts(original);
+  const normalizationSteps: ProcessingStep[] = normalized.changes.length ? [{
+    id: "normalized", title: "Раскладка и транслит", value: normalized.text,
+    detail: [...new Set(normalized.changes.map(change => `${change.source} → ${change.target}`))].slice(0, 12).join("; "),
+  }] : [];
+  // This is a terminal route. Do not run correction, translation or intent analysis after a match.
+  const moderation = inspectModeration(normalized.text);
+  if (moderation.kind === "violation") {
+    const processing: ProcessingTrace = {
+      classification: "violation",
+      route: "violation", routingSchema: ROUTING_SCHEMA, needsClarification: false,
+      missingDetails: [], answerReadiness: "not_evaluated",
+      ...(context ? {context} : {}),
+      topic: moderation.topic ?? "Оскорбление в обращении",
+      version: PROCESSOR_VERSION, decisionSource: "rules",
+      steps: [
+        { id: "received", title: "Исходный текст", value: original },
+        ...normalizationSteps,
+        { id: "classified", title: "Проверка нарушения", value: "Нарушение в обращении", detail: `Найдено выражение: «${moderation.match}». ${moderation.reason}` },
+        { id: "routed", title: "Куда отправлено", value: "В раздел «Нарушения»", detail: "Отправлено автоматически. Обработка завершена." },
+      ],
+    };
+    return { text: original.trim(), status: "violation" as const, corrected: false, processing };
+  }
+  const text = correctText(original, normalized.text);
+  const understanding = understandMessage(text);
+  const rule = clarifyDecision(normalized.text, understanding.text, useClarification(routeMessage(normalized.text, text, understanding.text), context));
+  const { status, reason, classification, topic } = rule;
   const corrected = text !== original.trim();
   const processing: ProcessingTrace = {
-    classification: status === "pending" ? "report" : "trash",
+    classification,
+    route: rule.route, routingSchema: ROUTING_SCHEMA,
+    needsClarification: rule.needsClarification, missingDetails: rule.missingDetails,
+    answerReadiness: "not_evaluated",
+    ...(context ? {context} : {}),
+    topic,
+    version: PROCESSOR_VERSION,
+    decisionSource: "rules",
+    ruleId: rule.ruleId, events: rule.events, followUp: rule.followUp,
+
     steps: [
       { id: "received", title: "Исходный текст", value: original },
-      { id: "corrected", title: "Исправление текста", value: text, ...(!corrected && { detail: "Без изменений." }) },
-      { id: "classified", title: "Жалоба или мусор", value: status === "pending" ? "Жалоба" : "Мусор", detail: reason },
-      { id: "routed", title: "Куда отправлено", value: status === "pending" ? "Администратору на проверку" : "В корзину" },
+      ...normalizationSteps,
+      { id: "moderated", title: "Проверка нарушения", value: moderation.kind === "complaint" ? "Возможная жалоба с руганью" : moderation.kind === "reported" ? "Пересказ или отрицание" : "Автоматическое нарушение не выявлено", detail: moderation.reason },
+      { id: "corrected", title: "Исправление текста", value: text, detail: corrected ? "Исправлены знакомые опечатки и слитные сочетания. Сокращения, цитаты, ссылки и команды сохранены." : "Без изменений." },
+      ...(understanding.translations.length || understanding.glossary.length ? [{
+        id: "understood" as const,
+        title: "Язык и смысл",
+        value: understanding.translations.length ? understanding.text : understanding.glossary.map(item => `${item.term} — ${item.meaning}`).join("; "),
+        detail: [
+          ...(understanding.translations.length ? [
+            "Словарный перевод для анализа; неизвестные слова сохранены.",
+            [...new Map(understanding.translations.map(item => [`${item.source}:${item.target}`, item])).values()]
+              .map(item => `${item.source} → ${item.target} (${{uz:"узб.",kk:"каз.",uk:"укр."}[item.language]})`).join("; "),
+            understanding.glossary.map(item => `${item.term} — ${item.meaning}`).join("; "),
+          ] : []),
+        ].filter(Boolean).join("\n") || undefined,
+      }] : [{ id: "understood" as const, title: "Язык и смысл", value: "Известные иностранные фразы и жаргон не найдены", detail: "Неизвестные слова сохранены." }]),
+      ...((rule.events?.length || 0) > 0 ? [{ id: "context" as const, title: "События и контекст", value: [...new Set(rule.events!.map(event => `${event.action}${event.negated ? " — отрицается" : event.uncertain ? " — контекст неясен" : event.kind === "punishment" ? " — наказание" : event.kind === "reported-speech" ? " — пересказ" : ""}`))].slice(0, 8).join("; "), detail: "Отрицания и чужая речь учитываются для соответствующего действия. Упоминание события не доказывает нарушение." }] : []),
+      { id: "rules", title: "Цель обращения", value: rule.route ? routeLabels[rule.route] : "Категория пока не определена", detail: rule.reason },
+      { id: "classified", title: "Итоговая категория", value: rule.route ? routeLabels[rule.route] : "Категория пока не определена" },
+      ...(rule.route !== "trash" ? [{id:"details" as const, title:rule.followUp ? "Что уточнить" : "Подробности", value:rule.followUp || "Уточнение не требуется"}] : []),
+      { id: "routed", title: "Куда отправлено", value: classification === "clarify" ? "Администратору для уточнения" : status === "pending" ? "Администратору на проверку" : "В корзину" },
     ],
   };
   return { text, status, corrected, processing };

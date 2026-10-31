@@ -34,12 +34,17 @@ yarn-error.log*
 # Checkout-local tool state
 /.wrangler/
 /.sites-runtime/
+/site-link.txt
+/open-site.url
 
 # Workspace scaffolding and publication archives
 /.agents/
 /.codex/
 /outputs/
 /work/
+/data/
+*.local.json
+*.parity.json
 
 # OS metadata
 .DS_Store

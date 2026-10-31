@@ -1,0 +1,122 @@
+{
+  "schema": "benchmark-quality-v1",
+  "generatedAt": "2026-10-31T02:32:03.492Z",
+  "labelNote": "Синтетические сообщения; эталон составлен заранее и отдельно проверен другим агентом. Повторные прогоны используют знакомый набор.",
+  "filesReady": true,
+  "runs": [
+    {
+      "id": "01-live-baseline",
+      "title": "1 — исходная версия",
+      "processorVersion": "rules-4.9-mocking-spam",
+      "source": "live",
+      "total": 10000,
+      "correct": 2781,
+      "wrong": 7219,
+      "accuracy": 0.2781,
+      "undetermined": 7103,
+      "falseViolation": 0,
+      "falseTrash": 20
+    },
+    {
+      "id": "02-native-intent",
+      "title": "2 — языковые правила",
+      "processorVersion": "rules-5.0-multilingual-purpose",
+      "source": "local",
+      "total": 10000,
+      "correct": 6296,
+      "wrong": 3704,
+      "accuracy": 0.6296,
+      "undetermined": 3636,
+      "falseViolation": 0,
+      "falseTrash": 20
+    },
+    {
+      "id": "03-language-and-moderation",
+      "title": "3 — исправление и нарушения",
+      "processorVersion": "rules-5.1-language-and-moderation",
+      "source": "local",
+      "total": 10000,
+      "correct": 6920,
+      "wrong": 3080,
+      "accuracy": 0.692,
+      "undetermined": 3059,
+      "falseViolation": 0,
+      "falseTrash": 20
+    },
+    {
+      "id": "04-native-purpose",
+      "title": "4 — цель обращения",
+      "processorVersion": "rules-5.2-native-purpose",
+      "source": "local",
+      "total": 10000,
+      "correct": 7181,
+      "wrong": 2819,
+      "accuracy": 0.7181,
+      "undetermined": 2806,
+      "falseViolation": 0,
+      "falseTrash": 20
+    },
+    {
+      "id": "05-final-rules",
+      "title": "5 — контекст и защита",
+      "processorVersion": "rules-5.3-context-guards",
+      "source": "local",
+      "total": 10000,
+      "correct": 7174,
+      "wrong": 2826,
+      "accuracy": 0.7174,
+      "undetermined": 2809,
+      "falseViolation": 0,
+      "falseTrash": 20
+    },
+    {
+      "id": "06-final-site",
+      "title": "6 — проверка сайта",
+      "processorVersion": "rules-5.3-context-guards",
+      "source": "live",
+      "total": 10000,
+      "correct": 7174,
+      "wrong": 2826,
+      "accuracy": 0.7174,
+      "undetermined": 2809,
+      "falseViolation": 0,
+      "falseTrash": 20
+    }
+  ],
+  "languages": [
+    {
+      "language": "uk",
+      "total": 2415,
+      "correct": 1497,
+      "wrong": 918,
+      "accuracy": 0.6198757763975156
+    },
+    {
+      "language": "uz",
+      "total": 2297,
+      "correct": 1631,
+      "wrong": 666,
+      "accuracy": 0.7100565955594254
+    },
+    {
+      "language": "ru",
+      "total": 2787,
+      "correct": 2113,
+      "wrong": 674,
+      "accuracy": 0.7581628991747399
+    },
+    {
+      "language": "kk",
+      "total": 2501,
+      "correct": 1933,
+      "wrong": 568,
+      "accuracy": 0.772890843662535
+    }
+  ],
+  "independent": {
+    "total": 400,
+    "correct": 263,
+    "wrong": 137,
+    "accuracy": 0.6575
+  }
+}

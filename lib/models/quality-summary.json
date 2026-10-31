@@ -1,0 +1,775 @@
+{
+  "generatedAt": "2026-10-30T20:24:26.605Z",
+  "model": {
+    "version": "intent-b3f001cae7ea",
+    "provenance": "provisional",
+    "training": {
+      "train": 781,
+      "validation": 193,
+      "approved": 0,
+      "provisional": 974,
+      "sha256": "b3f001cae7eaa3d8e9b65a6b0d2b36a9e8c23796c0602d072a560dcb450289b1"
+    },
+    "validation": {
+      "administration": {
+        "accepted": 0,
+        "correct": 0,
+        "precision": null
+      },
+      "appeal": {
+        "accepted": 16,
+        "correct": 15,
+        "precision": 0.9375
+      },
+      "help": {
+        "accepted": 9,
+        "correct": 9,
+        "precision": 1
+      },
+      "player": {
+        "accepted": 37,
+        "correct": 36,
+        "precision": 0.972972972972973
+      },
+      "property": {
+        "accepted": 0,
+        "correct": 0,
+        "precision": null
+      },
+      "question": {
+        "accepted": 0,
+        "correct": 0,
+        "precision": null
+      },
+      "unknown": {
+        "accepted": 0,
+        "correct": 0,
+        "precision": null
+      }
+    }
+  },
+  "fresh": {
+    "processorVersion": "rules-2.1-context",
+    "modelVersion": "intent-b3f001cae7ea",
+    "total": 200,
+    "labelStatus": "provisional",
+    "datasetSha256": "7b81212fa8f1f8f07fc8ef5a4575ede86da8d5db39ce7168c0ae9a1e795e853d",
+    "before": {
+      "correct": 115,
+      "wrong": 11,
+      "missed": 65,
+      "uncertain": 9,
+      "falseViolation": 0,
+      "falseTrash": 0,
+      "violationsDetected": 0,
+      "violationsTotal": 4
+    },
+    "after": {
+      "correct": 123,
+      "wrong": 11,
+      "missed": 57,
+      "uncertain": 9,
+      "falseViolation": 0,
+      "falseTrash": 0,
+      "violationsDetected": 2,
+      "violationsTotal": 4
+    },
+    "model": {
+      "used": 5,
+      "correct": 5,
+      "wrong": 0,
+      "uncertain": 0
+    },
+    "correction": {
+      "evaluated": 0,
+      "beforeCorrect": 0,
+      "afterCorrect": 0
+    },
+    "groups": {
+      "Читы и использование багов": {
+        "total": 10,
+        "before": {
+          "correct": 9,
+          "wrong": 1,
+          "missed": 0,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        },
+        "after": {
+          "correct": 9,
+          "wrong": 1,
+          "missed": 0,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        }
+      },
+      "Работа администрации": {
+        "total": 11,
+        "before": {
+          "correct": 4,
+          "wrong": 2,
+          "missed": 5,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        },
+        "after": {
+          "correct": 4,
+          "wrong": 2,
+          "missed": 5,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        }
+      },
+      "Неоднозначный смысл — нужна экспертная оценка": {
+        "total": 9,
+        "before": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "uncertain": 9,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        },
+        "after": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "uncertain": 9,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        }
+      },
+      "Жалобы на оскорбления, угрозы и чат": {
+        "total": 21,
+        "before": {
+          "correct": 17,
+          "wrong": 0,
+          "missed": 4,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        },
+        "after": {
+          "correct": 18,
+          "wrong": 0,
+          "missed": 3,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        }
+      },
+      "Обжалования наказаний": {
+        "total": 44,
+        "before": {
+          "correct": 29,
+          "wrong": 6,
+          "missed": 9,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        },
+        "after": {
+          "correct": 32,
+          "wrong": 6,
+          "missed": 6,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        }
+      },
+      "Помощь и технические проблемы": {
+        "total": 32,
+        "before": {
+          "correct": 9,
+          "wrong": 0,
+          "missed": 23,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        },
+        "after": {
+          "correct": 11,
+          "wrong": 0,
+          "missed": 21,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        }
+      },
+      "Недостаточно сведений для определения темы": {
+        "total": 18,
+        "before": {
+          "correct": 18,
+          "wrong": 0,
+          "missed": 0,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        },
+        "after": {
+          "correct": 18,
+          "wrong": 0,
+          "missed": 0,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        }
+      },
+      "ДМ, ДБ, РП и действия игроков": {
+        "total": 29,
+        "before": {
+          "correct": 26,
+          "wrong": 0,
+          "missed": 3,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        },
+        "after": {
+          "correct": 26,
+          "wrong": 0,
+          "missed": 3,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        }
+      },
+      "Аккаунт и пропажа имущества": {
+        "total": 1,
+        "before": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 1,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        },
+        "after": {
+          "correct": 0,
+          "wrong": 1,
+          "missed": 0,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        }
+      },
+      "Другие нарушения игроков": {
+        "total": 7,
+        "before": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 7,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        },
+        "after": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 7,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        }
+      },
+      "Оффтоп и сообщения без запроса": {
+        "total": 11,
+        "before": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 10,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        },
+        "after": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 10,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        }
+      },
+      "Оскорбления и нарушения в самом обращении": {
+        "total": 4,
+        "before": {
+          "correct": 0,
+          "wrong": 2,
+          "missed": 2,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 4
+        },
+        "after": {
+          "correct": 2,
+          "wrong": 1,
+          "missed": 1,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 2,
+          "violationsTotal": 4
+        }
+      },
+      "Вопросы по игре": {
+        "total": 1,
+        "before": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        },
+        "after": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        }
+      },
+      "Мошенничество и сделки": {
+        "total": 2,
+        "before": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 1,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        },
+        "after": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 1,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        }
+      }
+    }
+  },
+  "regression": {
+    "processorVersion": "rules-2.1-context",
+    "modelVersion": "intent-b3f001cae7ea",
+    "total": 1000,
+    "labelStatus": "provisional",
+    "datasetSha256": "e628145df8086812f43d45a7689cdb562da95021f809598f720eab7ca06d224a",
+    "before": {
+      "correct": 569,
+      "wrong": 53,
+      "missed": 352,
+      "uncertain": 26,
+      "falseViolation": 0,
+      "falseTrash": 0,
+      "violationsDetected": 3,
+      "violationsTotal": 24
+    },
+    "after": {
+      "correct": 684,
+      "wrong": 45,
+      "missed": 245,
+      "uncertain": 26,
+      "falseViolation": 0,
+      "falseTrash": 0,
+      "violationsDetected": 6,
+      "violationsTotal": 24
+    },
+    "model": {
+      "used": 91,
+      "correct": 91,
+      "wrong": 0,
+      "uncertain": 0
+    },
+    "correction": {
+      "evaluated": 0,
+      "beforeCorrect": 0,
+      "afterCorrect": 0
+    },
+    "groups": {
+      "ДМ, ДБ, РП и действия игроков": {
+        "total": 194,
+        "before": {
+          "correct": 150,
+          "wrong": 0,
+          "missed": 44,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        },
+        "after": {
+          "correct": 165,
+          "wrong": 0,
+          "missed": 29,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        }
+      },
+      "Обжалования наказаний": {
+        "total": 183,
+        "before": {
+          "correct": 99,
+          "wrong": 33,
+          "missed": 51,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        },
+        "after": {
+          "correct": 131,
+          "wrong": 30,
+          "missed": 22,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        }
+      },
+      "Недостаточно сведений для определения темы": {
+        "total": 110,
+        "before": {
+          "correct": 108,
+          "wrong": 2,
+          "missed": 0,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        },
+        "after": {
+          "correct": 109,
+          "wrong": 1,
+          "missed": 0,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        }
+      },
+      "Жалобы на оскорбления, угрозы и чат": {
+        "total": 140,
+        "before": {
+          "correct": 103,
+          "wrong": 0,
+          "missed": 37,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        },
+        "after": {
+          "correct": 116,
+          "wrong": 0,
+          "missed": 24,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        }
+      },
+      "Оскорбления и нарушения в самом обращении": {
+        "total": 24,
+        "before": {
+          "correct": 3,
+          "wrong": 2,
+          "missed": 19,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 3,
+          "violationsTotal": 24
+        },
+        "after": {
+          "correct": 6,
+          "wrong": 2,
+          "missed": 16,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 6,
+          "violationsTotal": 24
+        }
+      },
+      "Работа администрации": {
+        "total": 55,
+        "before": {
+          "correct": 12,
+          "wrong": 11,
+          "missed": 32,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        },
+        "after": {
+          "correct": 15,
+          "wrong": 10,
+          "missed": 30,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        }
+      },
+      "Помощь и технические проблемы": {
+        "total": 93,
+        "before": {
+          "correct": 27,
+          "wrong": 2,
+          "missed": 64,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        },
+        "after": {
+          "correct": 64,
+          "wrong": 1,
+          "missed": 28,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        }
+      },
+      "Читы и использование багов": {
+        "total": 36,
+        "before": {
+          "correct": 28,
+          "wrong": 0,
+          "missed": 8,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        },
+        "after": {
+          "correct": 28,
+          "wrong": 0,
+          "missed": 8,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        }
+      },
+      "Мошенничество и сделки": {
+        "total": 42,
+        "before": {
+          "correct": 29,
+          "wrong": 0,
+          "missed": 13,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        },
+        "after": {
+          "correct": 35,
+          "wrong": 0,
+          "missed": 7,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        }
+      },
+      "Неоднозначный смысл — нужна экспертная оценка": {
+        "total": 26,
+        "before": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "uncertain": 26,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        },
+        "after": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "uncertain": 26,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        }
+      },
+      "Вопросы по игре": {
+        "total": 42,
+        "before": {
+          "correct": 3,
+          "wrong": 3,
+          "missed": 36,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        },
+        "after": {
+          "correct": 5,
+          "wrong": 1,
+          "missed": 36,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        }
+      },
+      "Другие нарушения игроков": {
+        "total": 16,
+        "before": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 15,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        },
+        "after": {
+          "correct": 3,
+          "wrong": 0,
+          "missed": 13,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        }
+      },
+      "Оффтоп и сообщения без запроса": {
+        "total": 37,
+        "before": {
+          "correct": 6,
+          "wrong": 0,
+          "missed": 31,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        },
+        "after": {
+          "correct": 6,
+          "wrong": 0,
+          "missed": 31,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        }
+      },
+      "Аккаунт и пропажа имущества": {
+        "total": 2,
+        "before": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 2,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        },
+        "after": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 1,
+          "uncertain": 0,
+          "falseViolation": 0,
+          "falseTrash": 0,
+          "violationsDetected": 0,
+          "violationsTotal": 0
+        }
+      }
+    }
+  }
+}
