@@ -1,10 +1,12 @@
 # Basqar — «На связи»
 
-[![Проверка кода и сборки](https://github.com/BAITC-Hacks/hack-b6eba4f7-basqar/actions/workflows/ci.yml/badge.svg)](https://github.com/BAITC-Hacks/hack-b6eba4f7-basqar/actions/workflows/ci.yml)
+[![Проверка кода и сборки](https://github.com/rustamprogrammer/basqar-support-copilot/actions/workflows/ci.yml/badge.svg)](https://github.com/rustamprogrammer/basqar-support-copilot/actions/workflows/ci.yml)
 
 Помощник администратора **Grand Mobile**: разбирает обращения игроков, определяет категорию и срочность, находит фрагменты правил и готовит ответ для проверки человеком. Игрок отправляет сообщение; администратор получает очередь с причинами решения, источниками и редактируемым черновиком.
 
 Конкурсный интерфейс: **`POST /triage`**, 14 категорий, приоритеты **p0–p3**, языки **RU / KK / UZ / EN / ES / PT**. Веб-интерфейс сохраняет разделы «Вопрос», «Помощь», «Нарушение», «Корзина», «Не определено»: это маршруты поддержки, отдельные от конкурсной категории.
+
+Эта рабочая копия содержит обновления и инструкции для локальной проверки. [Исходный репозиторий команды](https://github.com/BAITC-Hacks/hack-b6eba4f7-basqar) архивирован; история проекта сохранена в fork.
 
 ## Жюри: запустить локально
 
@@ -13,8 +15,8 @@
 ### 1. Скачать и подготовить
 
 ```powershell
-git clone https://github.com/BAITC-Hacks/hack-b6eba4f7-basqar.git
-cd hack-b6eba4f7-basqar
+git clone https://github.com/rustamprogrammer/basqar-support-copilot.git
+cd basqar-support-copilot
 npm run setup:local -- --rules "C:/private/handout/rules.json"
 ```
 

@@ -18,8 +18,8 @@ Basqar запускается на компьютере проверяющего
 Команды выполняются в PowerShell. Замените пример пути на расположение вашего `rules.json`.
 
 ```powershell
-git clone https://github.com/BAITC-Hacks/hack-b6eba4f7-basqar.git
-cd hack-b6eba4f7-basqar
+git clone https://github.com/rustamprogrammer/basqar-support-copilot.git
+cd basqar-support-copilot
 npm run setup:local -- --rules "C:/private/handout/rules.json"
 ```
 
